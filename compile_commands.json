@@ -1,0 +1,62 @@
+[
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/CharSheet.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/CharSheet.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/CharSheet.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/elements/TextBox.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/elements/TextBox.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/elements/TextBox.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/elements/TextBoxFormatter.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/elements/TextBoxFormatter.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/elements/TextBoxFormatter.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/main.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/main.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/main.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/ClassPage.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/ClassPage.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/ClassPage.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/DescriptionPage.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/DescriptionPage.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/DescriptionPage.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/MainPage.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/MainPage.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/MainPage.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/PageBase.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/PageBase.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/PageBase.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/SpellPage.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/SpellPage.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/SpellPage.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/pagetypes/TraitPage.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/pagetypes/TraitPage.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/pagetypes/TraitPage.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/syshelpers/PdfDoc.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/syshelpers/PdfDoc.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/syshelpers/PdfDoc.cpp"
+  },
+  {
+    "directory": "/Users/pdobrei/self/dev/pdf",
+    "command": "/usr/bin/g++ -std=c++20 -Wall -Wextra -I/Users/pdobrei/self/dev/pdf/src -I/Users/pdobrei/self/dev/pdf/include -I/opt/homebrew/opt/openssl@3/include -I/opt/homebrew/opt/freetype/include/freetype2 -c /Users/pdobrei/self/dev/pdf/src/syshelpers/Utilities.cpp -o /Users/pdobrei/self/dev/pdf/build/obj/syshelpers/Utilities.o",
+    "file": "/Users/pdobrei/self/dev/pdf/src/syshelpers/Utilities.cpp"
+  }
+]

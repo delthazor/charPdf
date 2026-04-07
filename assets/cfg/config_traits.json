@@ -1,0 +1,274 @@
+[
+    {
+        "name": "Divine Sense",
+        "description": "Until the end of your next turn, you know the location of any celestial, fiend, or undead within 60 feet of you that is not behind total cover. You know the type (celestial, fiend, or undead) of any being whose presence you sense, but not its identity (the vampire Count Strahd von Zarovich, for instance). Within the same radius, you also detect the presence of any place or object that has been consecrated or desecrated. You can use this feature a number of times equal to 1 + your Charisma modifier. When you finish a long rest, you regain all expended uses."
+    },
+    {
+        "name": "Divine Smite",
+        "description": "When you hit a creature with a melee weapon attack, you can expend one spell slot to deal radiant damage to the target, in addition to the weapon's damage. The extra damage is 2d8 for a 1st-level spell slot, plus 1d8 for each spell level higher than 1st, to a maximum of 5d8. The damage increases by 1d8 if the target is an undead or a fiend, to a maximum of 6d8."
+    },
+    {
+        "name": "Lay on Hands",
+        "description": "You have a pool of healing power that replenishes when you take a long rest. With that pool, you can restore a total number of hit points equal to your paladin level x 5.\nAs an action, you can touch a creature and draw power from the pool to restore a number of hit points to that creature, up to the maximum amount remaining in your pool.\nAlternatively, you can expend 5 hit points from your pool of healing to cure the target of one disease or neutralize one poison affecting it. You can cure multiple diseases and neutralize multiple poisons with a single use of Lay on Hands, expending hit points separately for each one. This feature has no effect on undead and constructs."
+    },
+    {
+        "name": "Warding Flare",
+        "description": "When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing light to flare before the attacker before it hits or misses. An attacker that can't be blinded is immune to this feature. You can use this feature a number of times equal to your Wisdom modifier (a minimum of once). You regain all expended uses when you finish a long rest."
+    },
+    {
+        "name": "Channel Divinity",
+        "description": "You can use one Channel Divinity option once per short rest."
+    },
+    {
+        "name": "Channel Divinity - Radiance of the Dawn",
+        "description": "As an action, you can dispel magical darkness within 30 feet of you. Additionally, each hostile creature within 30 feet of you must make a Constitution saving throw. A creature takes radiant damage equal to 2d10 + your cleric level on a failed saving throw, and half as much damage on a successful one. A creature that has total cover from you is not affected."
+    },
+    {
+        "name": "Channel Divinity - Turn Undead",
+        "description": "As an action, you can speak a prayer censuring the undead. Each undead that can see or hear you within 30 feet of you must make a Wisdom saving throw. If the creature fails its saving throw, it is turned for 1 minute or until it takes any damage. A turned creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions. For its action, it can use only the Dash action or try to escape from an effect that prevents it from moving. If there's nowhere to move, the creature can use the Dodge action."
+    },
+    {
+        "name": "Channel Divinity - Conquering Presence",
+        "description": "You force each creature of your choice that you can see within 30 feet of you to make a Wisdom saving throw. On a failed save, a creature becomes frightened of you for 1 minute. The frightened creature can repeat this saving throw at the end of each of its turns, ending the effect on itself on a success."
+    },
+    {
+        "name": "Channel Divinity - Guided Strike",
+        "description": "When you make an attack roll, you can use your Channel Divinity to gain a +10 bonus to the roll. You make this choice after you see the roll, but before the DM says whether the attack hits or misses."
+    },
+    {
+        "name": "Channel Divitnity - War God's Blessing",
+        "description": "When a creature within 30 feet of you makes an attack roll, you can use your reaction to grant that creature a +10 bonus to the roll, using your Channel Divinity. You make this choice after you see the roll, but before the DM says whether the attack hits or misses."
+    },
+    {
+        "name": "Wildshape",
+        "description": "You can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice. You regain expended uses when you finish a short or long rest. Your druid level determines the beasts you can transform into. You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature. You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert if you fall unconscious, drop to 0 hit points, or die."
+    },
+    {
+        "name": "Symbiotic Entity",
+        "description": "As an action, you can expend a use of your Wild Shape feature to awaken those spores, rather than transforming into a beast form, and you gain 4 temporary hit points for each level you have in this class. While this feature is active, you gain the following benefits:\n-When you deal your Halo of Spores damage, roll the damage die a second time and add it to the total\n-Your melee weapon attacks deal an extra 1d6 necrotic damage to any target they hit\nThese benefits last for 10 minutes, until you lose all these temporary hit points, or until you use your Wild Shape again."
+    },
+    {
+        "name": "Metamagic - Twinned Spell",
+        "description": "When you cast a spell that targets only one creature and doesn't have a range of self, you can spend a number of sorcery points equal to the spell's level to target a second creature in range with the same spell (1 sorcery point if the spell is a cantrip). To be eligible, a spell must be incapable of targeting more than one creature at the spell's current level."
+    },
+    {
+        "name": "Metamagic - Quickened Spell",
+        "description": "When you cast a spell that has a casting time of 1 action, you can spend 2 sorcery points to change the casting time to 1 bonus action for this casting."
+    },
+    {
+        "name": "Position of Privilege",
+        "description": "Thanks to your knightly background, people are inclined to think the best of you, and people assume you have the right to be wherever you are. The common folk make every effort to accommodate you and avoid your displeasure. You can secure an audience with a local noble if you need to."
+    },
+    {
+        "name": "Retainer (squire)",
+        "description": "In every settlement (village, town, city, encampent, etc.), if city guards or other friendly military body is present you can always get an attendant who can do simple tasks for you (errands, messages, info gathering etc.). The attendant may leave the settlement, but will not go far away, and won’t go into obviously dangerous areas, and will not fight for you."
+    },
+    {
+        "name": "Military Rank (Officer)",
+        "description": "Soldiers loyal to your (former) military organization still recognize your authority and influence, and they defer to you if they are of a lower rank. You can invoke your rank to exert influence over other soldiers and requisition simple equipment or horses for temporary use. You can also usually gain access to friendly military encampments and fortresses where your rank is recognized."
+    },
+    {
+        "name": "Destroy Undead",
+        "description": "When an undead fails its saving throw against your \"Turn Undead\", it is instantly destroyed if its challenge rating is at or below a certain threshold (1/2)"
+    },
+    {
+        "name": "Darkvision",
+        "description": "You can see in dim light within 60 ft of you as if it were bright light, and in darkness as if it were dim light. You can't discern color in darkness, only shades of gray."
+    },
+    {
+        "name": "Gnome Cunning",
+        "description": "You have advantage on all Intelligence, Wisdom, and Charisma saves against magic."
+    },
+    {
+        "name": "Natural Illusionist",
+        "description": "You can cast a different version of the Minor Illusion spell. Intelligence is your spellcasting modifier for it."
+    },
+    {
+        "name": "Speak with Small Beasts",
+        "description": "Through sound and gestures, you may communicate simple ideas with Small or smaller beasts."
+    },
+    {
+        "name": "Discovery (Efficient Casting)",
+        "description": "Once per long rest you can cast a single spell without expending any spell slot."
+    },
+    {
+        "name": "Brain Spores",
+        "description": "You can infect the brains of a dead body with spores, imitating the Speak with Dead spell with the restriction of having only one question, and using a 2nd level spell slot."
+    },
+    {
+        "name": "Shadow Touched",
+        "description": "You can cast Invisibility and Inflict Wounds once per long rest each without expending a spell slot."
+    },
+    {
+        "name": "Halo of Spores",
+        "description": "When a creature you can see moves within 10 ft of you or starts its turn there, you can use your reaction to deal 1d4 necrotic damage unless it succeeds on a Constitution saving throw against your spell save DC. The necrotic damage increases to 1d6 at 6th level, 1d8 at 10th level, and 1d10 at 14th level."
+    },
+    {
+        "name": "Fey Ancestry",
+        "description": "You have advantage on saving throws against being charmed, and magic can't put you to sleep."
+    },
+    {
+        "name": "Researcher",
+        "description": "When you attempt to learn or recall a piece of lore, if you do not know that iformation, you often know where and from whom you can obtain it."
+    },
+    {
+        "name": "Favored by the Gods",
+        "description": "If you fail a saving throw or miss with an attack roll, you can roll 2d4 and add it to the total. Usable only once, per short or long rest."
+    },
+    {
+        "name": "Font of Magic – Sorcery points",
+        "description": "You tap into a deep wellspring of magic within yourself. This wellspring is represented by sorcery points, which allow you to create a variety of magical effects, called metamagic. Your pool of sorcery point equals to your level (unless other effects give you additional pool capacity). You can never have more sorcery points than the maximum pool size. You regain all missing sorcery points when you finish a long rest."
+    },
+    {
+        "name": "Font of Magic - Flexible Casting",
+        "description": "As a bonus action you can use your sorcery points to gain additional spell slots, or sacrifice spell slots to gain additional sorcery points. For creating spell slots level 1-2, it costs level+1 points, for 3-5, level +2 points. For sacrificing spell slots you gain points equal to spell slot level. Any extra spells slots created this way vanish on long rest."
+    },
+    {
+        "name": "Magical Guidance",
+        "description": "When you make an ability check that fails, you can spend 1 sorcery point to reroll the d20, and you must use the new roll."
+    },
+    {
+        "name": "Fey Touched",
+        "description": "Once per long rest you can cast each of your chosen spells without expending a spell slot. Your chosen spells:"
+    },
+    {
+        "name": "Trance",
+        "description": "Elfs require only 4 hours of sleep."
+    },
+    {
+        "name": "Feywild Gift",
+        "description": "Your shadow dances while no one is looking at it."
+    },
+    {
+        "name": "Rustic Hospitality",
+        "description": "You can find a place to hide, rest, or recuperate among commoners, unless you have shown yourself to be a danger to them. They will shield you from the law or anyone searching for you, but they will not risk their lives for you."
+    },
+    {
+        "name": "Extra Attack",
+        "description": "You can attack twice, instead of once, whenever you take the Attack action on your turn."
+    },
+    {
+        "name": "Favoured Enemy",
+        "description": "You have advantage on Wisdom (Survival) checks to track your favored enemies, as well as on Intelligence checks to recall information about them. Your chosen favoured enemies:"
+    },
+    {
+        "name": "Natural Explorer",
+        "description": "When you make an Intelligence or Wisdom check related to your favored terrain, your proficiency bonus is doubled if you are using a skill that you’re proficient in. While traveling for an hour or more in your favored terrain, you gain the following benefits:\n-Difficult terrain doesn’t slow your group’s travel.\n-Your group can’t become lost except by magical means.\n-Even when you are engaged in another activity while traveling (such as foraging, navigating, or tracking), you remain alert to danger.\n-If you are traveling alone, you can move stealthily at a normal pace.\n-When you forage, you find twice as much food as you normally would.\n-While tracking other creatures, you also learn their exact number, their sizes, and how long ago they passed through the area\nYour chosen favored terrain:"
+    },
+    {
+        "name": "Two-Wepon Fighting",
+        "description": "When you engage in two-weapon fighting, you can add your ability modifier to the damage of the second attack."
+    },
+    {
+        "name": "Dreadful Strike",
+        "description": "When you hit a creature with a weapon, you can deal an extra 1d4 psychic damage to the target, which can take this extra damage only once per turn."
+    },
+    {
+        "name": "Sentinel",
+        "description": "When you hit a creature with an opportunity attack, the creature's speed becomes 0 for the rest of the turn. Creatures provoke opportunity attacks from you even if they take the Disengage action before leaving your reach. When a creature within 5 feet of you makes an attack against a target other than you (and that target doesn't have this feat), you can use your reaction to make a melee weapon attack against the attacking creature."
+    },
+    {
+        "name": "Hellish Resistance",
+        "description": "You are resistant to fire damage."
+    },
+    {
+        "name": "Infernal Legacy",
+        "description": "From level 3, you can cast the Hellish Rebuke spell once per long rest as a 2nd-level spell with this trait. From level 5, you can also cast the Darkness spell the same way. Charisma is your spellcasting ability for this."
+    },
+    {
+        "name": "Dueling",
+        "description": "When you are wielding a melee weapon in one hand and no other weapons, you gain a +2 bonus to damage rolls with that weapon."
+    },
+    {
+        "name": "Divine Health",
+        "description": "You are immune to disease."
+    },
+    {
+        "name": "Shield Master",
+        "description": "You gain the following benefits while you are wielding a shield:\n- If you take the Attack action on your turn, you can use a bonus action to try to shove a creature within 5 feet of you with your shield.\n- If you aren't incapacitated, you can add your shield's AC bonus to any Dexterity saving throw you make against a spell or other harmful effect that targets only you.\n - If you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you can use your reaction to take no damage if you succeed on the saving throw, interposing your shield between yourself and the source of the effect."
+    },
+    {
+        "name": "Naturally Stealthy",
+        "description": "You can attempt to hide even when you are obscured only by a creature that is at least one size larger than you."
+    },
+    {
+        "name": "Nimble",
+        "description": "You can move through the space of any creature larger than you."
+    },
+    {
+        "name": "Brave",
+        "description": "You have advantage on saving throws against being frightened."
+    },
+    {
+        "name": "Lucky",
+        "description": "When you roll a 1 on the d20 for an attack roll, ability check, or saving throw, you can reroll the die and must use the new roll."
+    },
+    {
+        "name": "City Secrets",
+        "description": "When you are not in combat, you (and companions you lead) can travel between any two locations in the city twice as fast."
+    },
+    {
+        "name": "Cunning action",
+        "description": "You can take one of the following as a bonus action: Dash, Disengage, Hide."
+    },
+    {
+        "name": "Uncanny Dodge",
+        "description": "When an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you."
+    },
+    {
+        "name": "Mage Hand Legerdemain",
+        "description": "You can make the mage hand invisible, and you can perform the following with it:\n1) You can stow or retrive object one object in or from a container worn or carried by another creature.\n2) You can use thieves' tools to pick locks and disarm traps at range. \nYou can perform one of these tasks without being noticed by a creature if you succeed on a Dexterity (Sleight of Hand) check contested by the creature's Wisdom (Perception) check. In addition, you can use the bonus action granted by your Cunning Action to control the hand."
+    },
+    {
+        "name": "Sneak Attack",
+        "description": "Once per turn, you can deal extra damage to one creature you attacked if you have advantage on the attack rolland used a finesse or a ranged weapon. Advantage is not needed if another (not incapacitated) enemy of the target is within 5 ft of it, and you don't have disadvantage. The damage starts at 1d6 and an additional d6 is added every two levels (at lvl 3 it becomes 2d6, at lvl 5 it becomes 3d6, and so on)"
+    },
+    {
+        "name": "Primeval Awareness",
+        "description": "You can use your action and expend one ranger spell slot to focus your awareness on the region around you. For 1 minute per level of the spell slot you expend, you can sense whether the following types of creatures are present within 1 mile of you (or within up to 6 miles if you are in your favored terrain): aberrations, celestials, dragons, elementals, fey, fiends, and undead. This feature doesn’t reveal the creatures’ location or number."
+    },
+    {
+        "name": "Fungal Infestation",
+        "description": "If a beast or a humanoid that is Small or Medium dies within 10 feet of you, you can use your reaction to animate it, causing it to stand up immediately with 1 hit point. The creature uses the Zombie stat block. It remains animate for 1 hour, after which time it collapses and dies. In combat, the zombie's turn comes immediately after yours. It obeys your mental commands, and the only action it can take is the Attack action, making one melee attack. You can use this feature a number of times equal to your Wisdom modifier (minimum of once), and you regain all expended uses of it when you finish a long rest."
+    },
+    {
+        "name": "Empowered Healing",
+        "description": "Whenever you or an ally within 5 feet of you rolls dice to determine the number of hit points a spell restores, you can spend 1 sorcery point to reroll any number of those dice once, provided you aren't incapacitated. You can use this feature only once per turn."
+    },
+    {
+        "name": "Aura of Protection",
+        "description": "Whenever you or a friendly creature within 10 feet of you must make a saving throw, the creature gains a bonus to the saving throw equal to your Charisma modifier (with a minimum bonus of +1). You must be conscious to grant this bonus."
+    },
+    {
+        "name": "Sear Undead (2024)",
+        "description": "Whenever you use Turn Undead, you can roll a number of d8s equal to your Wisdom modifier (minimum of 1d8) and add the rolls together. Each Undead that fails its saving throw against that use of Turn Undead takes Radiant damage equal to the roll’s total. This damage doesn’t end the turn effect."
+    },
+    {
+        "name": "Channel Divinity (2024)",
+        "description": "You can use one of your Channel Divinity options using one charge, starting with two charges. You regain one of its expended charges when you finish a Short Rest, and you regain all expended charges when you finish a Long Rest. You gain additional charges when you reach certain Cleric levels."
+    },
+    {
+        "name": "Channel Divinity - Divine Spark (2024)",
+        "description": "As a Magic action choose a creature other than you, that you can see within 30 ft of yourself and focus divine energy at it. Roll 1d8 and add your Wisdom modifier. You either restore Hit Points to the creature equal to that total or force the creature to make a Constitution saving throw. On a failed save, the creature takes Necrotic or Radiant damage (your choice) equal to that total. On a successful save, the creature takes half as much damage (round down). You roll an additional d8 when you reach Cleric levels 7 (2d8), 13 (3d8), and 18 (4d8)."
+    },
+    {
+        "name": "Beguiling Twist",
+        "description": "You have advantage on saving throws against being charmed or frightened. Whenever you or a creature you can see within 120 ft of you succeeds on a saving throw against being charmed or frightened, you can use your reaction to force a different creature you can see in the same range to make a Wisdom saving throw against your spell save DC. If the save fails, the target is charmed or frightened by you (your choice) for 1 minute. The target can repeat the saving throw at the end of each of its turns, ending the effect on itself on a successful save."
+    },
+    {
+        "name": "Aura of Conquest",
+        "description": "You constantly emanate a menacing aura while you're not incapacitated. The aura extends 10 feet from you in every direction, but not through total cover. If a creature is frightened of you, its speed is reduced to 0 while in the aura, and that creature takes psychic damage equal to half your paladin level if it starts its turn there. (At lvl18, the range of this aura increases to 30 ft.)"
+    },
+    {
+        "name": "Evasion",
+        "description": "When you are subjected to an effect that allows you to make a Dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail."
+    },
+    {
+        "name": "Noble of Phandalin",
+        "description": "You are a low-class noble. You are welcomed in high society, although you may be received with prejudice as your noble status is rather new, and purchased, not born into. You gain +1 to all Persuasion and Intimidation checks regarding bureaucracy and paperwork (permits, travel papers, lawful access of restricted areas or objects, etc). You are also entitled to a minor credit (loan, max 20 gold, shared within all Phandalin Nobles) in every tax region where the local nobility recognises you, but it has a fixed 15% interest."
+    },
+    {
+        "name": "Blessed Strikes - Divine Strike",
+        "description": "Once on each of your turns when you hit a creature with an attack roll using a weapon, you can cause the target to take an extra 1d8 Necrotic or Radiant damage (your choice)."
+    }
+]

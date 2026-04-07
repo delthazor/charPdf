@@ -1,0 +1,291 @@
+{
+    "name": "Test Character",
+    "nameLetterSpacing": 3,
+    "background": "Soldier",
+    "race": "Human",
+    "stats": {
+        "strength": 16,
+        "dexterity": 16,
+        "constitution": 16,
+        "intelligence": 16,
+        "wisdom": 16,
+        "charisma": 16,
+        "speed": 30,
+        "maxHp": 47,
+        "ac": 14,
+        "initiativeBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 3,
+        "skills": {
+            "strength": {
+                "athletics": 2
+            },
+            "dexterity": {
+                "acrobatics": 2,
+                "sleightOfHand": 2,
+                "stealth": 2
+            },
+            "intelligence": {
+                "arcana": 2,
+                "history": 2,
+                "investigation": 2,
+                "nature": 2,
+                "religion": 2
+            },
+            "wisdom": {
+                "animalHandling": 2,
+                "insight": 2,
+                "medicine": 2,
+                "perception": 2,
+                "survival": 2
+            },
+            "charisma": {
+                "deception": 2,
+                "intimidation": 2,
+                "performance": 2,
+                "persuasion": 2
+            }
+        },
+        "savingThrows": {
+            "strength": 1,
+            "dexterity": 1,
+            "constitution": 1,
+            "intelligence": 1,
+            "wisdom": 1,
+            "charisma": 1
+        },
+        "tools": [
+            "Artisan's Tools",
+            "Carpenter's Tools"
+        ],
+        "languages": [
+            "Elven",
+            "Orcish",
+            "Goblin",
+            "Common"
+        ],
+        "armors": [
+            "Light Armor",
+            "Heavy Armor"
+        ],
+        "simpleWeapons": [
+            "Club",
+            "Hammer",
+            "Mace"
+        ],
+        "martialWeapons": [
+            "Warhammer",
+            "Morningstar",
+            "Longsword",
+            "Longbow"
+        ]
+    },
+    "traits": [
+        "Channel Divinity (2024)",
+        "Channel Divinity - Turn Undead",
+        "Channel Divinity - Divine Spark (2024)",
+        "Channel Divinity - Radiance of the Dawn",
+        "Warding Flare",
+        "Sear Undead (2024)",
+        "Blessed Strikes - Divine Strike",
+        "Retainer (squire)",
+        "Military Rank (Officer)",
+        "Position of Privilege",
+        "Noble of Phandalin",
+        "Darkvision",
+        "Natural Illusionist",
+        "Speak with Small Beasts",
+        "Shadow Touched",
+        "Fey Ancestry",
+        "Favored by the Gods",
+        "Magical Guidance",
+        "Fey Touched",
+        "Feywild Gift",
+        "Rustic Hospitality"
+    ],
+    "classes": {
+        "cleric": {
+            "level": 7,
+            "hitDice": "d8",
+            "resourcePoints": 3,
+            "subclass": "Light Domain",
+            "spellslots": {
+                "1": 9,
+                "2": 9,
+                "3": 9,
+                "4": 9,
+                "5": 9,
+                "6": 9,
+                "7": 9,
+                "8": 9,
+                "9": 9
+            },
+            "spells": {
+                "0": [
+                    "Light",
+                    "Guidance",
+                    "Mending",
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Create or Destroy Water"
+                ],
+                "0_extra": [
+                    "Channel Divinity",
+                    " - Turn Undead",
+                    " - Divine Spark",
+                    " - Radiance of the Dawn"
+                ],
+                "1": [
+                    "Light",
+                    "Guidance",
+                    "Mending",
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Create or Destroy Water"
+                ],
+                "2": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Augury",
+                    "Scorching Ray",
+                    "Prayer of Healing",
+                    "Silence"
+                ],
+                "3": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Speak with Dead",
+                    "Mass Healing Word",
+                    "Daylight",
+                    "Fireball",
+                    "Dispel Magic"
+                ],
+                "4": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ],
+                "5": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ],
+                "6": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ],
+                "7": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ],
+                "8": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ],
+                "9": [
+                    "Sacred Flame",
+                    "Thaumaturgy",
+                    "Burning Hands",
+                    "Healing Word",
+                    "Bless",
+                    "Detect Magic",
+                    "Arcane Eye",
+                    "Wall of Fire"
+                ]
+            }
+        },
+        "bard": {
+            "level": 1,
+            "hitDice": "d6",
+            "resourcePoints": 1,
+            "subclass": "College of Valor",
+            "spellslots": {
+                "1": 6,
+                "2": 5,
+                "3": 4,
+                "4": 3,
+                "5": 3,
+                "6": 2,
+                "7": 2,
+                "8": 2,
+                "9": 1
+            },
+            "spells": {
+                "0": [
+                    "Vicious Mockery",
+                    "Mage Hand",
+                    "True Strike"
+                ],
+                "0_extra": [
+                    "Bardic Inspiration"
+                ],
+                "1": [
+                    "Bane",
+                    "Charm Person",
+                    "Tasha's Hideous Laughter"
+                ]
+            }
+        },
+        "barbarian": {
+            "level": 1,
+            "hitDice": "d12",
+            "subclass": "Totem Warrior",
+            "spellslots": {
+                "1": 2,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            }
+        }
+    }
+}

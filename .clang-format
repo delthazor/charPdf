@@ -1,0 +1,18 @@
+BasedOnStyle: LLVM
+FixNamespaceComments: false
+BreakBeforeBraces: Allman
+PointerAlignment: Left
+ReferenceAlignment: Left
+DerivePointerAlignment: false
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 110
+
+# Allow one-liners (e.g. if (condition) return;)
+AllowShortBlocksOnASingleLine: Always
+AllowShortIfStatementsOnASingleLine: WithoutElse
+
+# When a call/declaration wraps, put each argument/parameter on its own line (no bin-packing)
+BinPackArguments: false
+BinPackParameters: false

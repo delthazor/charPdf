@@ -1,0 +1,8 @@
+build/**
+!build/.gitkeep
+*.o
+*.pdf
+*.a.bak
+.DS_Store
+output.pdf
+

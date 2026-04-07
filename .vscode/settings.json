@@ -1,0 +1,10 @@
+{
+    "C_Cpp.inlayHints.parameterNames.enabled": false,
+    "C_Cpp.inlayHints.referenceOperator.enabled": false,
+    "C_Cpp.formatting": "clangFormat",
+    "C_Cpp.clang_format_style": "file",
+    "editor.formatOnSave": true,
+    "editor.inlayHints.enabled": "off",
+    "makefile.configureOnOpen": true
+}
+
