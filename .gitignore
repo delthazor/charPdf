@@ -1,5 +1,15 @@
 build/**
 !build/.gitkeep
+include/**
+!include/.gitkeep
+lib/**
+!lib/.gitkeep
+.cursor/
+assets/*.png
+assets/*.jpg
+assets/*.jpeg
+assets/*.ttf
+.cache/
 *.o
 *.pdf
 *.a.bak
