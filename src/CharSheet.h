@@ -15,6 +15,10 @@ class CharSheet
 
   private:
     void FillSheet();
+    void AddMainPage();
+    void AddClassPages();
+    void AddTraitPages();
+    void AddSpellPages();
     void advanceSlot();
     template <typename PageT> void AddContent(PageParams params = {});
 

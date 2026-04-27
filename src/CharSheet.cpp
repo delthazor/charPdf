@@ -13,7 +13,9 @@ CharSheet::CharSheet(const Config& cfg,
                      const UtilType::TraitsCatalog& traitsCat,
                      const UtilType::SpellsCatalog& spellsCat)
     : config(cfg), traitsCatalog(traitsCat), spellsCatalog(spellsCat),
-      doc(Utilities::SanitizePdfStem(config.getString("name")) + ".pdf", A4_LANDSCAPE_WIDTH, A4_LANDSCAPE_HEIGHT),
+      doc(Utilities::SanitizePdfStem(config.getString("name")) + ".pdf",
+          A4_LANDSCAPE_WIDTH,
+          A4_LANDSCAPE_HEIGHT),
       currentSlot(PageSide::LEFT_SIDE), afterFirstPage(false)
 {
     FillSheet();
@@ -38,11 +40,14 @@ template <typename PageT> void CharSheet::AddContent(PageParams params)
     advanceSlot();
 }
 
-void CharSheet::FillSheet()
+void CharSheet::AddMainPage()
 {
     Utilities::LogInfo("Add Main page");
     AddContent<MainPage>();
+}
 
+void CharSheet::AddClassPages()
+{
     if (config.hasKey("classes"))
     {
         for (const auto& classId : config.getObject("classes").getKeys())
@@ -51,8 +56,14 @@ void CharSheet::FillSheet()
             AddContent<ClassPage>({{"classname", classId}});
         }
     }
-    else { Utilities::LogError("No classes found"); }
+    else
+    {
+        Utilities::LogError("No classes found");
+    }
+}
 
+void CharSheet::AddTraitPages()
+{
     if (config.hasKey("traits"))
     {
         const std::string fullText = Utilities::BuildFullTraitsText(config, traitsCatalog);
@@ -65,10 +76,19 @@ void CharSheet::FillSheet()
                 AddContent<TraitPage>({{"traitPageText", chunk}});
             }
         }
-        else { Utilities::LogError("No valid traits found, trait block is empty"); }
+        else
+        {
+            Utilities::LogError("No valid traits found, trait block is empty");
+        }
     }
-    else { Utilities::LogError("No traits found"); }
+    else
+    {
+        Utilities::LogError("No traits found");
+    }
+}
 
+void CharSheet::AddSpellPages()
+{
     if (config.hasKey("classes"))
     {
         const std::string fullSpellText = Utilities::BuildFullSpellsText(config, spellsCatalog);
@@ -82,7 +102,21 @@ void CharSheet::FillSheet()
                 AddContent<SpellPage>({{"spellPageText", chunk}});
             }
         }
-        else { Utilities::LogError("No valid spells found, spell block is empty"); }
+        else
+        {
+            Utilities::LogError("No valid spells found, spell block is empty");
+        }
     }
-    else { Utilities::LogError("No spells found"); }
+    else
+    {
+        Utilities::LogError("No spells found");
+    }
+}
+
+void CharSheet::FillSheet()
+{
+    AddMainPage();
+    AddClassPages();
+    AddTraitPages();
+    AddSpellPages();
 }
