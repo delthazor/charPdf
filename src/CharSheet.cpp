@@ -2,6 +2,7 @@
 
 #include "CharSheet.h"
 #include "pagetypes/ClassPage.h"
+#include "pagetypes/InventoryPage.h"
 #include "pagetypes/MainPage.h"
 #include "pagetypes/SpellPage.h"
 #include "pagetypes/TraitPage.h"
@@ -62,6 +63,12 @@ void CharSheet::AddClassPages()
     }
 }
 
+void CharSheet::AddInventoryPage()
+{
+    Utilities::LogInfo("Add Inventory page");
+    AddContent<InventoryPage>();
+}
+
 void CharSheet::AddTraitPages()
 {
     if (config.hasKey("traits"))
@@ -117,6 +124,7 @@ void CharSheet::FillSheet()
 {
     AddMainPage();
     AddClassPages();
+    AddInventoryPage();
     AddTraitPages();
     AddSpellPages();
 }

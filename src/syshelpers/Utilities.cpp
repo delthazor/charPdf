@@ -343,6 +343,15 @@ std::string CapitalizeFirst(const std::string& s)
 
 int CalcModFromStatVal(int statVal) { return (statVal - 10) / 2; }
 
+std::string FormatSignedInt(int value)
+{
+    if (value >= 0)
+    {
+        return "+" + std::to_string(value);
+    }
+    return std::to_string(value);
+}
+
 std::vector<std::string> SplitIntoWords(const std::string& text)
 {
     std::vector<std::string> words;

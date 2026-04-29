@@ -17,6 +17,7 @@ class CharSheet
     void FillSheet();
     void AddMainPage();
     void AddClassPages();
+    void AddInventoryPage();
     void AddTraitPages();
     void AddSpellPages();
     void advanceSlot();

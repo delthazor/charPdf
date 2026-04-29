@@ -111,7 +111,7 @@ void MainPage::AddStat(const std::string& statName, unsigned int statIndex)
 {
     const int statVal = config.getObject("stats").getInt(statName);
     const int statMod = Utilities::CalcModFromStatVal(statVal);
-    const std::string statModStr = statMod > 0 ? "+" + std::to_string(statMod) : std::to_string(statMod);
+    const std::string statModStr = Utilities::FormatSignedInt(statMod);
 
     doc.AddText(statModStr,
                 STAT_MOD_COORDS[statIndex].x,
@@ -164,7 +164,7 @@ void MainPage::AddMaxHp()
 void MainPage::AddProficiencyBonus()
 {
     const int bonus = config.getObject("proficiencies").getInt("bonus");
-    const std::string bonusStr = "+" + std::to_string(bonus);
+    const std::string bonusStr = Utilities::FormatSignedInt(bonus);
 
     doc.AddText(bonusStr, MARGIN + 86, 255, UtilType::TextOptions(FontType::Seagram, 15, 34, 0));
 }
@@ -254,8 +254,7 @@ void MainPage::RenderSkillProf(const std::string& statName, int skillValue, int 
 
     const int statMod = CalcModFromStatName(statName);
     const int totalBonus = statMod + (profBonus * skillValue);
-    const std::string bonusStr =
-        totalBonus >= 0 ? "+" + std::to_string(totalBonus) : std::to_string(totalBonus);
+    const std::string bonusStr = Utilities::FormatSignedInt(totalBonus);
 
     doc.AddText(bonusStr, START_X + 6, yPos, UtilType::TextOptions(FontType::Seagram, 10));
 
@@ -314,8 +313,7 @@ void MainPage::RenderSavingThrow(const std::string& statName, int profValue, int
 
     const int statMod = CalcModFromStatName(statName);
     const int totalBonus = statMod + (profBonus * profValue);
-    const std::string bonusStr =
-        totalBonus >= 0 ? "+" + std::to_string(totalBonus) : std::to_string(totalBonus);
+    const std::string bonusStr = Utilities::FormatSignedInt(totalBonus);
 
     doc.AddText(bonusStr, START_X + 6, yPos, UtilType::TextOptions(FontType::Seagram, 10));
 

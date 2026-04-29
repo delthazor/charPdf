@@ -287,5 +287,146 @@
                 "9": 0
             }
         }
-    }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [
+                {
+                    "name": "Lightbringer",
+                    "type": "Morningstar",
+                    "props": [],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 1,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "extratext": ""
+                },
+                {
+                    "name": "Light Crossbow",
+                    "type": "Light Crossbow",
+                    "props": [
+                        "loading",
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 1,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "80/320",
+                    "extratext": ""
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Breastplate",
+                    "type": "Medium Armor",
+                    "ac": {
+                        "base": 14,
+                        "modstat": "dexterity",
+                        "modcap": 2
+                    },
+                    "extratext": ""
+                },
+                {
+                    "name": "Shield",
+                    "type": "Shield",
+                    "ac": {
+                        "fixmod": 2
+                    },
+                    "extratext": ""
+                }
+            ]
+        },
+        "stashed": {
+            "weapons": [
+                {
+                    "name": "Mace",
+                    "type": "Mace",
+                    "props": [],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "extratext": ""
+                },
+                {
+                    "name": "Morningstar",
+                    "type": "Morningstar",
+                    "props": [],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "extratext": ""
+                },
+                {
+                    "name": "Heavy Crossbow",
+                    "type": "Heavy Crossbow",
+                    "props": [
+                        "heavy",
+                        "two-handed",
+                        "loading"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d10",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "100/400",
+                    "extratext": ""
+                }
+            ],
+            "armors": []
+        }
+    },
+    "backpack": [
+        "Healer's Kit",
+        "Herbalism Kit",
+        "Navigator's tools",
+        "Crossbow bolts x17",
+        "Holy Symbol",
+        "Blanket",
+        "Tinderbox",
+        "Rations (1 day) x7",
+        "Waterskin",
+        "Signet ring",
+        "Alms box",
+        "Sticks of incense x2",
+        "Censer",
+        "Vestments",
+        "Banner",
+        "Fine clothes",
+        "Oil (flask)",
+        "Red Cloak",
+        "Packets of Pixie Dust x3",
+        "Stone of Good Luck (attuned)",
+        "Silk Gloves of the Kindled Hand",
+        "Golden Ring of the Apprentices",
+        "Censer of Sustained Flame",
+        "Apám Gitárja"
+    ]
 }

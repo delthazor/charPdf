@@ -29,6 +29,7 @@ std::vector<std::string> SplitIntoWords(const std::string& text);
 std::string CapitalizeFirst(const std::string& s);
 std::string SanitizePdfStem(std::string stem);
 int CalcModFromStatVal(int statVal);
+std::string FormatSignedInt(int value);
 double CalcSpacingForClassname(const std::string& classname);
 
 nlohmann::ordered_json LoadJsonFromFile(const std::string& path);
