@@ -6,7 +6,10 @@
 using namespace PageConstants;
 
 PageBase::PageBase(PdfDoc& doc, const Config& config, PageSide side, const PageParams& params)
-    : doc(doc), config(config), side(side), LEFT_EDGE_REF((side == PageSide::LEFT_SIDE) ? 0 : MIDDLE_LINE),
+    : doc(doc),
+      config(config),
+      side(side),
+      LEFT_EDGE_REF((side == PageSide::LEFT_SIDE) ? 0 : MIDDLE_LINE),
       pageParams(params)
 {
 }
@@ -157,8 +160,10 @@ size_t PageBase::AddWrappedFormattedText(double startX,
     std::vector<UtilType::StyledWord> words;
     for (const auto& span : spans)
     {
-        UtilType::TextOptions opts = span.textOptions;
-        opts.fontSize = fontSize;
+        UtilType::TextOptions opts(span.textOptions.fontType,
+                                   fontSize,
+                                   span.textOptions.rotationAngle,
+                                   span.textOptions.letterSpacing);
         bool firstWord = true;
         for (const auto& word : Utilities::SplitIntoWords(span.text))
         {
@@ -206,8 +211,10 @@ double PageBase::DrawFormattedLabel(const std::vector<UtilType::FormattedLabelPa
     double totalWidth = 0;
     for (const auto& part : parts)
     {
-        UtilType::TextOptions opts = part.textOptions;
-        opts.fontSize = fontSize;
+        UtilType::TextOptions opts(part.textOptions.fontType,
+                                   fontSize,
+                                   part.textOptions.rotationAngle,
+                                   part.textOptions.letterSpacing);
         const double w = CalculateTextWidth(part.text, opts);
         if (part.underline) { doc.DrawTextUnderline(x, startY, w, opts.fontType, fontSize); }
         x += w;
@@ -216,8 +223,10 @@ double PageBase::DrawFormattedLabel(const std::vector<UtilType::FormattedLabelPa
     x = startX;
     for (const auto& part : parts)
     {
-        UtilType::TextOptions opts = part.textOptions;
-        opts.fontSize = fontSize;
+        UtilType::TextOptions opts(part.textOptions.fontType,
+                                   fontSize,
+                                   part.textOptions.rotationAngle,
+                                   part.textOptions.letterSpacing);
         doc.AddText(part.text, x, startY, opts);
         x += CalculateTextWidth(part.text, opts);
     }

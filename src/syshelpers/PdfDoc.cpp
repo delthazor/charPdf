@@ -186,9 +186,8 @@ void PdfDoc::AddTextCurved(const std::string& text,
 
         const Coords charPos(currentX, position.y + yOffset);
 
-        UtilType::TextOptions perCharOptions = textOptions;
-        perCharOptions.rotationAngle = rotationDeg;
-        perCharOptions.letterSpacing = 0;
+        UtilType::TextOptions perCharOptions(
+            textOptions.fontType, textOptions.fontSize, rotationDeg, textOptions.letterSpacing);
 
         AddText(charStr, charPos.x, charPos.y, perCharOptions);
 

@@ -213,8 +213,8 @@ void MainPage::AddHitDice()
             const double yPos = BASE_Y + yAdjust;
             const double rotationAngle = !isFirstOrLast ? 0 : (isLast ? 350 : 15);
 
-            UtilType::TextOptions textOptsWithRotation = textOpts;
-            textOptsWithRotation.rotationAngle = rotationAngle;
+            UtilType::TextOptions textOptsWithRotation(
+                textOpts.fontType, textOpts.fontSize, rotationAngle, textOpts.letterSpacing);
             doc.AddText(diceStr, currentX, yPos, textOptsWithRotation);
 
             currentX += componentWidth;

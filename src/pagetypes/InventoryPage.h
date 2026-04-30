@@ -11,10 +11,14 @@ class InventoryPage : public PageBase
     void Fill() override;
 
   private:
+    void loadProficiencyBonusFromConfig();
+
     void appendWeaponBlocks(const std::vector<Config>& weapons,
                             std::vector<UtilType::FormattedLabeledBlock>& outBlocks);
     void appendArmorBlocks(const std::vector<Config>& armors,
                            std::vector<UtilType::FormattedLabeledBlock>& outBlocks);
+
+    void buildAndRenderEquipmentBlocks(const Config& equipment);
 
     int proficiencyBonus;
 };

@@ -31,6 +31,8 @@ enum class FontType
     TimesNewRomanItalic,
 };
 
+constexpr double EQUIPMENT_FONTSIZE = 8.0;
+
 constexpr double A4_LANDSCAPE_WIDTH = 842;
 constexpr double A4_LANDSCAPE_HEIGHT = 595;
 constexpr double MARGIN = 0.75;

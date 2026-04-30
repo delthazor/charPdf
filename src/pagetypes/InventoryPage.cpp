@@ -4,17 +4,9 @@
 #include <string>
 
 #include "elements/TextBox.h"
+#include "elements/WeaponPrinter.h"
 #include "syshelpers/PageConstants.h"
 #include "syshelpers/Utilities.h"
-
-using namespace PageConstants;
-
-namespace InventoryPageTextStyle
-{
-inline constexpr double FONTSIZE = 10.0;
-inline const UtilType::TextOptions NORMAL_TEXT{FontType::Arial, FONTSIZE};
-inline const UtilType::TextOptions BOLD_TEXT{FontType::ArialBold, FONTSIZE};
-} // namespace InventoryPageTextStyle
 
 namespace
 {
@@ -50,27 +42,8 @@ bool IsWeaponTypeProficient(const Config& config, const std::string& weaponType)
 UtilType::FormattedLabeledBlock MakeStashedHeadingBlock()
 {
     UtilType::FormattedLabeledBlock block;
-    block.textSpans.push_back({"Stashed:", InventoryPageTextStyle::BOLD_TEXT, false, true});
+    block.textSpans.push_back({"Stashed:", UtilType::BOLD_TEXT, false, true});
     return block;
-}
-
-std::string JoinProps(const std::vector<std::string>& props)
-{
-    std::string propsStr;
-    for (size_t i = 0; i < props.size(); ++i)
-    {
-        propsStr += props[i];
-        if (i < props.size() - 1) { propsStr += ", "; }
-    }
-    return propsStr;
-}
-
-std::string BuildDamageSumDisplay(const std::string& dice, int baseBonus, bool proficient, int statMod)
-{
-    std::string out = dice;
-    if (baseBonus != 0) { out += Utilities::FormatSignedInt(baseBonus); }
-    if (proficient && statMod != 0) { out += Utilities::FormatSignedInt(statMod); }
-    return out;
 }
 
 std::string ArmorTextAfterColon(const Config& armorCfg)
@@ -99,15 +72,13 @@ UtilType::FormattedLabeledBlock BuildArmorBlock(const Config& armorCfg)
     const std::string type = armorCfg.getString("type");
 
     UtilType::FormattedLabeledBlock block;
-    block.labelParts.push_back({name, InventoryPageTextStyle::NORMAL_TEXT, true});
+    block.labelParts.push_back({name, UtilType::NORMAL_TEXT, true});
     if (name != type)
     {
-        block.labelParts.push_back(
-            {std::string(" (") + type + ")", InventoryPageTextStyle::NORMAL_TEXT, false});
+        block.labelParts.push_back({std::string(" (") + type + ")", UtilType::NORMAL_TEXT, false});
     }
-    block.textSpans.push_back({":", InventoryPageTextStyle::NORMAL_TEXT, false, false});
-    block.textSpans.push_back(
-        {ArmorTextAfterColon(armorCfg), InventoryPageTextStyle::NORMAL_TEXT, false, false});
+    block.textSpans.push_back({":", UtilType::NORMAL_TEXT, false, false});
+    block.textSpans.push_back({ArmorTextAfterColon(armorCfg), UtilType::NORMAL_TEXT, false, false});
     return block;
 }
 
@@ -123,59 +94,15 @@ void InventoryPage::appendWeaponBlocks(const std::vector<Config>& weapons,
 {
     for (const Config& w : weapons)
     {
-        const std::string weaponName = w.getString("name");
-        const std::string weaponType = w.getString("type");
-        const bool proficient = IsWeaponTypeProficient(config, weaponType);
+        const bool isRanged = IsRangedWeaponType(w.getString("type"));
+        const bool isProficient = IsWeaponTypeProficient(config, w.getString("type"));
 
-        const bool ranged = IsRangedWeaponType(weaponType);
-        const std::string statName = ranged ? "dexterity" : "strength";
-        const int statMod = CalcModFromStatName(statName);
-
-        const Config dmgBase = w.getObject("damage").getObject("base");
-        const std::string dice = dmgBase.getString("dice");
-        const int baseBonus = dmgBase.getInt("bonus");
-        const std::string dmgType = dmgBase.getString("type");
-
-        std::vector<std::string> props;
-        if (w.hasKey("props")) { props = w.getStringArray("props"); }
-
-        std::string damageChunk = dice;
-        if (baseBonus != 0) { damageChunk += Utilities::FormatSignedInt(baseBonus); }
-        damageChunk += " ";
-        damageChunk += dmgType;
-
-        const int hitTotal = statMod + (proficient ? proficiencyBonus : 0) + baseBonus;
-        const std::string dmgDisplay = BuildDamageSumDisplay(dice, baseBonus, proficient, statMod);
-
-        UtilType::FormattedLabeledBlock block;
-        block.labelParts.push_back({weaponName, InventoryPageTextStyle::NORMAL_TEXT, true});
-        if (weaponName != weaponType)
-        {
-            block.labelParts.push_back(
-                {std::string(" (") + weaponType + ")", InventoryPageTextStyle::NORMAL_TEXT, false});
-        }
-        block.textSpans.push_back({":", InventoryPageTextStyle::NORMAL_TEXT, false, false});
-        block.textSpans.push_back({std::string(ranged ? " Ranged (DEX)" : " Melee (STR)"),
-                                   InventoryPageTextStyle::NORMAL_TEXT,
-                                   false,
-                                   false});
-        block.textSpans.push_back({" " + damageChunk, InventoryPageTextStyle::NORMAL_TEXT, false, false});
-        if (!props.empty())
-        {
-            block.textSpans.push_back(
-                {", " + JoinProps(props), InventoryPageTextStyle::NORMAL_TEXT, false, false});
-        }
-        if (proficient)
-        {
-            block.textSpans.push_back({", proficient", InventoryPageTextStyle::NORMAL_TEXT, false, false});
-        }
-
-        block.textSpans.push_back({" - TOTAL:", InventoryPageTextStyle::BOLD_TEXT, false, true});
-        block.textSpans.push_back(
-            {std::string(" Hit Chance: ") + Utilities::FormatSignedInt(hitTotal) + ", Dmg: " + dmgDisplay,
-             InventoryPageTextStyle::NORMAL_TEXT,
-             false,
-             false});
+        UtilType::FormattedLabeledBlock block =
+            WeaponPrinter(w,
+                          CalcModFromStatName(isRanged ? "dexterity" : "strength"),
+                          isProficient ? proficiencyBonus : 0,
+                          isRanged)
+                .Render();
 
         outBlocks.push_back(std::move(block));
     }
@@ -193,26 +120,16 @@ void InventoryPage::appendArmorBlocks(const std::vector<Config>& armors,
 void InventoryPage::Draw()
 {
     DecorateCorners();
-    doc.AddImage("assets/box-wide.png", LEFT_EDGE_REF + 18, MARGIN, 388, 281);
-    doc.AddImage("assets/box-wide-bottomribbon.png", LEFT_EDGE_REF + MARGIN, 281 + MARGIN, 422, 316);
+    doc.AddImage("assets/box-wide.png", LEFT_EDGE_REF + 18, PageConstants::MARGIN, 388, 281);
+    doc.AddImage("assets/box-wide-bottomribbon.png",
+                 LEFT_EDGE_REF + PageConstants::MARGIN,
+                 281 + PageConstants::MARGIN,
+                 422,
+                 316);
 }
 
-void InventoryPage::Fill()
+void InventoryPage::loadProficiencyBonusFromConfig()
 {
-    doc.AddTextCurved("Backpack",
-                      Coords(LEFT_EDGE_REF + MARGIN + 112, 502),
-                      99,
-                      UtilType::TextOptions(FontType::Seagram, 28, 0, 11));
-
-    if (!config.hasKey("equipment"))
-    {
-        Utilities::LogError("No equipment found");
-        return;
-    }
-
-    const Config equipment = config.getObject("equipment");
-    std::vector<UtilType::FormattedLabeledBlock> blocks;
-
     proficiencyBonus = 0;
     if (config.hasKey("proficiencies") && config.getObject("proficiencies").hasKey("bonus"))
     {
@@ -222,6 +139,11 @@ void InventoryPage::Fill()
     {
         Utilities::LogError("No proficiency bonus found, using 0 instead.");
     }
+}
+
+void InventoryPage::buildAndRenderEquipmentBlocks(const Config& equipment)
+{
+    std::vector<UtilType::FormattedLabeledBlock> blocks;
 
     if (equipment.hasKey("used"))
     {
@@ -241,7 +163,23 @@ void InventoryPage::Fill()
 
     if (blocks.empty()) { return; }
 
-    TextBox box = TextBox::CreateStandard(
-        *this, LEFT_EDGE_REF + 20, 3 * MARGIN, InventoryPageTextStyle::FONTSIZE, {368});
+    TextBox box =
+        TextBox::CreateStandard(*this, LEFT_EDGE_REF + 30, 18, PageConstants::EQUIPMENT_FONTSIZE, {368});
     box.RenderFormattedBlocks(blocks);
+}
+
+void InventoryPage::Fill()
+{
+    doc.AddTextCurved("Backpack",
+                      Coords(LEFT_EDGE_REF + PageConstants::MARGIN + 112, 502),
+                      99,
+                      UtilType::TextOptions(PageConstants::FontType::Seagram, 28, 0, 11));
+
+    loadProficiencyBonusFromConfig();
+
+    if (!config.hasKey("equipment")) { Utilities::LogError("No equipment section found"); }
+    else
+    {
+        buildAndRenderEquipmentBlocks(config.getObject("equipment"));
+    }
 }
