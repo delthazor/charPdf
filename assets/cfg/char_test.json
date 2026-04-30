@@ -403,30 +403,34 @@
             "armors": []
         }
     },
-    "backpack": [
-        "Healer's Kit",
-        "Herbalism Kit",
-        "Navigator's tools",
-        "Crossbow bolts x17",
-        "Holy Symbol",
-        "Blanket",
-        "Tinderbox",
-        "Rations (1 day) x7",
-        "Waterskin",
-        "Signet ring",
-        "Alms box",
-        "Sticks of incense x2",
-        "Censer",
-        "Vestments",
-        "Banner",
-        "Fine clothes",
-        "Oil (flask)",
-        "Red Cloak",
-        "Packets of Pixie Dust x3",
-        "Stone of Good Luck (attuned)",
-        "Silk Gloves of the Kindled Hand",
-        "Golden Ring of the Apprentices",
-        "Censer of Sustained Flame",
-        "Apám Gitárja"
-    ]
+    "backpack": {
+        "general": [
+            "Blanket",
+            "Tinderbox",
+            "Waterskin",
+            "Signet ring",
+            "Alms box",
+            "Vestments",
+            "Banner",
+            "Fine clothes",
+            "Oil (flask)",
+            "Red Cloak"
+        ],
+        "accessories": [
+            "Healer's Kit",
+            "Herbalism Kit",
+            "Navigator's tools",
+            "Holy Symbol",
+            "Stone of Good Luck (attuned)",
+            "Silk Gloves of the Kindled Hand",
+            "Golden Ring of the Apprentices",
+            "Censer of Sustained Flame",
+            "Apám Gitárja"
+        ],
+        "consumables": [
+            "Rations (1 day) x7",
+            "Crossbow bolts x17",
+            "Packets of Pixie Dust x3"
+        ]
+    }
 }
