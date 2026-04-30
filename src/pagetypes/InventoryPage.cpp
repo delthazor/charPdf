@@ -13,6 +13,20 @@ namespace
 
 static const std::vector<std::string> RANGED_WEAPON_TYPES{};
 
+constexpr double EQUIPMENT_X_OFFSET = 18.0;
+constexpr double EQUIPMENT_WIDTH = 388.0;
+constexpr double EQUIPMENT_HEIGHT = 281.0;
+constexpr double EQUIPMENT_TEXT_X_OFFSET = 30.0;
+constexpr double EQUIPMENT_TEXT_Y_OFFSET = 18.0;
+
+constexpr double BACKPACK_WIDTH = 422.0;
+constexpr double BACKPACK_HEIGHT = 316.0;
+
+constexpr double BACKPACK_COLUMN_WIDTH = 110.0;
+constexpr double BACKPACK_COLUMN_GAP = 5.0;
+constexpr double BACKPACK_COLUMN_START_X = 30.0;
+constexpr double BACKPACK_COLUMN_START_Y = 299.0;
+
 bool IsRangedWeaponType(const std::string& type)
 {
     return std::find(RANGED_WEAPON_TYPES.begin(), RANGED_WEAPON_TYPES.end(), type) !=
@@ -92,6 +106,9 @@ InventoryPage::InventoryPage(PdfDoc& doc, const Config& config, PageSide side, c
 void InventoryPage::appendWeaponBlocks(const std::vector<Config>& weapons,
                                        std::vector<UtilType::FormattedLabeledBlock>& outBlocks)
 {
+    if (weapons.empty()) { return; }
+
+    Utilities::LogInfo("   - Appending weapon blocks");
     for (const Config& w : weapons)
     {
         const bool isRanged = IsRangedWeaponType(w.getString("type"));
@@ -111,6 +128,9 @@ void InventoryPage::appendWeaponBlocks(const std::vector<Config>& weapons,
 void InventoryPage::appendArmorBlocks(const std::vector<Config>& armors,
                                       std::vector<UtilType::FormattedLabeledBlock>& outBlocks)
 {
+    if (armors.empty()) { return; }
+
+    Utilities::LogInfo("   - Appending armor blocks");
     for (const Config& a : armors)
     {
         outBlocks.push_back(BuildArmorBlock(a));
@@ -120,12 +140,16 @@ void InventoryPage::appendArmorBlocks(const std::vector<Config>& armors,
 void InventoryPage::Draw()
 {
     DecorateCorners();
-    doc.AddImage("assets/box-wide.png", LEFT_EDGE_REF + 18, PageConstants::MARGIN, 388, 281);
+    doc.AddImage("assets/box-wide.png",
+                 LEFT_EDGE_REF + EQUIPMENT_X_OFFSET,
+                 PageConstants::MARGIN,
+                 EQUIPMENT_WIDTH,
+                 EQUIPMENT_HEIGHT);
     doc.AddImage("assets/box-wide-bottomribbon.png",
                  LEFT_EDGE_REF + PageConstants::MARGIN,
-                 281 + PageConstants::MARGIN,
-                 422,
-                 316);
+                 EQUIPMENT_HEIGHT + PageConstants::MARGIN,
+                 BACKPACK_WIDTH,
+                 BACKPACK_HEIGHT);
 }
 
 void InventoryPage::loadProficiencyBonusFromConfig()
@@ -141,12 +165,20 @@ void InventoryPage::loadProficiencyBonusFromConfig()
     }
 }
 
-void InventoryPage::buildAndRenderEquipmentBlocks(const Config& equipment)
+void InventoryPage::buildAndRenderEquipmentBlocks()
 {
+    if (!config.hasKey("equipment"))
+    {
+        Utilities::LogError("No equipment section found");
+        return;
+    }
+
+    const Config& equipment = config.getObject("equipment");
     std::vector<UtilType::FormattedLabeledBlock> blocks;
 
     if (equipment.hasKey("used"))
     {
+        Utilities::LogInfo(" - Building used equipment blocks");
         const Config used = equipment.getObject("used");
         if (used.hasKey("weapons")) { appendWeaponBlocks(used.getObjectArray("weapons"), blocks); }
         if (used.hasKey("armors")) { appendArmorBlocks(used.getObjectArray("armors"), blocks); }
@@ -156,6 +188,7 @@ void InventoryPage::buildAndRenderEquipmentBlocks(const Config& equipment)
 
     if (equipment.hasKey("stashed"))
     {
+        Utilities::LogInfo(" - Building stashed equipment blocks");
         const Config stashed = equipment.getObject("stashed");
         if (stashed.hasKey("weapons")) { appendWeaponBlocks(stashed.getObjectArray("weapons"), blocks); }
         if (stashed.hasKey("armors")) { appendArmorBlocks(stashed.getObjectArray("armors"), blocks); }
@@ -163,9 +196,45 @@ void InventoryPage::buildAndRenderEquipmentBlocks(const Config& equipment)
 
     if (blocks.empty()) { return; }
 
-    TextBox box =
-        TextBox::CreateStandard(*this, LEFT_EDGE_REF + 30, 18, PageConstants::EQUIPMENT_FONTSIZE, {368});
+    TextBox box = TextBox::CreateStandard(*this,
+                                          LEFT_EDGE_REF + EQUIPMENT_TEXT_X_OFFSET,
+                                          EQUIPMENT_TEXT_Y_OFFSET,
+                                          PageConstants::EQUIPMENT_FONTSIZE,
+                                          {EQUIPMENT_WIDTH - EQUIPMENT_X_OFFSET});
     box.RenderFormattedBlocks(blocks);
+}
+
+void InventoryPage::buildAndRenderBackpack()
+{
+    if (!config.hasKey("backpack"))
+    {
+        Utilities::LogError("No backpack section found");
+        return;
+    }
+
+    const Config& backpack = config.getObject("backpack");
+    size_t columnIndex = 0;
+
+    for (const std::string& key : backpack.getKeys())
+    {
+        if (!backpack.isStringArray(key))
+        {
+            Utilities::LogError(std::string("backpack.") + key + " must be a string array; skipping");
+        }
+        else
+        {
+            const double columnX =
+                LEFT_EDGE_REF + BACKPACK_COLUMN_START_X +
+                static_cast<double>(columnIndex) * (BACKPACK_COLUMN_WIDTH + BACKPACK_COLUMN_GAP);
+            TextBox box = TextBox::CreateStandard(*this,
+                                                  columnX,
+                                                  BACKPACK_COLUMN_START_Y,
+                                                  PageConstants::EQUIPMENT_FONTSIZE,
+                                                  {BACKPACK_COLUMN_WIDTH});
+            box.RenderPlainTextLines(backpack.getStringArray(key));
+            ++columnIndex;
+        }
+    }
 }
 
 void InventoryPage::Fill()
@@ -176,10 +245,6 @@ void InventoryPage::Fill()
                       UtilType::TextOptions(PageConstants::FontType::Seagram, 28, 0, 11));
 
     loadProficiencyBonusFromConfig();
-
-    if (!config.hasKey("equipment")) { Utilities::LogError("No equipment section found"); }
-    else
-    {
-        buildAndRenderEquipmentBlocks(config.getObject("equipment"));
-    }
+    buildAndRenderEquipmentBlocks();
+    buildAndRenderBackpack();
 }

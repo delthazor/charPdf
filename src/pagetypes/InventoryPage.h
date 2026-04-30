@@ -18,7 +18,8 @@ class InventoryPage : public PageBase
     void appendArmorBlocks(const std::vector<Config>& armors,
                            std::vector<UtilType::FormattedLabeledBlock>& outBlocks);
 
-    void buildAndRenderEquipmentBlocks(const Config& equipment);
+    void buildAndRenderEquipmentBlocks();
+    void buildAndRenderBackpack();
 
     int proficiencyBonus;
 };

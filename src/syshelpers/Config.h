@@ -43,6 +43,18 @@ class Config
     bool isNull() const { return data.is_null(); }
     bool hasKey(const std::string& key) const { return data.contains(key); }
 
+    bool isStringArray(const std::string& key) const
+    {
+        if (!hasKey(key)) { return false; }
+        const auto& node = data[key];
+        if (!node.is_array()) { return false; }
+        for (const auto& el : node)
+        {
+            if (!el.is_string()) { return false; }
+        }
+        return true;
+    }
+
     std::vector<std::string> getKeys() const
     {
         std::vector<std::string> keys;
