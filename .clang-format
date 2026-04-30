@@ -9,6 +9,9 @@ TabWidth: 4
 UseTab: Never
 ColumnLimit: 110
 
+# Constructor init lists: either one line total, or one initializer per line (no partial wrapping)
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+
 # Allow one-liners (e.g. if (condition) return;)
 AllowShortBlocksOnASingleLine: Always
 AllowShortIfStatementsOnASingleLine: WithoutElse
