@@ -1,10 +1,23 @@
 #include <filesystem>
+#include <string>
+#include <string_view>
 
 #include "CharSheet.h"
 #include "syshelpers/Config.h"
 #include "syshelpers/Utilities.h"
 
 namespace fs = std::filesystem;
+
+namespace
+{
+
+std::string MakeProcessingBanner(std::string_view name)
+{
+    const size_t dashNum = 40 - name.size();
+    return std::string(dashNum, '-') + " " + std::string(name) + " " + std::string(dashNum, '-');
+}
+
+}
 
 static UtilType::TraitsCatalog LoadTraitsCatalog()
 {
@@ -31,6 +44,7 @@ static void CreatePDFs(const UtilType::TraitsCatalog& traitsCatalog,
             const Config config(Utilities::LoadJsonFromFile(entry.path().string()));
 
             const std::string name = config.getString("name");
+            Utilities::LogInfo(MakeProcessingBanner(name));
             Utilities::LogInfo(std::string("Processing: ") + name);
 
             CharSheet sheet(config, traitsCatalog, spellsCatalog);
