@@ -1,5 +1,5 @@
 {
-    "name": "Celdrick",
+    "name": "Someone",
     "nameLetterSpacing": 3,
     "background": "Soldier",
     "race": "Human",
@@ -404,6 +404,24 @@
         }
     },
     "backpack": {
+        "accessories": [
+            "Apám Gitárja",
+            "Stone of Good Luck (attuned)",
+            "Silk Gloves of the Kindled Hand",
+            "Golden Ring of the Apprentices",
+            "Censer of Sustained Flame"
+        ],
+        "consumables": [
+            "Rations (1 day) x7",
+            "Crossbow bolts x17",
+            "Packets of Pixie Dust x3"
+        ],
+        "kits & tools": [
+            "Healer's Kit",
+            "Herbalism Kit",
+            "Navigator's tools",
+            "Holy Symbol"
+        ],
         "general": [
             "Blanket",
             "Tinderbox",
@@ -415,22 +433,6 @@
             "Fine clothes",
             "Oil (flask)",
             "Red Cloak"
-        ],
-        "accessories": [
-            "Healer's Kit",
-            "Herbalism Kit",
-            "Navigator's tools",
-            "Holy Symbol",
-            "Stone of Good Luck (attuned)",
-            "Silk Gloves of the Kindled Hand",
-            "Golden Ring of the Apprentices",
-            "Censer of Sustained Flame",
-            "Apám Gitárja"
-        ],
-        "consumables": [
-            "Rations (1 day) x7",
-            "Crossbow bolts x17",
-            "Packets of Pixie Dust x3"
         ]
     }
 }

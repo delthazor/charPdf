@@ -24,7 +24,7 @@ constexpr double BACKPACK_WIDTH = 422.0;
 constexpr double BACKPACK_HEIGHT = 316.0;
 
 constexpr double BACKPACK_COLUMN_WIDTH = 90.0;
-constexpr double BACKPACK_COLUMN_GAP = 3.0;
+constexpr double BACKPACK_COLUMN_GAP = 4.0;
 constexpr double BACKPACK_COLUMN_START_Y = 301.0;
 constexpr double BACKPACK_FIRST_COLUMN_START_X = 30.0;
 constexpr double BACKPACK_COLUMN_STEP = BACKPACK_COLUMN_WIDTH + BACKPACK_COLUMN_GAP;
@@ -248,13 +248,15 @@ void InventoryPage::buildAndRenderBackpack()
             const double columnLocalX = BACKPACK_COLUMN_START_X[columnIndex];
             const double columnX = LEFT_EDGE_REF + columnLocalX;
 
-            doc.AddTextCurved(Utilities::CapitalizeFirst(key),
-                              Coords(columnX + 18.0, BACKPACK_COLUMN_START_Y - 24 * PageConstants::MARGIN),
-                              9,
-                              UtilType::TextOptions(PageConstants::FontType::Seagram, 10, 0, 0));
+            doc.AddTextCurved(
+                Utilities::CapitalizeFirst(key),
+                Coords(columnX + 26.0 - key.length() + ((key.length() > 8) ? 0 : 4),
+                       BACKPACK_COLUMN_START_Y - 22 * PageConstants::MARGIN),
+                (key.length() > 8) ? 10 : 6,
+                UtilType::TextOptions(PageConstants::FontType::Seagram, (key.length() > 8) ? 8 : 10, 0, 0));
 
             TextBox box = TextBox::CreateStandard(*this,
-                                                  columnX,
+                                                  columnX + 3.5 * columnIndex,
                                                   BACKPACK_COLUMN_START_Y,
                                                   PageConstants::EQUIPMENT_FONTSIZE,
                                                   {BACKPACK_COLUMN_WIDTH});
