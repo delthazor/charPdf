@@ -1,6 +1,7 @@
 #include "pagetypes/InventoryPage.h"
 
 #include <algorithm>
+#include <array>
 #include <string>
 
 #include "elements/TextBox.h"
@@ -22,10 +23,17 @@ constexpr double EQUIPMENT_TEXT_Y_OFFSET = 18.0;
 constexpr double BACKPACK_WIDTH = 422.0;
 constexpr double BACKPACK_HEIGHT = 316.0;
 
-constexpr double BACKPACK_COLUMN_WIDTH = 110.0;
-constexpr double BACKPACK_COLUMN_GAP = 5.0;
-constexpr double BACKPACK_COLUMN_START_X = 30.0;
-constexpr double BACKPACK_COLUMN_START_Y = 299.0;
+constexpr double BACKPACK_COLUMN_WIDTH = 90.0;
+constexpr double BACKPACK_COLUMN_GAP = 3.0;
+constexpr double BACKPACK_COLUMN_START_Y = 301.0;
+constexpr double BACKPACK_FIRST_COLUMN_START_X = 30.0;
+constexpr double BACKPACK_COLUMN_STEP = BACKPACK_COLUMN_WIDTH + BACKPACK_COLUMN_GAP;
+constexpr std::array<double, 4> BACKPACK_COLUMN_START_X{
+    BACKPACK_FIRST_COLUMN_START_X,
+    BACKPACK_FIRST_COLUMN_START_X + 1 * BACKPACK_COLUMN_STEP,
+    BACKPACK_FIRST_COLUMN_START_X + 2 * BACKPACK_COLUMN_STEP,
+    BACKPACK_FIRST_COLUMN_START_X + 3 * BACKPACK_COLUMN_STEP,
+};
 
 bool IsRangedWeaponType(const std::string& type)
 {
@@ -150,6 +158,14 @@ void InventoryPage::Draw()
                  EQUIPMENT_HEIGHT + PageConstants::MARGIN,
                  BACKPACK_WIDTH,
                  BACKPACK_HEIGHT);
+    for (const double x : BACKPACK_COLUMN_START_X)
+    {
+        doc.AddImage("assets/boxribbon.png",
+                     LEFT_EDGE_REF + x - PageConstants::MARGIN,
+                     EQUIPMENT_HEIGHT - 3 * PageConstants::MARGIN,
+                     BACKPACK_COLUMN_WIDTH * 0.9,
+                     28);
+    }
 }
 
 void InventoryPage::loadProficiencyBonusFromConfig()
@@ -223,9 +239,20 @@ void InventoryPage::buildAndRenderBackpack()
         }
         else
         {
-            const double columnX =
-                LEFT_EDGE_REF + BACKPACK_COLUMN_START_X +
-                static_cast<double>(columnIndex) * (BACKPACK_COLUMN_WIDTH + BACKPACK_COLUMN_GAP);
+            if (columnIndex >= BACKPACK_COLUMN_START_X.size())
+            {
+                Utilities::LogError("Too many columns in backpack, skipping extra columns");
+                continue;
+            }
+
+            const double columnLocalX = BACKPACK_COLUMN_START_X[columnIndex];
+            const double columnX = LEFT_EDGE_REF + columnLocalX;
+
+            doc.AddTextCurved(Utilities::CapitalizeFirst(key),
+                              Coords(columnX + 18.0, BACKPACK_COLUMN_START_Y - 24 * PageConstants::MARGIN),
+                              9,
+                              UtilType::TextOptions(PageConstants::FontType::Seagram, 10, 0, 0));
+
             TextBox box = TextBox::CreateStandard(*this,
                                                   columnX,
                                                   BACKPACK_COLUMN_START_Y,
