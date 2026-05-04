@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cmath>
+#include <vector>
 
 #include "PDFWriter/PDFUsedFont.h"
 #include "syshelpers/PdfDoc.h"
@@ -127,21 +128,77 @@ void PdfDoc::AddText(const std::string& text, double x, double y, const UtilType
     context->Q();
 }
 
+PdfDoc::CurvedRunLayout PdfDoc::buildCurvedRunLayout(const std::string& text,
+                                                     const UtilType::TextOptions& textOptions)
+{
+    static const double CURVED_TEXT_LETTER_SPACING = 0.5;
+    static const double FIRST_CHAR_LETTER_SPACING = 0.15;
+    static const double FIRST_CHAR_T_SPACING = -1.1;
+
+    CurvedRunLayout layout;
+    const size_t n = text.size();
+    layout.leftEdge.reserve(n);
+    layout.advance.reserve(n);
+
+    double x = 0.0;
+    for (size_t i = 0; i < n; ++i)
+    {
+        const char c = text[i];
+        const std::string charStr(1, c);
+        const double advance = CalculateTextWidth(charStr, textOptions);
+        layout.leftEdge.push_back(x);
+        layout.advance.push_back(advance);
+        x += advance;
+        if (i + 1 < n)
+        {
+            if (std::abs(textOptions.letterSpacing) > 0.001) { x += textOptions.letterSpacing; }
+            double spacing = (i == 0) ? FIRST_CHAR_LETTER_SPACING : CURVED_TEXT_LETTER_SPACING;
+            if (i == 0 && c == 'T') { spacing = FIRST_CHAR_T_SPACING; }
+            x += spacing;
+        }
+    }
+    layout.runWidth = x;
+    return layout;
+}
+
+namespace
+{
+double CurveTermFromSymmetricProgress(const double progress)
+{
+    const double oneMinusProgress = 1.0 - progress;
+    if (oneMinusProgress * oneMinusProgress <= 1.0)
+    {
+        return 1.0 - std::sqrt(1.0 - oneMinusProgress * oneMinusProgress);
+    }
+    return 1.0;
+}
+} // namespace
+
 void PdfDoc::AddTextCurved(const std::string& text,
                            const Coords& position,
                            double curvature,
                            const UtilType::TextOptions& textOptions)
 {
+    AddTextCurvedLinear(text, position, curvature, textOptions);
+}
+
+void PdfDoc::AddTextCurvedLinear(const std::string& text,
+                                 const Coords& position,
+                                 double curvature,
+                                 const UtilType::TextOptions& textOptions)
+{
     static const double CURVATURE_ZERO_THRESHOLD = 1e-6;
     static const double MIN_TEXT_WIDTH_FOR_CURVE = 0.5;
     static const int MIN_TEXT_LENGTH_FOR_CURVE = 5;
     static const double RAD_TO_DEG = 180.0 / M_PI;
-    static const double PARABOLA_TANGENT_FACTOR = 4.0;
     static const double DISPLACEMENT_DAMPING = 0.24;
     static const double ROTATION_DAMPING = 0.35;
-    static const double CURVED_TEXT_LETTER_SPACING = 0.5;
-    static const double FIRST_CHAR_LETTER_SPACING = 0.15;
-    static const double FIRST_CHAR_T_SPACING = -1.1;
+    // Same caller `curvature` as before refactor; internal boost restores perceived bend after
+    // distance-based progress + slope rotation (replaced index progress + atan(.../totalWidth)).
+    static const double LINEAR_VISUAL_CURVATURE_GAIN = 2.15;
+    // Symmetric bump uses a point along each glyph toward the left (1 = glyph center). Same idea
+    // as circular chord sampling: uneven first-gap / spacing shifts optical mass vs runWidth/2.
+    static const double LINEAR_CURVE_PROGRESS_BLEND = 0.86;
 
     if (!isOpen) { return; }
     if (text.empty()) { return; }
@@ -151,54 +208,168 @@ void PdfDoc::AddTextCurved(const std::string& text,
         return;
     }
 
-    const double totalWidth = CalculateTextWidth(text, textOptions);
-    if (totalWidth < MIN_TEXT_WIDTH_FOR_CURVE || text.size() < MIN_TEXT_LENGTH_FOR_CURVE)
+    const CurvedRunLayout layout = buildCurvedRunLayout(text, textOptions);
+    const double runWidth = layout.runWidth;
+    if (runWidth < MIN_TEXT_WIDTH_FOR_CURVE || text.size() < MIN_TEXT_LENGTH_FOR_CURVE)
+    {
+        AddText(text, position.x, position.y, textOptions);
+        return;
+    }
+
+    const double effectiveCurvature = curvature * LINEAR_VISUAL_CURVATURE_GAIN;
+
+    const size_t n = text.size();
+    std::vector<double> yOffset(n);
+    std::vector<double> lineTopX(n);
+    std::vector<double> lineTopY(n);
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        double progress = 0.0;
+        if (runWidth > 1e-12)
+        {
+            const double sampleAlong =
+                layout.leftEdge[i] + LINEAR_CURVE_PROGRESS_BLEND * (layout.advance[i] * 0.5);
+            const double halfSpan = runWidth * 0.5;
+            progress = std::min(sampleAlong, runWidth - sampleAlong) / halfSpan;
+            progress = std::clamp(progress, 0.0, 1.0);
+        }
+        const double curveTerm = CurveTermFromSymmetricProgress(progress);
+        yOffset[i] = effectiveCurvature * curveTerm * DISPLACEMENT_DAMPING;
+        lineTopX[i] = position.x + layout.leftEdge[i];
+        lineTopY[i] = position.y + yOffset[i];
+    }
+
+    for (size_t i = 0; i < n; ++i)
+    {
+        const std::string charStr(1, text[i]);
+
+        double dx = 1.0;
+        double dy = 0.0;
+        if (n == 1)
+        {
+            dx = 1.0;
+            dy = 0.0;
+        }
+        else if (i == 0)
+        {
+            dx = lineTopX[1] - lineTopX[0];
+            dy = lineTopY[1] - lineTopY[0];
+        }
+        else if (i + 1 == n)
+        {
+            dx = lineTopX[i] - lineTopX[i - 1];
+            dy = lineTopY[i] - lineTopY[i - 1];
+        }
+        else
+        {
+            dx = lineTopX[i + 1] - lineTopX[i - 1];
+            dy = lineTopY[i + 1] - lineTopY[i - 1];
+        }
+
+        const double rotationDeg = -std::atan2(dy, dx) * RAD_TO_DEG * ROTATION_DAMPING;
+
+        const Coords charPos(lineTopX[i], lineTopY[i]);
+        UtilType::TextOptions perCharOptions(
+            textOptions.fontType, textOptions.fontSize, rotationDeg, textOptions.letterSpacing);
+        AddText(charStr, charPos.x, charPos.y, perCharOptions);
+    }
+}
+
+void PdfDoc::AddTextCurvedCircular(const std::string& text,
+                                   const Coords& position,
+                                   double curvature,
+                                   const UtilType::TextOptions& textOptions)
+{
+    static const double CURVATURE_ZERO_THRESHOLD = 1e-6;
+    static const double MIN_TEXT_WIDTH_FOR_CURVE = 0.5;
+    static const int MIN_TEXT_LENGTH_FOR_CURVE = 5;
+    static const double RAD_TO_DEG = 180.0 / M_PI;
+    static const double MAX_PHI = 0.95 * M_PI;
+    // Larger |curvature| => smaller radius (tighter bend), aligned with linear "more curvature" feel.
+    static const double R_SCALE = 2200.0;
+    static const double ROTATION_DAMPING = 1.0;
+    // (px,py) is baseline-left on the arc. Extra down in font units: between tight (≈0.38) and
+    // previous heavy nudge (1.75) so line top sits between “too high” and “too low”.
+    static const double CIRCULAR_LINE_TOP_EXTRA_DOWN = 1.12;
+
+    if (!isOpen) { return; }
+    if (text.empty()) { return; }
+    if (std::abs(curvature) < CURVATURE_ZERO_THRESHOLD)
+    {
+        AddText(text, position.x, position.y, textOptions);
+        return;
+    }
+
+    const CurvedRunLayout layout = buildCurvedRunLayout(text, textOptions);
+    const double L = layout.runWidth;
+    if (L < MIN_TEXT_WIDTH_FOR_CURVE || text.size() < MIN_TEXT_LENGTH_FOR_CURVE)
     {
         AddText(text, position.x, position.y, textOptions);
         return;
     }
 
     const size_t n = text.size();
-    const double halfLen = (n > 1) ? (static_cast<double>(n) - 1.0) * 0.5 : 0.0;
+    // Horizontal span of the laid-out run (same as linear); chord subtends phi on the circle.
+    const double chord = std::max(L, 1e-9);
+    const double halfChord = chord * 0.5;
+    double R = R_SCALE / std::max(std::abs(curvature), CURVATURE_ZERO_THRESHOLD);
+    // Curvature was tuned for linear y/rotation, not circle geometry. When R would fall near
+    // halfChord, phi -> pi (semicircle) and the middle spikes. Keep R at least ~1.32 * halfChord
+    // so phi stays bounded (~1.65 rad max) for wide labels (e.g. Backpack curvature 99, fs 28).
+    static const double CIRCULAR_MIN_R_OVER_HALF_CHORD = 1.32;
+    R = std::max(R, halfChord * CIRCULAR_MIN_R_OVER_HALF_CHORD);
 
-    double currentX = position.x;
+    double phi = 2.0 * std::asin(std::min(halfChord / R, 1.0));
+    if (phi > MAX_PHI)
+    {
+        R = halfChord / std::sin(MAX_PHI * 0.5);
+        phi = MAX_PHI;
+    }
+
+    const double My = position.y;
+    const double bumpSign = (curvature > 0.0) ? 1.0 : -1.0;
+    const double dCenter = std::sqrt(std::max(R * R - halfChord * halfChord, 0.0));
+    const double Cx = position.x + halfChord;
+    const double Cy = My + bumpSign * dCenter;
+
+    const double xLeft = position.x;
+    const double xRight = position.x + chord;
+    const double thetaLeft = std::atan2(My - Cy, xLeft - Cx);
+    // Central angle for chord length is phi; pick sweep so the arc ends at xRight (minor-arc branch).
+    double sweep = ((curvature > 0.0) ? 1.0 : -1.0) * phi;
+    auto endXForSweep = [&](const double sw) { return Cx + R * std::cos(thetaLeft + sw); };
+    if (std::fabs(endXForSweep(sweep) - xRight) > std::fabs(endXForSweep(-sweep) - xRight)) { sweep = -sweep; }
+    const double deltaTheta = sweep;
+
+    const double fontSize = textOptions.fontSize;
+
     for (size_t i = 0; i < n; ++i)
     {
-        const char c = text[i];
-        const std::string charStr(1, c);
-        const double advance = CalculateTextWidth(charStr, textOptions);
+        const std::string charStr(1, text[i]);
+        const double adv = layout.advance[i];
+        // Chord fraction at glyph center (symmetric on arc; avoids left-edge lean / crowding).
+        const double sCenter = layout.leftEdge[i] + adv * 0.5;
+        const double t = (chord > 1e-12) ? std::clamp(sCenter / chord, 0.0, 1.0) : 0.0;
+        const double theta = thetaLeft + t * deltaTheta;
 
-        const double progress =
-            (halfLen > 1e-9) ? std::min(static_cast<double>(i), static_cast<double>(n - 1 - i)) / halfLen
-                             : 0.0;
+        const double pxC = Cx + R * std::cos(theta);
+        const double pyC = Cy + R * std::sin(theta);
+        // Unit tangent along reading direction (matches sign of deltaTheta).
+        const double tDir = (deltaTheta >= 0.0) ? 1.0 : -1.0;
+        const double tx = -tDir * std::sin(theta);
+        const double ty = tDir * std::cos(theta);
+        const double px = pxC - 0.5 * adv * tx;
+        const double py = pyC - 0.5 * adv * ty;
 
-        const double oneMinusProgress = 1.0 - progress;
-        const double curveTerm = (oneMinusProgress * oneMinusProgress <= 1.0)
-                                     ? (1.0 - std::sqrt(1.0 - oneMinusProgress * oneMinusProgress))
-                                     : 1.0;
-        const double yOffset = curvature * curveTerm * DISPLACEMENT_DAMPING;
+        const double lineTopX = px;
+        const double lineTopY = py - fontSize + CIRCULAR_LINE_TOP_EXTRA_DOWN * fontSize;
 
-        const double rotationMagnitude =
-            std::atan(PARABOLA_TANGENT_FACTOR * curvature * (1.0 - progress) / totalWidth) * RAD_TO_DEG *
-            ROTATION_DAMPING;
-        const double rotationDeg =
-            (static_cast<double>(i) <= halfLen) ? rotationMagnitude : -rotationMagnitude;
-
-        const Coords charPos(currentX, position.y + yOffset);
+        const double rotationDeg = -std::atan2(ty, tx) * RAD_TO_DEG * ROTATION_DAMPING;
 
         UtilType::TextOptions perCharOptions(
             textOptions.fontType, textOptions.fontSize, rotationDeg, textOptions.letterSpacing);
-
-        AddText(charStr, charPos.x, charPos.y, perCharOptions);
-
-        currentX += advance;
-        if (i + 1 < n)
-        {
-            if (std::abs(textOptions.letterSpacing) > 0.001) { currentX += textOptions.letterSpacing; }
-            double spacing = (i == 0) ? FIRST_CHAR_LETTER_SPACING : CURVED_TEXT_LETTER_SPACING;
-            if (i == 0 && c == 'T') { spacing = FIRST_CHAR_T_SPACING; }
-            currentX += spacing;
-        }
+        AddText(charStr, lineTopX, lineTopY, perCharOptions);
     }
 }
 

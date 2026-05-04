@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "PDFWriter/PDFPage.h"
 #include "PDFWriter/PDFWriter.h"
@@ -28,6 +29,14 @@ class PdfDoc
                        const Coords& position,
                        double curvature,
                        const UtilType::TextOptions& textOptions = {});
+    void AddTextCurvedLinear(const std::string& text,
+                             const Coords& position,
+                             double curvature,
+                             const UtilType::TextOptions& textOptions = {});
+    void AddTextCurvedCircular(const std::string& text,
+                               const Coords& position,
+                               double curvature,
+                               const UtilType::TextOptions& textOptions = {});
     void DrawCircle(double centerX, double centerY, double radius, double strokeWidth = 1.0);
     void DrawFilledCircle(double centerX, double centerY, double radius);
     void DrawRectangleFill(
@@ -56,6 +65,14 @@ class PdfDoc
     double CalculateTextWidth(const std::string& text, const UtilType::TextOptions& textOptions);
 
   private:
+    struct CurvedRunLayout
+    {
+        std::vector<double> leftEdge;
+        std::vector<double> advance;
+        double runWidth{0.0};
+    };
+    CurvedRunLayout buildCurvedRunLayout(const std::string& text, const UtilType::TextOptions& textOptions);
+
     struct UnderlineMetrics
     {
         double position;
