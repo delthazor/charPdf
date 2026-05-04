@@ -199,6 +199,9 @@ void PdfDoc::AddTextCurvedLinear(const std::string& text,
     // Symmetric bump uses a point along each glyph toward the left (1 = glyph center). Same idea
     // as circular chord sampling: uneven first-gap / spacing shifts optical mass vs runWidth/2.
     static const double LINEAR_CURVE_PROGRESS_BLEND = 0.86;
+    // Blend path tangent with legacy inward tilt (ends lean toward the bump middle).
+    static const double LINEAR_ROTATION_INWARD_BLEND = 0.32;
+    static const double PARABOLA_TANGENT_FACTOR = 4.0;
 
     if (!isOpen) { return; }
     if (text.empty()) { return; }
@@ -220,6 +223,7 @@ void PdfDoc::AddTextCurvedLinear(const std::string& text,
 
     const size_t n = text.size();
     std::vector<double> yOffset(n);
+    std::vector<double> glyphProgress(n);
     std::vector<double> lineTopX(n);
     std::vector<double> lineTopY(n);
 
@@ -234,6 +238,7 @@ void PdfDoc::AddTextCurvedLinear(const std::string& text,
             progress = std::min(sampleAlong, runWidth - sampleAlong) / halfSpan;
             progress = std::clamp(progress, 0.0, 1.0);
         }
+        glyphProgress[i] = progress;
         const double curveTerm = CurveTermFromSymmetricProgress(progress);
         yOffset[i] = effectiveCurvature * curveTerm * DISPLACEMENT_DAMPING;
         lineTopX[i] = position.x + layout.leftEdge[i];
@@ -267,7 +272,19 @@ void PdfDoc::AddTextCurvedLinear(const std::string& text,
             dy = lineTopY[i + 1] - lineTopY[i - 1];
         }
 
-        const double rotationDeg = -std::atan2(dy, dx) * RAD_TO_DEG * ROTATION_DAMPING;
+        const double tangentDeg = -std::atan2(dy, dx) * RAD_TO_DEG * ROTATION_DAMPING;
+        double inwardSigned = 0.0;
+        if (runWidth > 1e-12 && n > 1)
+        {
+            const double inwardMag =
+                std::atan(PARABOLA_TANGENT_FACTOR * effectiveCurvature * (1.0 - glyphProgress[i]) /
+                          std::max(runWidth, 1e-9)) *
+                RAD_TO_DEG * ROTATION_DAMPING;
+            const double glyphMid = layout.leftEdge[i] + layout.advance[i] * 0.5;
+            inwardSigned = (glyphMid <= runWidth * 0.5 + 1e-9) ? inwardMag : -inwardMag;
+        }
+        const double rotationDeg = (1.0 - LINEAR_ROTATION_INWARD_BLEND) * tangentDeg +
+                                   LINEAR_ROTATION_INWARD_BLEND * inwardSigned;
 
         const Coords charPos(lineTopX[i], lineTopY[i]);
         UtilType::TextOptions perCharOptions(
