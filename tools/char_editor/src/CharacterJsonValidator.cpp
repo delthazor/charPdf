@@ -1,5 +1,6 @@
 #include "CharacterJsonValidator.h"
 
+#include <cmath>
 #include <string>
 
 namespace CharacterJson
@@ -91,6 +92,37 @@ void RequireInt(std::vector<Issue>& out,
     if (obj.is_object() && obj.contains(key) && !obj.at(key).is_number_integer())
     {
         out.push_back({Issue::Severity::Error, JoinPath(path, key), "expected int"});
+    }
+}
+
+void RequireNameLetterSpacing(std::vector<Issue>& out,
+                              const nlohmann::ordered_json& obj,
+                              const std::string& path,
+                              const char* key)
+{
+    RequireKey(out, obj, path, key);
+    if (!obj.is_object() || !obj.contains(key)) { return; }
+    const auto& n = obj.at(key);
+    if (!n.is_number())
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "expected number"});
+        return;
+    }
+    const double v = n.is_number_integer() ? static_cast<double>(n.get<int>()) : n.get<double>();
+    if (!std::isfinite(v))
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "must be a finite number"});
+        return;
+    }
+    if (v < -50.0 || v > 50.0)
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "must be between -50 and 50"});
+        return;
+    }
+    const double scaled = std::round(v * 100.0);
+    if (std::fabs(v * 100.0 - scaled) > 1e-4)
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "at most 2 decimal places"});
     }
 }
 
@@ -351,7 +383,7 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
     }
 
     RequireString(issues, doc, "/", "name");
-    RequireInt(issues, doc, "/", "nameLetterSpacing");
+    RequireNameLetterSpacing(issues, doc, "/", "nameLetterSpacing");
     RequireNonEmptyString(issues, doc, "/", "race");
     RequireString(issues, doc, "/", "background");
     RequireNonEmptyString(issues, doc, "/", "name");

@@ -17,6 +17,7 @@ class QLabel;
 class QTabWidget;
 class QWidget;
 class QLineEdit;
+class QDoubleSpinBox;
 class QSpinBox;
 class QString;
 class QVBoxLayout;
@@ -49,6 +50,7 @@ class MainWindow : public QMainWindow
 
     void OnRootStringChanged(const QString& value);
     void OnRootIntChanged(int value);
+    void OnRootDoubleChanged(double value);
     void OnStatIntChanged(int value);
     void OnProficiencyBonusChanged(int value);
     void OnSavingThrowChanged(int value);
@@ -150,7 +152,7 @@ class MainWindow : public QMainWindow
     // General tab (includes stats column; for refresh)
     QWidget* generalTab = nullptr;
     QLineEdit* generalName = nullptr;
-    QSpinBox* generalNameSpacing = nullptr;
+    QDoubleSpinBox* generalNameSpacing = nullptr;
     QLineEdit* generalRace = nullptr;
     QLineEdit* generalBackground = nullptr;
 

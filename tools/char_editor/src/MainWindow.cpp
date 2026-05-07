@@ -4,6 +4,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
+#include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
@@ -33,6 +34,7 @@
 #include "StringListEditor.h"
 
 #include <array>
+#include <cmath>
 #include <functional>
 #include <utility>
 #include <vector>
@@ -264,6 +266,18 @@ void MainWindow::OnRootIntChanged(int value)
     UpdateRawJsonView();
 }
 
+void MainWindow::OnRootDoubleChanged(double value)
+{
+    QObject* s = sender();
+    if (!s) { return; }
+    const QByteArray key = s->property("jsonKey").toByteArray();
+    if (key.isEmpty()) { return; }
+    const double rounded = std::round(value * 100.0) / 100.0;
+    doc.Json()[key.constData()] = rounded;
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
 void MainWindow::OnStatIntChanged(int value)
 {
     QObject* s = sender();
@@ -320,6 +334,12 @@ static int GetIntOrDefault(const nlohmann::ordered_json& obj, const char* key, i
 {
     if (!obj.is_object() || !obj.contains(key) || !obj.at(key).is_number_integer()) { return def; }
     return obj.at(key).get<int>();
+}
+
+static double GetDoubleOrDefault(const nlohmann::ordered_json& obj, const char* key, double def)
+{
+    if (!obj.is_object() || !obj.contains(key) || !obj.at(key).is_number()) { return def; }
+    return obj.at(key).get<double>();
 }
 
 static std::string GetStringOrDefault(const nlohmann::ordered_json& obj, const char* key, const std::string& def)
@@ -1061,8 +1081,10 @@ QWidget* MainWindow::BuildGeneralTab()
 
     generalName = new QLineEdit();
     generalName->setProperty("jsonKey", "name");
-    generalNameSpacing = new QSpinBox();
-    generalNameSpacing->setRange(-50, 50);
+    generalNameSpacing = new QDoubleSpinBox();
+    generalNameSpacing->setRange(-50.0, 50.0);
+    generalNameSpacing->setDecimals(2);
+    generalNameSpacing->setSingleStep(0.1);
     generalNameSpacing->setProperty("jsonKey", "nameLetterSpacing");
     generalRace = new QLineEdit();
     generalRace->setProperty("jsonKey", "race");
@@ -1077,7 +1099,10 @@ QWidget* MainWindow::BuildGeneralTab()
     QObject::connect(generalName, &QLineEdit::textChanged, this, &MainWindow::OnRootStringChanged);
     QObject::connect(generalRace, &QLineEdit::textChanged, this, &MainWindow::OnRootStringChanged);
     QObject::connect(generalBackground, &QLineEdit::textChanged, this, &MainWindow::OnRootStringChanged);
-    QObject::connect(generalNameSpacing, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnRootIntChanged);
+    QObject::connect(generalNameSpacing,
+                     QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                     this,
+                     &MainWindow::OnRootDoubleChanged);
 
     statStrength = MakeSpinBox(0, 30);
     statStrength->setProperty("jsonKey", "strength");
@@ -1652,7 +1677,12 @@ void MainWindow::UpdateTabsFromDocument()
 {
     const nlohmann::ordered_json& root = std::as_const(doc).Json();
     if (generalName) { generalName->setText(QString::fromStdString(GetStringOrDefault(root, "name", "New Character"))); }
-    if (generalNameSpacing) { generalNameSpacing->setValue(GetIntOrDefault(root, "nameLetterSpacing", 1)); }
+    if (generalNameSpacing)
+    {
+        generalNameSpacing->blockSignals(true);
+        generalNameSpacing->setValue(GetDoubleOrDefault(root, "nameLetterSpacing", 1.0));
+        generalNameSpacing->blockSignals(false);
+    }
     if (generalRace) { generalRace->setText(QString::fromStdString(GetStringOrDefault(root, "race", "Human"))); }
     if (generalBackground)
     {

@@ -2,6 +2,7 @@
 
 #include "CharacterJsonValidator.h"
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -25,6 +26,26 @@ void EnsureNonEmptyString(nlohmann::ordered_json& obj, const char* key, const st
 void EnsureInt(nlohmann::ordered_json& obj, const char* key, int def)
 {
     if (!obj.contains(key) || !obj[key].is_number_integer()) { obj[key] = def; }
+}
+
+void EnsureNameLetterSpacing(nlohmann::ordered_json& doc)
+{
+    constexpr double kDef = 1.0;
+    constexpr double kMin = -50.0;
+    constexpr double kMax = 50.0;
+    if (!doc.contains("nameLetterSpacing") || !doc["nameLetterSpacing"].is_number())
+    {
+        doc["nameLetterSpacing"] = kDef;
+        return;
+    }
+    double v = doc["nameLetterSpacing"].is_number_integer()
+                   ? static_cast<double>(doc["nameLetterSpacing"].get<int>())
+                   : doc["nameLetterSpacing"].get<double>();
+    if (!std::isfinite(v)) { v = kDef; }
+    if (v < kMin) { v = kMin; }
+    if (v > kMax) { v = kMax; }
+    v = std::round(v * 100.0) / 100.0;
+    doc["nameLetterSpacing"] = v;
 }
 
 void EnsureNonNegInt(nlohmann::ordered_json& obj, const char* key, int def)
@@ -131,7 +152,7 @@ nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
 {
     nlohmann::ordered_json doc;
     doc["name"] = "New Character";
-    doc["nameLetterSpacing"] = 1;
+    doc["nameLetterSpacing"] = 1.0;
     doc["background"] = "";
     doc["race"] = "Human";
 
@@ -222,7 +243,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
     if (!doc.is_object()) { doc = nlohmann::ordered_json::object(); }
 
     EnsureNonEmptyString(doc, "name", "New Character");
-    EnsureInt(doc, "nameLetterSpacing", 1);
+    EnsureNameLetterSpacing(doc);
     EnsureString(doc, "background", "");
     EnsureNonEmptyString(doc, "race", "Human");
 
