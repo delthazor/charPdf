@@ -12,7 +12,15 @@
 namespace
 {
 
-static const std::vector<std::string> RANGED_WEAPON_TYPES{};
+static const std::vector<std::string> RANGED_WEAPON_TYPES{"Light Crossbow",
+                                                          "Hand Crossbow",
+                                                          "Heavy Crossbow",
+                                                          "Dart",
+                                                          "Shortbow",
+                                                          "Longbow",
+                                                          "Sling",
+                                                          "Blowgun",
+                                                          "Net"};
 
 constexpr double EQUIPMENT_X_OFFSET = 18.0;
 constexpr double EQUIPMENT_WIDTH = 388.0;
@@ -122,13 +130,12 @@ void InventoryPage::appendWeaponBlocks(const std::vector<Config>& weapons,
         const bool isRanged = IsRangedWeaponType(w.getString("type"));
         const bool isProficient = IsWeaponTypeProficient(config, w.getString("type"));
 
-        UtilType::FormattedLabeledBlock block =
-            WeaponPrinter(w,
-                          CalcModFromStatName("strength"),
-                          CalcModFromStatName("dexterity"),
-                          isProficient ? proficiencyBonus : 0,
-                          isRanged)
-                .Render();
+        UtilType::FormattedLabeledBlock block = WeaponPrinter(w,
+                                                              CalcModFromStatName("strength"),
+                                                              CalcModFromStatName("dexterity"),
+                                                              isProficient ? proficiencyBonus : 0,
+                                                              isRanged)
+                                                    .Render();
 
         outBlocks.push_back(std::move(block));
     }
