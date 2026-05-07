@@ -74,6 +74,7 @@ class MainWindow : public QMainWindow
     void OnClassesAddClicked();
     void OnClassesRemoveClicked();
     void OnClassListCurrentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
+    void OnClassIdEditingFinished();
     void OnClassSpellLevelComboChanged(const QString& text);
     void OnClassLevelSpinChanged(int value);
     void OnClassResourcePointsChanged(int value);
@@ -139,6 +140,8 @@ class MainWindow : public QMainWindow
     CharacterRepository repo;
     CharacterDocument doc;
     bool suppressFileListNavigation = false;
+    /// Ignore file-list selection until the user clicks or tabs into the list (avoids auto-load on focus).
+    bool fileListLoadsNeedUserGesture_ = true;
     bool editorWorkspaceOpen_ = false;
 
     QListWidget* fileList = nullptr;
@@ -181,6 +184,7 @@ class MainWindow : public QMainWindow
 
     // Classes tab
     QListWidget* classesList = nullptr;
+    QLineEdit* classIdEdit = nullptr;
     QComboBox* classesSpellLevel = nullptr;
     StringListEditor* classesSpellsEditor = nullptr;
     QSpinBox* classLevelSpin = nullptr;

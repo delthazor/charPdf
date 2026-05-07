@@ -22,11 +22,14 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QEvent>
+#include <QFocusEvent>
+#include <QKeyEvent>
 #include <QScrollArea>
 #include <QFrame>
 #include <QGridLayout>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QSignalBlocker>
 #include <QShowEvent>
 #include <QSizePolicy>
 
@@ -48,7 +51,7 @@ namespace
 constexpr std::array<const char*, 4> kBackpackSectionKeys{
     "accessories", "consumables", "kits & tools", "general"};
 constexpr std::array<const char*, 4> kBackpackTabTitles{
-    "Accessories", "Consumables", "Kits & tools", "General"};
+    "Accessories", "Consumables", "Kits && Tools", "General"};
 
 QSpinBox* MakeSpinBox(int min, int max)
 {
@@ -186,6 +189,7 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
                      &QListWidget::currentItemChanged,
                      this,
                      &MainWindow::OnCharacterFileListCurrentItemChanged);
+    fileList->installEventFilter(this);
 
     QWidget* right = new QWidget();
     splitter->addWidget(right);
@@ -231,6 +235,44 @@ MainWindow::~MainWindow()
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)
 {
+    // QListView delivers mouse events to viewport(), not the QListWidget itself.
+    const bool onFileListSurface =
+        (fileList != nullptr && (watched == fileList || watched == fileList->viewport()));
+    if (onFileListSurface)
+    {
+        if (event->type() == QEvent::MouseButtonPress) { fileListLoadsNeedUserGesture_ = false; }
+        else if (event->type() == QEvent::KeyPress)
+        {
+            switch (static_cast<QKeyEvent*>(event)->key())
+            {
+            case Qt::Key_Down:
+            case Qt::Key_Up:
+            case Qt::Key_Home:
+            case Qt::Key_End:
+            case Qt::Key_PageUp:
+            case Qt::Key_PageDown:
+            case Qt::Key_Space:
+                fileListLoadsNeedUserGesture_ = false;
+                break;
+            default:
+                break;
+            }
+        }
+        else if (event->type() == QEvent::FocusIn)
+        {
+            switch (static_cast<QFocusEvent*>(event)->reason())
+            {
+            case Qt::MouseFocusReason:
+            case Qt::TabFocusReason:
+            case Qt::BacktabFocusReason:
+            case Qt::ShortcutFocusReason:
+                fileListLoadsNeedUserGesture_ = false;
+                break;
+            default:
+                break;
+            }
+        }
+    }
     if (event->type() == QEvent::Wheel && qobject_cast<QAbstractSpinBox*>(watched)) { return true; }
     return QMainWindow::eventFilter(watched, event);
 }
@@ -504,14 +546,23 @@ void MainWindow::RefreshClassList()
 
 void MainWindow::LoadSelectedClassIntoEditor()
 {
-    if (!classesList || !classLevelSpin || !classHitDiceEdit || !classSubclassEdit || !classResourceSpin
+    if (!classesList || !classIdEdit || !classLevelSpin || !classHitDiceEdit || !classSubclassEdit || !classResourceSpin
         || !classesSpellsEditor)
     {
         return;
     }
     const QListWidgetItem* item = classesList->currentItem();
-    if (!item) { return; }
+    if (!item)
+    {
+        classIdEdit->clear();
+        classIdEdit->setEnabled(false);
+        return;
+    }
+    classIdEdit->setEnabled(true);
     const std::string classId = item->text().toStdString();
+    classIdEdit->blockSignals(true);
+    classIdEdit->setText(QString::fromStdString(classId));
+    classIdEdit->blockSignals(false);
     auto& cls = doc.Json()["classes"][classId];
     if (!cls.is_object()) { cls = nlohmann::ordered_json::object(); }
 
@@ -567,6 +618,50 @@ void MainWindow::OnClassesRemoveClicked()
 }
 
 void MainWindow::OnClassListCurrentItemChanged(QListWidgetItem*, QListWidgetItem*) { LoadSelectedClassIntoEditor(); }
+
+void MainWindow::OnClassIdEditingFinished()
+{
+    if (!classesList || !classIdEdit) { return; }
+    QListWidgetItem* item = classesList->currentItem();
+    if (!item) { return; }
+
+    const std::string oldId = item->text().toStdString();
+    const std::string newId = classIdEdit->text().trimmed().toStdString();
+
+    if (newId.empty())
+    {
+        QMessageBox::warning(this, "Class id", "Class id cannot be empty.");
+        classIdEdit->blockSignals(true);
+        classIdEdit->setText(QString::fromStdString(oldId));
+        classIdEdit->blockSignals(false);
+        return;
+    }
+    if (newId == oldId) { return; }
+
+    if (!doc.Json().contains("classes") || !doc.Json()["classes"].is_object()) { return; }
+    auto& classes = doc.Json()["classes"];
+    if (classes.contains(newId))
+    {
+        QMessageBox::warning(this, "Class id", "A class with that id already exists.");
+        classIdEdit->blockSignals(true);
+        classIdEdit->setText(QString::fromStdString(oldId));
+        classIdEdit->blockSignals(false);
+        return;
+    }
+    if (!classes.contains(oldId)) { return; }
+
+    nlohmann::ordered_json rebuilt = nlohmann::ordered_json::object();
+    for (auto it = classes.begin(); it != classes.end(); ++it)
+    {
+        if (it.key() == oldId) { rebuilt[newId] = it.value(); }
+        else { rebuilt[it.key()] = it.value(); }
+    }
+    classes.swap(rebuilt);
+
+    item->setText(QString::fromStdString(newId));
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
 
 void MainWindow::OnClassSpellLevelComboChanged(const QString&)
 {
@@ -1341,6 +1436,12 @@ QWidget* MainWindow::BuildClassesTab()
     QVBoxLayout* editorLayout = new QVBoxLayout();
     editor->setLayout(editorLayout);
 
+    QFormLayout* classIdForm = new QFormLayout();
+    classIdEdit = new QLineEdit();
+    classIdEdit->setPlaceholderText("JSON object key (e.g. cleric)");
+    classIdForm->addRow("Class id", classIdEdit);
+    editorLayout->addLayout(classIdForm);
+
     QGroupBox* basicsGroup = new QGroupBox("Basics");
     editorLayout->addWidget(basicsGroup);
     QFormLayout* basicsForm = new QFormLayout();
@@ -1395,6 +1496,7 @@ QWidget* MainWindow::BuildClassesTab()
     QObject::connect(addBtn, &QPushButton::clicked, this, &MainWindow::OnClassesAddClicked);
     QObject::connect(removeBtn, &QPushButton::clicked, this, &MainWindow::OnClassesRemoveClicked);
     QObject::connect(classesList, &QListWidget::currentItemChanged, this, &MainWindow::OnClassListCurrentItemChanged);
+    QObject::connect(classIdEdit, &QLineEdit::editingFinished, this, &MainWindow::OnClassIdEditingFinished);
     QObject::connect(classesSpellLevel, &QComboBox::currentTextChanged, this, &MainWindow::OnClassSpellLevelComboChanged);
     QObject::connect(classLevelSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnClassLevelSpinChanged);
     QObject::connect(classResourceSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnClassResourcePointsChanged);
@@ -1722,7 +1824,10 @@ void MainWindow::UpdateTabsFromDocument()
 
 void MainWindow::RefreshFileList()
 {
-    suppressFileListNavigation = true;
+    const bool hadPath = doc.FilePath().has_value();
+    const std::string savedPath = hadPath ? doc.FilePath().value() : std::string();
+
+    QSignalBlocker block(fileList);
     fileList->clear();
     const auto files = repo.ListCharacterFiles();
     for (const auto& f : files)
@@ -1731,7 +1836,21 @@ void MainWindow::RefreshFileList()
         item->setData(Qt::UserRole, QString::fromStdString(f.fullPath));
         fileList->addItem(item);
     }
-    suppressFileListNavigation = false;
+    fileList->setCurrentRow(-1);
+
+    if (editorWorkspaceOpen_ && hadPath)
+    {
+        const QString want = QString::fromStdString(savedPath);
+        for (int i = 0; i < fileList->count(); ++i)
+        {
+            QListWidgetItem* it = fileList->item(i);
+            if (it && it->data(Qt::UserRole).toString() == want)
+            {
+                fileList->setCurrentRow(i);
+                break;
+            }
+        }
+    }
 }
 
 bool MainWindow::TrySaveCurrentDocument()
@@ -1757,6 +1876,19 @@ bool MainWindow::MaybeDiscardUnsavedChanges()
 void MainWindow::OnCharacterFileListCurrentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
 {
     if (suppressFileListNavigation) { return; }
+
+    if (fileListLoadsNeedUserGesture_)
+    {
+        if (current != nullptr)
+        {
+            suppressFileListNavigation = true;
+            fileList->clearSelection();
+            fileList->setCurrentRow(-1);
+            suppressFileListNavigation = false;
+        }
+        return;
+    }
+
     if (!current) { return; }
     const QString fullPath = current->data(Qt::UserRole).toString();
     if (fullPath.isEmpty()) { return; }
@@ -1927,6 +2059,7 @@ void MainWindow::SetEditorWorkspaceOpen(bool open)
 {
     editorWorkspaceOpen_ = open;
     if (editorStack) { editorStack->setCurrentIndex(open ? 1 : 0); }
+    if (!open) { fileListLoadsNeedUserGesture_ = true; }
     UpdateValidationSummary();
 }
 
