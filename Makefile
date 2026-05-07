@@ -11,12 +11,13 @@ ASSETS_DIR = assets
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/obj
 TARGET = $(BUILD_DIR)/pdf_app
+EDITOR_TARGET = $(BUILD_DIR)/char_editor
 
 SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 DEPS = $(OBJECTS:.o=.d)
 
-.PHONY: all clean run
+.PHONY: all clean run editor run_editor check-character-json
 
 all: $(TARGET)
 
@@ -43,10 +44,43 @@ $(OBJ_DIR):
 run: $(TARGET)
 	@cd $(BUILD_DIR) && ./$(notdir $(TARGET))
 
+check-character-json: $(TARGET) | $(BUILD_DIR)/assets
+	@cd $(BUILD_DIR) && ./$(notdir $(TARGET))
+
+# Character JSON editor (Qt6 Widgets, optional)
+QT_CFLAGS := $(shell pkg-config --cflags Qt6Widgets 2>/dev/null)
+QT_LIBS := $(shell pkg-config --libs Qt6Widgets 2>/dev/null)
+EDITOR_SRC_DIR = tools/char_editor/src
+EDITOR_SOURCES = $(shell find $(EDITOR_SRC_DIR) -name '*.cpp')
+EDITOR_OBJECTS = $(patsubst $(EDITOR_SRC_DIR)/%.cpp,$(OBJ_DIR)/char_editor/%.o,$(EDITOR_SOURCES))
+EDITOR_DEPS = $(EDITOR_OBJECTS:.o=.d)
+
+.PHONY: editor
+editor: $(EDITOR_TARGET)
+
+$(EDITOR_TARGET): $(EDITOR_OBJECTS) | $(BUILD_DIR)
+	@if [ -z "$(QT_CFLAGS)" ] || [ -z "$(QT_LIBS)" ]; then \
+		echo "error: Qt6Widgets not found via pkg-config. Install Qt6 + pkg-config and ensure Qt6Widgets.pc is visible." >&2; \
+		exit 1; \
+	fi
+	$(CXX) $(EDITOR_OBJECTS) $(LDFLAGS) $(QT_LIBS) -o $@
+
+$(OBJ_DIR)/char_editor/%.o: $(EDITOR_SRC_DIR)/%.cpp | $(OBJ_DIR)
+	@if [ -z "$(QT_CFLAGS)" ]; then \
+		echo "error: Qt6Widgets not found via pkg-config. Install Qt6 + pkg-config and ensure Qt6Widgets.pc is visible." >&2; \
+		exit 1; \
+	fi
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(QT_CFLAGS) -I./$(EDITOR_SRC_DIR) -c $< -o $@
+
+run_editor: $(EDITOR_TARGET) | $(BUILD_DIR)/assets
+	@cd $(BUILD_DIR) && ./$(notdir $(EDITOR_TARGET))
+
 -include $(DEPS)
+-include $(EDITOR_DEPS)
 
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET) $(BUILD_DIR)/*.pdf
+	rm -rf $(OBJ_DIR) $(TARGET) $(EDITOR_TARGET) $(BUILD_DIR)/*.pdf
 
 info:
 	@echo "Compiler: $(CXX)"
