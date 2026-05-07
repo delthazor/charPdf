@@ -124,7 +124,8 @@ void InventoryPage::appendWeaponBlocks(const std::vector<Config>& weapons,
 
         UtilType::FormattedLabeledBlock block =
             WeaponPrinter(w,
-                          CalcModFromStatName(isRanged ? "dexterity" : "strength"),
+                          CalcModFromStatName("strength"),
+                          CalcModFromStatName("dexterity"),
                           isProficient ? proficiencyBonus : 0,
                           isRanged)
                 .Render();

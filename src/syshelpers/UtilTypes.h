@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -116,24 +117,44 @@ struct DamageConfig
     std::string DamageChunkTyped() const { return DamageChunkBare() + " " + type; }
 };
 
+inline bool DamageAltIsPopulated(const Config& altObj)
+{
+    if (!altObj.hasKey("dice") || !altObj.hasKey("type")) { return false; }
+    return !altObj.getString("dice").empty();
+}
+
+inline std::optional<DamageConfig> ParseWeaponDamageAlt(const Config& damageSection)
+{
+    if (!damageSection.hasKey("alt")) { return std::nullopt; }
+    const Config alt = damageSection.getObject("alt");
+    if (!DamageAltIsPopulated(alt)) { return std::nullopt; }
+    return DamageConfig(alt);
+}
+
 struct WeaponConfig
 {
     const std::string name;
     const std::string type;
     const DamageConfig damageBase;
+    const std::optional<DamageConfig> damageAlt;
+    const std::vector<std::string> damageExtra;
     const std::vector<std::string> props;
     const bool proficient;
     const bool ranged;
     const std::string range;
+    const std::string extratext;
 
     WeaponConfig(Config weaponCfg, bool isRanged, bool isProficient)
         : name(weaponCfg.getString("name")),
           type(weaponCfg.getString("type")),
           damageBase(weaponCfg.getObject("damage").getObject("base")),
+          damageAlt(ParseWeaponDamageAlt(weaponCfg.getObject("damage"))),
+          damageExtra(weaponCfg.getObject("damage").getStringArray("extra")),
           props(weaponCfg.getStringArray("props")),
           proficient(isProficient),
           ranged(isRanged),
-          range(weaponCfg.hasKey("range") ? weaponCfg.getString("range") : "")
+          range(weaponCfg.hasKey("range") ? weaponCfg.getString("range") : ""),
+          extratext(weaponCfg.hasKey("extratext") ? weaponCfg.getString("extratext") : "")
     {
     }
 };

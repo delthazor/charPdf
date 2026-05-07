@@ -3,12 +3,28 @@
 #include "syshelpers/UtilTypes.h"
 #include "syshelpers/Utilities.h"
 
+#include <algorithm>
+#include <string>
+#include <vector>
+
+namespace
+{
+
+bool HasProp(const std::vector<std::string>& props, const char* key)
+{
+    return std::find(props.begin(), props.end(), std::string(key)) != props.end();
+}
+
+} // namespace
+
 WeaponPrinter::WeaponPrinter(const Config& rawWeaponConfig,
-                             const int statModParam,
+                             const int strengthModParam,
+                             const int dexterityModParam,
                              const int proficiencyBonusParam,
                              const bool isRangedParam)
     : weaponCfg(rawWeaponConfig, isRangedParam, proficiencyBonusParam > 0),
-      statMod(statModParam),
+      strengthMod(strengthModParam),
+      dexterityMod(dexterityModParam),
       proficiencyBonus(proficiencyBonusParam),
       isRanged(isRangedParam)
 
@@ -19,6 +35,7 @@ WeaponPrinter::WeaponPrinter(const Config& rawWeaponConfig,
     RenderProps();
     RenderProfLabel();
     RenderTotals();
+    RenderExtraText();
 }
 
 void WeaponPrinter::RenderName()
@@ -39,8 +56,10 @@ void WeaponPrinter::RenderRangeType()
 
 void WeaponPrinter::RenderRawDamage()
 {
-    block.textSpans.push_back(
-        {" " + weaponCfg.damageBase.damageChunkTyped, UtilType::NORMAL_TEXT, false, false});
+    block.textSpans.push_back({" " + weaponCfg.damageBase.damageChunkTyped + BuildExtraDamages(),
+                               UtilType::NORMAL_TEXT,
+                               false,
+                               false});
 }
 
 void WeaponPrinter::RenderProps()
@@ -59,10 +78,53 @@ void WeaponPrinter::RenderProfLabel()
     }
 }
 
+void WeaponPrinter::AppendTotalLine(const std::string& extraBeforeColon,
+                                    const int abilityMod,
+                                    const UtilType::DamageConfig& damage)
+{
+    block.textSpans.push_back(
+        {std::string(" - TOTAL") + extraBeforeColon + ":", UtilType::BOLD_TEXT, false, true});
+    block.textSpans.push_back(
+        {BuildWeaponTotalString(abilityMod, damage), UtilType::NORMAL_TEXT, false, false});
+}
+
+void WeaponPrinter::RenderVersatileTotals(const std::string& prefix, const int statModParam)
+{
+    const bool versatile = HasProp(weaponCfg.props, "versatile");
+
+    if (versatile)
+    {
+        if (!weaponCfg.damageAlt.has_value())
+        {
+            Utilities::LogError("Weapon has versatile property but damage.alt is missing or empty.");
+        }
+        else
+        {
+            AppendTotalLine(prefix + " (OneHand)", strengthMod, weaponCfg.damageBase);
+            AppendTotalLine(prefix + " (TwoHand)", strengthMod, weaponCfg.damageAlt.value());
+        }
+    }
+    else
+    {
+        AppendTotalLine(prefix, statModParam, weaponCfg.damageBase);
+    }
+}
+
 void WeaponPrinter::RenderTotals()
 {
-    block.textSpans.push_back({" - TOTAL:", UtilType::BOLD_TEXT, false, true});
-    block.textSpans.push_back({BuildWeaponTotalString(), UtilType::NORMAL_TEXT, false, false});
+    const bool finesse = HasProp(weaponCfg.props, "finesse");
+
+    if (finesse)
+    {
+        RenderVersatileTotals(" (STR)", strengthMod);
+        RenderVersatileTotals(" (DEX)", dexterityMod);
+    }
+
+    else
+    {
+        const int mod = isRanged ? dexterityMod : strengthMod;
+        RenderVersatileTotals("", mod);
+    }
 }
 
 std::string WeaponPrinter::JoinProps() const
@@ -76,21 +138,45 @@ std::string WeaponPrinter::JoinProps() const
     return propsStr;
 }
 
-std::string WeaponPrinter::BuildWeaponTotalString() const
+std::string WeaponPrinter::BuildWeaponTotalString(const int abilityMod,
+                                                  const UtilType::DamageConfig& damage) const
 {
-    const int hitTotal = statMod + (weaponCfg.proficient ? proficiencyBonus : 0) + weaponCfg.damageBase.bonus;
-    const std::string dmgDisplay = BuildDamageSumDisplay() + " " + weaponCfg.damageBase.type;
+    const int hitTotal = abilityMod + (weaponCfg.proficient ? proficiencyBonus : 0) + damage.bonus;
+    const std::string dmgDisplay = BuildDamageSumDisplay(abilityMod, damage) + " " + damage.type;
 
     return std::string(" Hit Chance: ") + Utilities::FormatSignedInt(hitTotal) + ", Dmg: " + dmgDisplay;
 }
 
-std::string WeaponPrinter::BuildDamageSumDisplay() const
+std::string WeaponPrinter::BuildDamageSumDisplay(const int abilityMod,
+                                                 const UtilType::DamageConfig& damage) const
 {
-    std::string out = weaponCfg.damageBase.dice;
-    int bonus = weaponCfg.damageBase.bonus;
-    if (weaponCfg.proficient && statMod != 0) { bonus += statMod; }
+    std::string out = damage.dice;
+    int bonus = damage.bonus;
+    if (weaponCfg.proficient && abilityMod != 0) { bonus += abilityMod; }
     if (bonus != 0) { out += Utilities::FormatSignedInt(bonus); }
+    out += BuildExtraDamages();
     return out;
+}
+
+std::string WeaponPrinter::BuildExtraDamages() const
+{
+    std::string out;
+    if (!weaponCfg.damageExtra.empty())
+    {
+        for (const std::string& extra : weaponCfg.damageExtra)
+        {
+            out += " " + extra;
+        }
+    }
+    return out;
+}
+
+void WeaponPrinter::RenderExtraText()
+{
+    if (!weaponCfg.extratext.empty())
+    {
+        block.textSpans.push_back({weaponCfg.extratext, UtilType::NORMAL_TEXT, false, true});
+    }
 }
 
 UtilType::FormattedLabeledBlock WeaponPrinter::Render() const { return block; }

@@ -7,7 +7,8 @@ class WeaponPrinter
 {
   public:
     WeaponPrinter(const Config& rawWeaponConfig,
-                  int statModParam,
+                  int strengthModParam,
+                  int dexterityModParam,
                   int proficiencyBonusParam,
                   bool isRangedParam);
 
@@ -20,13 +21,21 @@ class WeaponPrinter
     void RenderProps();
     void RenderProfLabel();
     void RenderTotals();
+    void RenderExtraText();
+
+    void AppendTotalLine(const std::string& extraBeforeColon,
+                         int abilityMod,
+                         const UtilType::DamageConfig& damage);
+    void RenderVersatileTotals(const std::string& prefix, const int statModParam);
 
     std::string JoinProps() const;
-    std::string BuildWeaponTotalString() const;
-    std::string BuildDamageSumDisplay() const;
+    std::string BuildWeaponTotalString(int abilityMod, const UtilType::DamageConfig& damage) const;
+    std::string BuildDamageSumDisplay(int abilityMod, const UtilType::DamageConfig& damage) const;
+    std::string BuildExtraDamages() const;
 
     const UtilType::WeaponConfig weaponCfg;
-    const int statMod;
+    const int strengthMod;
+    const int dexterityMod;
     const int proficiencyBonus;
     const bool isRanged;
 

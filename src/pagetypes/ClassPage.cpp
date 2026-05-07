@@ -120,7 +120,8 @@ std::vector<Coords> MakeSpellBoxMatrix(double leftEdgeRef)
 ClassPage::ClassPage(PdfDoc& doc, const Config& config, PageSide side, const PageParams& params)
     : PageBase(doc, config, side, params),
       classData(config.getObject("classes").getObject(params.at("classname"))),
-      spellSlotMarker(MakeSpellSlotMarkers(LEFT_EDGE_REF)), spellBoxMatrix(MakeSpellBoxMatrix(LEFT_EDGE_REF))
+      spellSlotMarker(MakeSpellSlotMarkers(LEFT_EDGE_REF)),
+      spellBoxMatrix(MakeSpellBoxMatrix(LEFT_EDGE_REF))
 {
 }
 
@@ -202,7 +203,7 @@ void ClassPage::AddSubclass()
     Utilities::LogInfo(" - Adding subclass");
     const std::string subclass = classData.getString("subclass");
     doc.AddTextCurved(
-        subclass, Coords(LEFT_EDGE_REF + 302, 24), 11, UtilType::TextOptions(FontType::Seagram, 12));
+        subclass, Coords(LEFT_EDGE_REF + 302, 22), 14, UtilType::TextOptions(FontType::Seagram, 12));
 }
 
 void ClassPage::AddLevel()
