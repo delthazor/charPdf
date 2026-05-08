@@ -1,5 +1,5 @@
 {
-    "name": "New Character",
+    "name": "Chempe",
     "nameLetterSpacing": 3.5,
     "background": "Hermit",
     "race": "Forest Gnome",
@@ -95,6 +95,7 @@
             "level": 7,
             "hitDice": "d8",
             "resourcePoints": 2,
+            "castStat": "wisdom",
             "subclass": "Circle of Spores",
             "spellslots": {
                 "1": 0,

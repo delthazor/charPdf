@@ -46,6 +46,7 @@ class MainWindow : public QMainWindow
     void OnToolbarNew();
     void OnToolbarSave();
     void OnToolbarSaveAs();
+    void OnToolbarGenerate();
     void OnRefreshFileListButton();
 
     void OnRootStringChanged(const QString& value);
@@ -137,6 +138,10 @@ class MainWindow : public QMainWindow
     void UpdateRawJsonView();
     void UpdateValidationSummary();
     void SetEditorWorkspaceOpen(bool open);
+
+    QString ProjectRootAbsolute() const;
+    QString ResolvePdfAppPath(const QString& projectRoot) const;
+    bool LaunchPdfGeneratorInNewConsole(const QString& projectRoot);
 
     CharacterRepository repo;
     CharacterDocument doc;

@@ -4,6 +4,11 @@
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
+#include <QProcess>
+#include <QUuid>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -41,6 +46,10 @@
 #include <functional>
 #include <utility>
 #include <vector>
+
+#if defined(Q_OS_MACOS) || defined(Q_OS_MAC)
+#include <sys/stat.h>
+#endif
 
 namespace CharEditor
 {
@@ -143,10 +152,12 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     QAction* actNew = toolbar->addAction("New");
     QAction* actSave = toolbar->addAction("Save");
     QAction* actSaveAs = toolbar->addAction("Save As");
+    QAction* actGenerate = toolbar->addAction("Generate");
 
     QObject::connect(actNew, &QAction::triggered, this, &MainWindow::OnToolbarNew);
     QObject::connect(actSave, &QAction::triggered, this, &MainWindow::OnToolbarSave);
     QObject::connect(actSaveAs, &QAction::triggered, this, &MainWindow::OnToolbarSaveAs);
+    QObject::connect(actGenerate, &QAction::triggered, this, &MainWindow::OnToolbarGenerate);
 
     QWidget* central = new QWidget();
     setCentralWidget(central);
@@ -284,6 +295,221 @@ void MainWindow::OnToolbarNew()
 }
 void MainWindow::OnToolbarSave() { Save(); }
 void MainWindow::OnToolbarSaveAs() { SaveAs(); }
+
+void MainWindow::OnToolbarGenerate()
+{
+    if (!editorWorkspaceOpen_)
+    {
+        QMessageBox::information(this, "Generate", "Select a character file or choose New first.");
+        return;
+    }
+
+    const QString root = ProjectRootAbsolute();
+    if (root.isEmpty() || !QDir(root).exists())
+    {
+        QMessageBox::critical(
+            this,
+            "Generate",
+            QString("Could not resolve the PDF project root from the cfg folder:\n%1\n\n"
+                    "Expected that path under the current working directory (repo root, or build/ when using make run_editor).")
+                .arg(QString::fromStdString(repo.RootDir())));
+        return;
+    }
+
+    if (doc.IsDirty())
+    {
+        const int answer =
+            QMessageBox::question(this,
+                                  "Generate",
+                                  "Save changes before generating PDFs?\n\n"
+                                  "The generator reads character JSON files from disk.",
+                                  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                  QMessageBox::Save);
+        if (answer == QMessageBox::Cancel) { return; }
+        if (answer == QMessageBox::Save)
+        {
+            Save();
+            if (doc.IsDirty()) { return; }
+        }
+    }
+
+    LaunchPdfGeneratorInNewConsole(root);
+}
+
+QString MainWindow::ProjectRootAbsolute() const
+{
+    const QString cfgAbs =
+        QDir::cleanPath(QDir(QDir::currentPath()).filePath(QString::fromStdString(repo.RootDir())));
+    QFileInfo cfgFi(cfgAbs);
+    if (!cfgFi.exists() || !cfgFi.isDir()) { return {}; }
+
+    // make run_editor uses cwd = build/ and assets/cfg via build/assets -> ../assets.
+    // Without resolving symlinks, two cdUps stop at build/ instead of the repo root.
+    QString cfgCanon = cfgFi.canonicalFilePath();
+    if (cfgCanon.isEmpty()) { cfgCanon = cfgAbs; }
+
+    QDir d(cfgCanon);
+    if (!d.cdUp()) { return {}; }
+    if (!d.cdUp()) { return {}; }
+    return d.absolutePath();
+}
+
+QString MainWindow::ResolvePdfAppPath(const QString& projectRoot) const
+{
+    auto absoluteExeIfFile = [](const QString& path) -> QString {
+        const QFileInfo fi(path);
+        if (!fi.isFile()) { return {}; }
+        const QString c = fi.canonicalFilePath();
+        return c.isEmpty() ? fi.absoluteFilePath() : c;
+    };
+
+    QString standard = QDir(projectRoot).filePath(QStringLiteral("build/pdf_app"));
+#if defined(Q_OS_WIN)
+    standard += QStringLiteral(".exe");
+#endif
+    if (QString resolved = absoluteExeIfFile(standard); !resolved.isEmpty()) { return resolved; }
+
+    // Same directory as char_editor when using make run_editor (cwd is build/).
+    QString sibling = QDir(QDir::currentPath()).filePath(QStringLiteral("pdf_app"));
+#if defined(Q_OS_WIN)
+    sibling += QStringLiteral(".exe");
+#endif
+    if (QString resolved = absoluteExeIfFile(sibling); !resolved.isEmpty()) { return resolved; }
+
+    return standard;
+}
+
+bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
+{
+    QString pdfApp = ResolvePdfAppPath(projectRoot);
+
+    const QFileInfo exe(pdfApp);
+    if (!exe.exists() || !exe.isFile())
+    {
+        QMessageBox::critical(
+            this,
+            "Generate",
+            QString("The PDF app was not found:\n%1\n\n"
+                    "Build it from the repo root (for example: make or make pdf_app).")
+                .arg(pdfApp));
+        return false;
+    }
+
+    auto bashSingleQuoted = [](const QString& s) -> QString {
+        QString out;
+        out += QChar(u'\'');
+        for (QChar c : s)
+        {
+            if (c == QChar(u'\'')) { out += QStringLiteral("'\\''"); }
+            else { out += c; }
+        }
+        return out + QChar(u'\'');
+    };
+
+#if defined(Q_OS_MACOS) || defined(Q_OS_MAC)
+    const QString scriptPath = QDir::temp().absoluteFilePath(
+        QStringLiteral("char_editor_pdf_gen_%1.command").arg(QUuid::createUuid().toString(QUuid::WithoutBraces)));
+    QFile out(scriptPath);
+    if (!out.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QMessageBox::critical(this, "Generate", "Could not write a temporary launcher script.");
+        return false;
+    }
+
+    const QString cdDir = bashSingleQuoted(QDir::toNativeSeparators(projectRoot));
+    const QString exePath = bashSingleQuoted(QDir::toNativeSeparators(pdfApp));
+
+    QByteArray sh;
+    sh += "#!/bin/bash\n";
+    sh += "set +e\n";
+    sh += "cd " + cdDir.toUtf8() + " || { echo \"cd failed\"; read -r; exit 1; }\n";
+    sh += "echo Running pdf_app from: \"$(pwd)\"\n";
+    sh += exePath.toUtf8() + "\n";
+    sh += "echo \"\"\n";
+    sh += "echo \"Exit code: $?\"\n";
+    sh += "read -r -p \"Press Enter to close...\"\n";
+    out.write(sh);
+    out.close();
+
+    if (::chmod(scriptPath.toUtf8().constData(), 0755) != 0)
+    {
+        QMessageBox::critical(this, "Generate", "Could not mark the launcher script as executable.");
+        QFile::remove(scriptPath);
+        return false;
+    }
+
+    if (!QProcess::startDetached(QStringLiteral("/usr/bin/open"), QStringList() << scriptPath))
+    {
+        QMessageBox::critical(this, "Generate", "Could not open Terminal.app.");
+        QFile::remove(scriptPath);
+        return false;
+    }
+    return true;
+#elif defined(Q_OS_WIN)
+    const QString batPath = QDir::temp().absoluteFilePath(
+        QStringLiteral("char_editor_pdf_gen_%1.bat").arg(QUuid::createUuid().toString(QUuid::WithoutBraces)));
+    QFile outBat(batPath);
+    if (!outBat.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        QMessageBox::critical(this, "Generate", "Could not write a temporary launcher script.");
+        return false;
+    }
+    const QString rootNat = QDir::toNativeSeparators(projectRoot);
+    const QString exeNat = QDir::toNativeSeparators(pdfApp);
+    auto batQuote = [](const QString& p) -> QString { return p.replace(QLatin1Char('"'), QStringLiteral("\"\"")); };
+    QByteArray bat;
+    bat += "@echo off\r\n";
+    bat += "cd /d \"" + batQuote(rootNat).toUtf8() + "\"\r\n";
+    bat += "echo Running pdf_app...\r\n";
+    bat += "call \"" + batQuote(exeNat).toUtf8() + "\"\r\n";
+    bat += "echo.\r\n";
+    bat += "pause\r\n";
+    outBat.write(bat);
+    outBat.close();
+
+    if (!QProcess::startDetached(QStringLiteral("cmd.exe"),
+                                 QStringList{QStringLiteral("/c"), QStringLiteral("start"), QStringLiteral("cmd"),
+                                             QStringLiteral("/k"), QDir::toNativeSeparators(batPath)}))
+    {
+        QMessageBox::critical(this, "Generate", "Could not open a console window.");
+        QFile::remove(batPath);
+        return false;
+    }
+    return true;
+#else
+    const QString bashLine =
+        QStringLiteral("cd %1 && ./build/pdf_app; st=$?; echo; echo Exit code: $st; read -r -p \"Press Enter...\"")
+            .arg(bashSingleQuoted(QDir::toNativeSeparators(projectRoot)));
+
+    if (QProcess::startDetached(QStringLiteral("gnome-terminal"),
+                               QStringList{QStringLiteral("--working-directory"), projectRoot, QStringLiteral("--"),
+                                           QStringLiteral("bash"), QStringLiteral("-lc"), bashLine}))
+    {
+        return true;
+    }
+    if (QProcess::startDetached(QStringLiteral("xfce4-terminal"),
+                               QStringList{QStringLiteral("--working-directory"), projectRoot, QStringLiteral("-x"),
+                                           QStringLiteral("bash"), QStringLiteral("-lc"), bashLine}))
+    {
+        return true;
+    }
+    if (QProcess::startDetached(QStringLiteral("konsole"),
+                               QStringList{QStringLiteral("--workdir"), projectRoot, QStringLiteral("-e"), QStringLiteral("bash"),
+                                           QStringLiteral("-lc"), bashLine}))
+    {
+        return true;
+    }
+
+    QMessageBox::critical(
+        this,
+        "Generate",
+        QStringLiteral("Could not start a terminal (tried gnome-terminal, xfce4-terminal, konsole).\n"
+                       "Run from a shell: cd \"%1\" && ./build/pdf_app")
+            .arg(projectRoot));
+    return false;
+#endif
+}
+
 void MainWindow::OnRefreshFileListButton() { RefreshFileList(); }
 
 void MainWindow::OnRootStringChanged(const QString& value)
