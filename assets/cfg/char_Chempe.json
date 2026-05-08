@@ -89,7 +89,18 @@
             "Net"
         ]
     },
-    "traits": [],
+    "traits": [
+        "Darkvision",
+        "Gnome Cunning",
+        "Natural Illusionist",
+        "Wildshape",
+        "Symbiotic Entity",
+        "Speak with Small Beasts",
+        "Discovery (Efficient Casting)",
+        "Brain Spores",
+        "Shadow Touched",
+        "Halo of Spores"
+    ],
     "classes": {
         "druid": {
             "level": 7,
@@ -98,10 +109,10 @@
             "castStat": "wisdom",
             "subclass": "Circle of Spores",
             "spellslots": {
-                "1": 0,
-                "2": 0,
-                "3": 0,
-                "4": 0,
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1,
                 "5": 0,
                 "6": 0,
                 "7": 0,
@@ -109,12 +120,43 @@
                 "9": 0
             },
             "spells": {
-                "0": [],
-                "0_extra": [],
-                "1": [],
-                "2": [],
-                "3": [],
-                "4": [],
+                "0": [
+                    "Minor Illusion [Natural Illusionist]",
+                    "Chill Touch",
+                    "Frostbite",
+                    "Druidcraft",
+                    "Poison Spray"
+                ],
+                "0_extra": [
+                    "Wildshape",
+                    "Symbiotic Entity"
+                ],
+                "1": [
+                    "Ice Knife",
+                    "Entangle",
+                    "Healing Word",
+                    "Absorb Elements",
+                    "Inflict Wounds"
+                ],
+                "2": [
+                    "Blindness/Deafness",
+                    "Gentle Repose",
+                    "Gust of Wind",
+                    "Invisibility",
+                    "Locate Animals or Plants"
+                ],
+                "3": [
+                    "Animate Dead",
+                    "Gaseous Form",
+                    "Summon Fey",
+                    "Freedom of the Waves",
+                    "Erupting Earth"
+                ],
+                "4": [
+                    "Blight",
+                    "Confusion",
+                    "Ice Storm"
+                ],
                 "5": [],
                 "6": [],
                 "7": [],
