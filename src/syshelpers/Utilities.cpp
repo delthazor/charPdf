@@ -63,6 +63,63 @@ size_t interParagraphSpacingCharPenalty()
     return static_cast<size_t>(std::ceil(gapLines * static_cast<double>(cpl)));
 }
 
+bool StripOneTrailingBracketContext(std::string& s)
+{
+    const size_t pos = s.rfind(" [");
+    if (pos == std::string::npos) { return false; }
+    if (pos + 2 >= s.size()) { return false; }
+    if (s[pos + 1] != '[') { return false; }
+    size_t depth = 1;
+    size_t j = pos + 2;
+    for (; j < s.size(); ++j)
+    {
+        if (s[j] == '[') { ++depth; }
+        else if (s[j] == ']')
+        {
+            --depth;
+            if (depth == 0) { break; }
+        }
+    }
+    if (depth != 0 || j != s.size() - 1) { return false; }
+    s.resize(pos);
+    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    return true;
+}
+
+bool StripOneTrailingParenContext(std::string& s)
+{
+    const size_t pos = s.rfind(" (");
+    if (pos == std::string::npos) { return false; }
+    if (pos + 2 >= s.size()) { return false; }
+    if (s[pos + 1] != '(') { return false; }
+    size_t depth = 1;
+    size_t j = pos + 2;
+    for (; j < s.size(); ++j)
+    {
+        if (s[j] == '(') { ++depth; }
+        else if (s[j] == ')')
+        {
+            --depth;
+            if (depth == 0) { break; }
+        }
+    }
+    if (depth != 0 || j != s.size() - 1) { return false; }
+    s.resize(pos);
+    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    return true;
+}
+
+std::string ToLowerAscii(std::string_view sv)
+{
+    std::string out;
+    out.reserve(sv.size());
+    for (unsigned char c : sv)
+    {
+        out.push_back(static_cast<char>(std::tolower(c)));
+    }
+    return out;
+}
+
 void stripLeadingAtHigherLevels(std::string& upgrades)
 {
     constexpr std::string_view prefix = "At Higher Levels:";
@@ -194,7 +251,12 @@ UtilType::SpellsCatalog BuildSpellsCatalog(nlohmann::ordered_json arr)
     for (const auto& elem : out.raw)
     {
         const std::string name = elem.value("name", std::string());
-        if (!name.empty() && !out.byName.contains(name)) { out.byName.emplace(name, elem); }
+        if (!name.empty() && !out.byName.contains(name))
+        {
+            out.byName.emplace(name, elem);
+            const std::string lower = ToLowerAscii(name);
+            if (!out.byLowerName.contains(lower)) { out.byLowerName.emplace(lower, name); }
+        }
     }
     return out;
 }
@@ -220,6 +282,23 @@ std::string BuildFullTraitsText(const Config& characterConfig, const UtilType::T
     return fullText;
 }
 
+std::string SpellNameForCatalogLookup(const std::string& displayName)
+{
+    std::string s = displayName;
+    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    size_t lead = 0;
+    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead]))) { ++lead; }
+    if (lead > 0) { s.erase(0, lead); }
+
+    for (;;)
+    {
+        const bool strippedBracket = StripOneTrailingBracketContext(s);
+        const bool strippedParen = StripOneTrailingParenContext(s);
+        if (!strippedBracket && !strippedParen) { break; }
+    }
+    return s;
+}
+
 std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::SpellsCatalog& spellsCatalog)
 {
     std::string fullText;
@@ -242,31 +321,47 @@ std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::S
 
             for (const std::string& name : spellsObj.getStringArray(levelKey))
             {
-                if (seen.insert(name).second)
+                const std::string catalogKey = SpellNameForCatalogLookup(name);
+                if (catalogKey.empty())
                 {
-                    const auto it = spellsCatalog.byName.find(name);
-                    if (it == spellsCatalog.byName.end())
+                    Utilities::LogError("ERROR: Spell name is empty after context suffix strip: " + name);
+                    continue;
+                }
+                auto spellIt = spellsCatalog.byName.find(catalogKey);
+                if (spellIt == spellsCatalog.byName.end())
+                {
+                    const auto lit = spellsCatalog.byLowerName.find(ToLowerAscii(catalogKey));
+                    if (lit != spellsCatalog.byLowerName.end())
                     {
-                        Utilities::LogError("ERROR: Spell data is missing for spell: " + name);
-                        continue;
+                        spellIt = spellsCatalog.byName.find(lit->second);
                     }
-
-                    std::string label = name;
-                    if (it->second.contains("params"))
+                }
+                if (spellIt == spellsCatalog.byName.end())
+                {
+                    Utilities::LogError("ERROR: Spell data is missing for spell: " + name
+                                        + " (catalog key: " + catalogKey + ")");
+                    continue;
+                }
+                const std::string& canonicalKey = spellIt->first;
+                if (seen.insert(canonicalKey).second)
+                {
+                    std::string label = spellIt->second.value("name", canonicalKey);
+                    if (spellIt->second.contains("params"))
                     {
                         label += " (";
-                        label += it->second.value("params", std::string());
+                        label += spellIt->second.value("params", std::string());
                         label += ")";
                     }
 
-                    std::string desc = it->second.value("description", std::string());
-                    if (it->second.contains("concentration") && it->second.value("concentration", true))
+                    std::string desc = spellIt->second.value("description", std::string());
+                    if (spellIt->second.contains("concentration")
+                        && spellIt->second.value("concentration", true))
                     {
                         desc = "Requires Concentration! " + desc;
                     }
-                    if (it->second.contains("upgrades"))
+                    if (spellIt->second.contains("upgrades"))
                     {
-                        std::string up = it->second.value("upgrades", std::string());
+                        std::string up = spellIt->second.value("upgrades", std::string());
                         stripLeadingAtHigherLevels(up);
                         desc += "\nAt Higher Levels: ";
                         desc += up;

@@ -35,6 +35,8 @@ double CalcSpacingForClassname(const std::string& classname);
 nlohmann::ordered_json LoadJsonFromFile(const std::string& path);
 
 std::string BuildFullTraitsText(const Config& characterConfig, const UtilType::TraitsCatalog& traitsCatalog);
+/// Spell names in character JSON may end with " [context]" or " (context)" for display; catalog keys omit those suffixes.
+std::string SpellNameForCatalogLookup(const std::string& displayName);
 std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::SpellsCatalog& spellsCatalog);
 std::vector<std::string> SplitDescriptionTextIntoPages(const std::string& fullText);
 

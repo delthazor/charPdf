@@ -87,6 +87,8 @@ struct SpellsCatalog
 {
     nlohmann::ordered_json raw;
     std::unordered_map<std::string, nlohmann::ordered_json> byName;
+    /// Lowercase ASCII name -> exact `name` key in `byName` (first wins on collision).
+    std::unordered_map<std::string, std::string> byLowerName;
 };
 
 struct DamageConfig
