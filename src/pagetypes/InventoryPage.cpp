@@ -266,7 +266,7 @@ void InventoryPage::buildAndRenderBackpack()
             TextBox box = TextBox::CreateStandard(*this,
                                                   columnX + 3.5 * columnIndex,
                                                   BACKPACK_COLUMN_START_Y,
-                                                  PageConstants::EQUIPMENT_FONTSIZE,
+                                                  PageConstants::EQUIPMENT_FONTSIZE - 1.0,
                                                   {BACKPACK_COLUMN_WIDTH});
             box.RenderPlainTextLines(backpack.getStringArray(key));
             ++columnIndex;
