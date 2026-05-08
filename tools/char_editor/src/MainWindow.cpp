@@ -1398,11 +1398,34 @@ void MainWindow::RefreshBackpackSections()
     }
 }
 
+std::vector<std::string> MainWindow::GetTraits()
+{
+    const nlohmann::ordered_json& root = std::as_const(doc).Json();
+    if (!root.contains("traits") || !root["traits"].is_array()) { return {}; }
+    std::vector<std::string> out;
+    for (const auto& el : root["traits"])
+    {
+        if (el.is_string()) { out.push_back(el.get<std::string>()); }
+    }
+    return out;
+}
+
+void MainWindow::SetTraits(const std::vector<std::string>& items)
+{
+    auto& arr = doc.Json()["traits"];
+    arr = nlohmann::ordered_json::array();
+    for (const auto& s : items) { arr.push_back(s); }
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
 QWidget* MainWindow::BuildGeneralTab()
 {
     QWidget* w = new QWidget();
     generalTab = w;
-    QHBoxLayout* root = new QHBoxLayout(w);
+    QVBoxLayout* outer = new QVBoxLayout(w);
+    QHBoxLayout* root = new QHBoxLayout();
+    outer->addLayout(root);
 
     QGroupBox* generalBox = new QGroupBox("Character");
     QFormLayout* generalForm = new QFormLayout();
@@ -1484,6 +1507,19 @@ QWidget* MainWindow::BuildGeneralTab()
                      QOverload<int>::of(&QSpinBox::valueChanged),
                      this,
                      &MainWindow::OnStatIntChanged);
+
+    QGroupBox* traitsBox = new QGroupBox("Traits");
+    outer->addWidget(traitsBox, 1);
+    QVBoxLayout* traitsLayout = new QVBoxLayout();
+    traitsBox->setLayout(traitsLayout);
+    QLabel* traitsHint =
+        new QLabel("Trait names as in assets/cfg/config_traits.json (Racial Traits, Class Features, etc.).");
+    traitsHint->setWordWrap(true);
+    traitsLayout->addWidget(traitsHint);
+    generalTraitsEditor =
+        new StringListEditor(std::bind(&MainWindow::GetTraits, this), std::bind(&MainWindow::SetTraits, this, std::placeholders::_1));
+    traitsLayout->addWidget(generalTraitsEditor, 1);
+    generalTraitsEditor->Refresh();
 
     return w;
 }
@@ -1944,7 +1980,8 @@ QWidget* MainWindow::BuildBackpackTab()
                                  std::bind(&MainWindow::SetBackpackSectionItemsForKey,
                                            this,
                                            key,
-                                           std::placeholders::_1));
+                                           std::placeholders::_1),
+                                 StringListEditor::Mode::SelectRowToEdit);
         backpackTabs->addTab(backpackSectionEditors[i], QString::fromUtf8(kBackpackTabTitles[i]));
     }
     RefreshBackpackSections();
@@ -2045,6 +2082,8 @@ void MainWindow::UpdateTabsFromDocument()
     SetSpinValue(statMaxHp, stats, "maxHp", 10);
     SetSpinValue(statAc, stats, "ac", 14);
     SetSpinValue(statInitiativeBonus, stats, "initiativeBonus", 0);
+
+    if (generalTraitsEditor) { generalTraitsEditor->Refresh(); }
 
     RefreshProficienciesFromDocument();
 

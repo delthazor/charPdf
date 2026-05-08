@@ -115,6 +115,9 @@ class MainWindow : public QMainWindow
     void SetBackpackSectionItemsForKey(const char* sectionKey, const std::vector<std::string>& items);
     void RefreshBackpackSections();
 
+    std::vector<std::string> GetTraits();
+    void SetTraits(const std::vector<std::string>& items);
+
     void RefreshFileList();
     void OnCharacterFileListCurrentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
     bool MaybeDiscardUnsavedChanges();
@@ -164,6 +167,7 @@ class MainWindow : public QMainWindow
     QDoubleSpinBox* generalNameSpacing = nullptr;
     QLineEdit* generalRace = nullptr;
     QLineEdit* generalBackground = nullptr;
+    StringListEditor* generalTraitsEditor = nullptr;
 
     // Stats widgets (General tab, right column)
     QSpinBox* statStrength = nullptr;

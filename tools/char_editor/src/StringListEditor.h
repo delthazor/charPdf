@@ -19,20 +19,32 @@ class StringListEditor : public QWidget
     using Getter = std::function<std::vector<std::string>()>;
     using Setter = std::function<void(const std::vector<std::string>&)>;
 
-    StringListEditor(Getter getter, Setter setter, QWidget* parent = nullptr);
+    enum class Mode
+    {
+        AppendOnly,
+        SelectRowToEdit
+    };
+
+    StringListEditor(Getter getter, Setter setter, Mode mode = Mode::AppendOnly, QWidget* parent = nullptr);
 
     void Refresh();
 
   private:
-    void AddFromInput();
+    void CommitFromInput();
     void RemoveSelected();
+    void OnListCurrentRowChanged(int row);
+    void EnterAddNewMode();
+
+    void UpdatePrimaryButtonLabel();
 
     Getter getter;
     Setter setter;
+    Mode mode = Mode::AppendOnly;
 
     QListWidget* list = nullptr;
     QLineEdit* input = nullptr;
     QPushButton* addBtn = nullptr;
+    QPushButton* newItemBtn = nullptr;
     QPushButton* removeBtn = nullptr;
 };
 
