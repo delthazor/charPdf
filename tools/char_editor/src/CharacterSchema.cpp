@@ -118,6 +118,24 @@ void RestoreTopLevelKeyOrder(nlohmann::ordered_json& obj, const std::vector<std:
     obj.swap(rebuilt);
 }
 
+// Matches hand-edited character JSON (e.g. assets/cfg/char_Celdrick.json).
+void RestoreClassObjectKeyOrder(nlohmann::ordered_json& classObj)
+{
+    static const char* kOrder[] = {
+        "level", "hitDice", "resourcePoints", "castStat", "subclass", "spellslots", "spells"};
+    if (!classObj.is_object()) { return; }
+    nlohmann::ordered_json rebuilt = nlohmann::ordered_json::object();
+    for (const char* k : kOrder)
+    {
+        if (classObj.contains(k)) { rebuilt[k] = classObj.at(k); }
+    }
+    for (auto it = classObj.begin(); it != classObj.end(); ++it)
+    {
+        if (!rebuilt.contains(it.key())) { rebuilt[it.key()] = it.value(); }
+    }
+    classObj.swap(rebuilt);
+}
+
 void EnsureEquipmentBucket(nlohmann::ordered_json& doc, const char* bucketKey)
 {
     EnsureObject(doc, "equipment");
@@ -206,6 +224,7 @@ nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
         cls["level"] = 1;
         cls["hitDice"] = "d8";
         cls["resourcePoints"] = 0;
+        cls["castStat"] = "";
         cls["subclass"] = "";
         cls["spellslots"] = nlohmann::ordered_json::object(
             {{"1", 0}, {"2", 0}, {"3", 0}, {"4", 0}, {"5", 0}, {"6", 0}, {"7", 0}, {"8", 0}, {"9", 0}});
@@ -359,6 +378,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
         EnsureNonEmptyString(classObj, "hitDice", "d8");
         EnsureNonNegInt(classObj, "resourcePoints", 0);
         EnsureString(classObj, "subclass", "");
+        EnsureString(classObj, "castStat", "");
 
         if (!classObj.contains("spellslots") || !classObj["spellslots"].is_object())
         {
@@ -380,6 +400,8 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
             if (!spells.contains(k) || !spells[k].is_array()) { spells[k] = nlohmann::ordered_json::array(); }
             EnsureStringArrayElementsNonEmpty(spells[k]);
         }
+
+        RestoreClassObjectKeyOrder(classObj);
     }
 
     // Equipment item normalization.

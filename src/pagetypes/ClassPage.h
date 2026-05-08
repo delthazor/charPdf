@@ -19,6 +19,7 @@ class ClassPage : public PageBase
     void AddSubclass();
     void AddLevel();
     void AddResourcePoints();
+    void AddCastInfo();
     void AddSpellSlots();
     void AddSpellStats();
     void AddSpellNames();

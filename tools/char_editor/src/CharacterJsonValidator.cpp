@@ -485,8 +485,9 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
                 RequireNonZeroNonNegInt(issues, classObj, basePath, "level");
 
                 RequireNonEmptyString(issues, classObj, basePath, "hitDice");
-                RequireString(issues, classObj, basePath, "subclass");
                 RequireNonNegInt(issues, classObj, basePath, "resourcePoints");
+                RequireString(issues, classObj, basePath, "castStat");
+                RequireString(issues, classObj, basePath, "subclass");
 
                 RequireKey(issues, classObj, basePath, "spellslots");
                 if (classObj.contains("spellslots"))

@@ -162,6 +162,7 @@ void ClassPage::Fill()
     AddSubclass();
     AddLevel();
     AddResourcePoints();
+    AddCastInfo();
     AddSpellSlots();
     AddSpellStats();
     AddSpellNames();
@@ -230,6 +231,43 @@ void ClassPage::AddResourcePoints()
                 LEFT_EDGE_REF + 202,
                 130,
                 UtilType::TextOptions(FontType::Seagram, 26));
+}
+
+void ClassPage::AddCastInfo()
+{
+    if (!classData.hasKey("castStat"))
+    {
+        Utilities::LogError("ERROR: Cast stat data is missing!");
+        return;
+    }
+
+    const UtilType::TextOptions headOpts(FontType::Seagram, 16);
+    const UtilType::TextOptions dataOpts(FontType::Seagram, 18);
+    const UtilType::TextOptions labelOpts(FontType::Seagram, 10);
+    const UtilType::TextOptions infoOpts(FontType::Arial, 6);
+
+    doc.AddText("Spellcasting Ability", LEFT_EDGE_REF + 289, 88, labelOpts);
+    doc.AddText("Spell Save DC:", LEFT_EDGE_REF + 280, 111, labelOpts);
+    doc.AddText("Spell Attack Bonus:", LEFT_EDGE_REF + 276, 144, labelOpts);
+
+    doc.AddText("8+ spellcasting ability mod+ prof.bonus", LEFT_EDGE_REF + 277, 124, infoOpts);
+    doc.AddText("spellcasting ability mod+ prof.bonus", LEFT_EDGE_REF + 279, 158, infoOpts);
+
+    const std::string castStatRaw = classData.getString("castStat");
+    if (castStatRaw.empty()) { return; }
+
+    Utilities::LogInfo(" - Adding cast info");
+
+    const std::string castStat = Utilities::CapitalizeFirst(castStatRaw);
+    const int castStatMod = CalcModFromStatName(castStatRaw);
+    const std::string castStatModStr = castStat + " (" + Utilities::FormatSignedInt(castStatMod) + ")";
+    doc.AddText(castStatModStr, LEFT_EDGE_REF + 277, 69, headOpts);
+
+    const int spellSaveDc = 8 + castStatMod + config.getObject("proficiencies").getInt("bonus");
+    doc.AddText(std::to_string(spellSaveDc), LEFT_EDGE_REF + 348, 103, dataOpts);
+
+    const int spellAttackBonus = castStatMod + config.getObject("proficiencies").getInt("bonus");
+    doc.AddText(std::to_string(spellAttackBonus), LEFT_EDGE_REF + 362, 136, dataOpts);
 }
 
 void ClassPage::AddSpellSlots()

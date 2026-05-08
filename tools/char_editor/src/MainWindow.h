@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow
     void OnClassResourcePointsChanged(int value);
     void OnClassHitDiceChanged(const QString& value);
     void OnClassSubclassChanged(const QString& value);
+    void OnClassCastStatChanged(const QString& value);
     void OnClassSpellSlotChanged(int value);
 
     void EnsureEquipmentStructure();
@@ -190,6 +191,7 @@ class MainWindow : public QMainWindow
     QSpinBox* classLevelSpin = nullptr;
     QLineEdit* classHitDiceEdit = nullptr;
     QLineEdit* classSubclassEdit = nullptr;
+    QLineEdit* classCastStatEdit = nullptr;
     QSpinBox* classResourceSpin = nullptr;
     std::array<QSpinBox*, 9> classSlotSpins{};
 

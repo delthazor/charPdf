@@ -546,8 +546,8 @@ void MainWindow::RefreshClassList()
 
 void MainWindow::LoadSelectedClassIntoEditor()
 {
-    if (!classesList || !classIdEdit || !classLevelSpin || !classHitDiceEdit || !classSubclassEdit || !classResourceSpin
-        || !classesSpellsEditor)
+    if (!classesList || !classIdEdit || !classLevelSpin || !classHitDiceEdit || !classSubclassEdit || !classCastStatEdit
+        || !classResourceSpin || !classesSpellsEditor)
     {
         return;
     }
@@ -569,6 +569,7 @@ void MainWindow::LoadSelectedClassIntoEditor()
     classLevelSpin->setValue(GetIntOrDefault(cls, "level", 1));
     classHitDiceEdit->setText(QString::fromStdString(GetStringOrDefault(cls, "hitDice", "d8")));
     classSubclassEdit->setText(QString::fromStdString(GetStringOrDefault(cls, "subclass", "")));
+    classCastStatEdit->setText(QString::fromStdString(GetStringOrDefault(cls, "castStat", "")));
     classResourceSpin->setValue(GetIntOrDefault(cls, "resourcePoints", 0));
 
     if (!cls.contains("spellslots") || !cls["spellslots"].is_object())
@@ -716,6 +717,19 @@ void MainWindow::OnClassSubclassChanged(const QString& value)
     auto& cls = doc.Json()["classes"][classId];
     if (!cls.is_object()) { cls = nlohmann::ordered_json::object(); }
     cls["subclass"] = value.toStdString();
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
+void MainWindow::OnClassCastStatChanged(const QString& value)
+{
+    if (!classesList) { return; }
+    const QListWidgetItem* item = classesList->currentItem();
+    if (!item) { return; }
+    const std::string classId = item->text().toStdString();
+    auto& cls = doc.Json()["classes"][classId];
+    if (!cls.is_object()) { cls = nlohmann::ordered_json::object(); }
+    cls["castStat"] = value.toStdString();
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
@@ -1451,13 +1465,15 @@ QWidget* MainWindow::BuildClassesTab()
     classLevelSpin->setRange(1, 20);
     classHitDiceEdit = new QLineEdit();
     classSubclassEdit = new QLineEdit();
+    classCastStatEdit = new QLineEdit();
     classResourceSpin = new QSpinBox();
     classResourceSpin->setRange(0, 999);
 
     basicsForm->addRow("Level", classLevelSpin);
     basicsForm->addRow("Hit dice (e.g. d8)", classHitDiceEdit);
-    basicsForm->addRow("Subclass", classSubclassEdit);
     basicsForm->addRow("Resource points", classResourceSpin);
+    basicsForm->addRow("Cast stat", classCastStatEdit);
+    basicsForm->addRow("Subclass", classSubclassEdit);
 
     QGroupBox* slotsGroup = new QGroupBox("Spell slots (1-9)");
     editorLayout->addWidget(slotsGroup);
@@ -1502,6 +1518,7 @@ QWidget* MainWindow::BuildClassesTab()
     QObject::connect(classResourceSpin, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnClassResourcePointsChanged);
     QObject::connect(classHitDiceEdit, &QLineEdit::textChanged, this, &MainWindow::OnClassHitDiceChanged);
     QObject::connect(classSubclassEdit, &QLineEdit::textChanged, this, &MainWindow::OnClassSubclassChanged);
+    QObject::connect(classCastStatEdit, &QLineEdit::textChanged, this, &MainWindow::OnClassCastStatChanged);
 
     for (QSpinBox* s : classSlotSpins)
     {
