@@ -10,7 +10,7 @@
         "intelligence": 14,
         "wisdom": 16,
         "charisma": 12,
-        "speed": 30,
+        "speed": 35,
         "maxHp": 53,
         "ac": 13,
         "initiativeBonus": 1
@@ -125,18 +125,119 @@
     },
     "equipment": {
         "used": {
-            "weapons": [],
-            "armors": []
+            "weapons": [
+                {
+                    "name": "Greatclub",
+                    "type": "Greatclub",
+                    "extratext": "",
+                    "props": [
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Leather Armor",
+                    "type": "Light Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 11,
+                        "modstat": "dexterity",
+                        "modcap": 0
+                    }
+                }
+            ]
         },
         "stashed": {
-            "weapons": [],
+            "weapons": [
+                {
+                    "name": "Whip",
+                    "type": "Whip",
+                    "extratext": "",
+                    "props": [
+                        "finesse",
+                        "reach(+5ft.)"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Shortbow",
+                    "type": "Shortbow",
+                    "props": [
+                        "light",
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "80/320",
+                    "extratext": ""
+                }
+            ],
             "armors": []
         }
     },
     "backpack": {
-        "accessories": [],
-        "consumables": [],
-        "kits & tools": [],
-        "general": []
+        "accessories": [
+            "Boots of Movement",
+            "Bag of Tricks",
+            "Alchemy jug"
+        ],
+        "consumables": [
+            "Torch x10",
+            "Rations (1 day) x12",
+            "Wild Mushrooms",
+            "Arrows x66",
+            "Protein szelet (STR+1, 2-3h)",
+            "STR Potion (STR+1, 1h) x2",
+            "Hp poti (1d4)",
+            "Hp poti (2d4)",
+            "Hp poti (2d4+2)",
+            "General Anti-Poison (vial)",
+            "Sleeping Potion",
+            "Higany (fiola)",
+            "Sárkányfű (csomag)",
+            "Porított Jázmin (zacskó)"
+        ],
+        "kits & tools": [
+            "Alchemist's Supplies",
+            "Herbalism Kit"
+        ],
+        "general": [
+            "Bedroll",
+            "Blanket",
+            "Candle",
+            "Mess Kit",
+            "Tinderbox",
+            "Waterskin",
+            "Rope (hemphen, 50ft)",
+            "Case (for map or scroll)",
+            "Common clothes",
+            "Soap x2",
+            "Red Cloak"
+        ]
     }
 }
