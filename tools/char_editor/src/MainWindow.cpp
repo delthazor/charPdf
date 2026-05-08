@@ -395,6 +395,17 @@ bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
         return false;
     }
 
+    // Same as `make run`: cwd must be build/ so assets/ resolves via symlink and *.pdf land in build/.
+    const QString buildDir = QDir::cleanPath(QDir(projectRoot).filePath(QStringLiteral("build")));
+    if (!QDir(buildDir).exists())
+    {
+        QMessageBox::critical(
+            this,
+            "Generate",
+            QString("The build directory was not found:\n%1").arg(buildDir));
+        return false;
+    }
+
     auto bashSingleQuoted = [](const QString& s) -> QString {
         QString out;
         out += QChar(u'\'');
@@ -416,15 +427,14 @@ bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
         return false;
     }
 
-    const QString cdDir = bashSingleQuoted(QDir::toNativeSeparators(projectRoot));
-    const QString exePath = bashSingleQuoted(QDir::toNativeSeparators(pdfApp));
+    const QString cdDir = bashSingleQuoted(QDir::toNativeSeparators(buildDir));
 
     QByteArray sh;
     sh += "#!/bin/bash\n";
     sh += "set +e\n";
     sh += "cd " + cdDir.toUtf8() + " || { echo \"cd failed\"; read -r; exit 1; }\n";
-    sh += "echo Running pdf_app from: \"$(pwd)\"\n";
-    sh += exePath.toUtf8() + "\n";
+    sh += "echo \"Running pdf_app from: $(pwd) - PDFs are written here.\"\n";
+    sh += "./pdf_app\n";
     sh += "echo \"\"\n";
     sh += "echo \"Exit code: $?\"\n";
     sh += "read -r -p \"Press Enter to close...\"\n";
@@ -454,14 +464,13 @@ bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
         QMessageBox::critical(this, "Generate", "Could not write a temporary launcher script.");
         return false;
     }
-    const QString rootNat = QDir::toNativeSeparators(projectRoot);
-    const QString exeNat = QDir::toNativeSeparators(pdfApp);
+    const QString buildNat = QDir::toNativeSeparators(buildDir);
     auto batQuote = [](const QString& p) -> QString { return p.replace(QLatin1Char('"'), QStringLiteral("\"\"")); };
     QByteArray bat;
     bat += "@echo off\r\n";
-    bat += "cd /d \"" + batQuote(rootNat).toUtf8() + "\"\r\n";
-    bat += "echo Running pdf_app...\r\n";
-    bat += "call \"" + batQuote(exeNat).toUtf8() + "\"\r\n";
+    bat += "cd /d \"" + batQuote(buildNat).toUtf8() + "\"\r\n";
+    bat += "echo Running pdf_app; PDFs are written in this directory.\r\n";
+    bat += "call pdf_app.exe\r\n";
     bat += "echo.\r\n";
     bat += "pause\r\n";
     outBat.write(bat);
@@ -477,24 +486,22 @@ bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
     }
     return true;
 #else
-    const QString bashLine =
-        QStringLiteral("cd %1 && ./build/pdf_app; st=$?; echo; echo Exit code: $st; read -r -p \"Press Enter...\"")
-            .arg(bashSingleQuoted(QDir::toNativeSeparators(projectRoot)));
+    const QString bashLine = QStringLiteral("./pdf_app; st=$?; echo; echo Exit code: $st; read -r -p \"Press Enter...\"");
 
     if (QProcess::startDetached(QStringLiteral("gnome-terminal"),
-                               QStringList{QStringLiteral("--working-directory"), projectRoot, QStringLiteral("--"),
+                               QStringList{QStringLiteral("--working-directory"), buildDir, QStringLiteral("--"),
                                            QStringLiteral("bash"), QStringLiteral("-lc"), bashLine}))
     {
         return true;
     }
     if (QProcess::startDetached(QStringLiteral("xfce4-terminal"),
-                               QStringList{QStringLiteral("--working-directory"), projectRoot, QStringLiteral("-x"),
+                               QStringList{QStringLiteral("--working-directory"), buildDir, QStringLiteral("-x"),
                                            QStringLiteral("bash"), QStringLiteral("-lc"), bashLine}))
     {
         return true;
     }
     if (QProcess::startDetached(QStringLiteral("konsole"),
-                               QStringList{QStringLiteral("--workdir"), projectRoot, QStringLiteral("-e"), QStringLiteral("bash"),
+                               QStringList{QStringLiteral("--workdir"), buildDir, QStringLiteral("-e"), QStringLiteral("bash"),
                                            QStringLiteral("-lc"), bashLine}))
     {
         return true;
@@ -504,8 +511,8 @@ bool MainWindow::LaunchPdfGeneratorInNewConsole(const QString& projectRoot)
         this,
         "Generate",
         QStringLiteral("Could not start a terminal (tried gnome-terminal, xfce4-terminal, konsole).\n"
-                       "Run from a shell: cd \"%1\" && ./build/pdf_app")
-            .arg(projectRoot));
+                       "Run from a shell: cd \"%1\" && ./pdf_app")
+            .arg(buildDir));
     return false;
 #endif
 }
