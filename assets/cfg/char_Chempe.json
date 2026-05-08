@@ -1,0 +1,141 @@
+{
+    "name": "New Character",
+    "nameLetterSpacing": 3.5,
+    "background": "Hermit",
+    "race": "Forest Gnome",
+    "stats": {
+        "strength": 14,
+        "dexterity": 12,
+        "constitution": 12,
+        "intelligence": 14,
+        "wisdom": 16,
+        "charisma": 12,
+        "speed": 30,
+        "maxHp": 53,
+        "ac": 13,
+        "initiativeBonus": 1
+    },
+    "proficiencies": {
+        "bonus": 3,
+        "skills": {
+            "strength": {
+                "athletics": 0
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 0,
+                "history": 0,
+                "investigation": 0,
+                "nature": 1,
+                "religion": 1
+            },
+            "wisdom": {
+                "animalHandling": 1,
+                "insight": 0,
+                "medicine": 1,
+                "perception": 0,
+                "survival": 0
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 0,
+                "performance": 0,
+                "persuasion": 0
+            }
+        },
+        "savingThrows": {
+            "strength": 0,
+            "dexterity": 0,
+            "constitution": 0,
+            "intelligence": 1,
+            "wisdom": 1,
+            "charisma": 0
+        },
+        "tools": [
+            "Herbalism Kit",
+            "Brewer's Supplies",
+            "Alchemist's Supplies"
+        ],
+        "languages": [
+            "Common",
+            "Gnomish",
+            "Druidic",
+            "Giant"
+        ],
+        "armors": [
+            "Light Armor",
+            "Medium Armor",
+            "Shield"
+        ],
+        "simpleWeapons": [
+            "Javelin",
+            "Mace",
+            "Club",
+            "Greatclub",
+            "Dagger",
+            "Dart",
+            "Quarterstaff",
+            "Sling",
+            "Spear",
+            "Shortbow"
+        ],
+        "martialWeapons": [
+            "Scimitar",
+            "Whip",
+            "Net"
+        ]
+    },
+    "traits": [],
+    "classes": {
+        "druid": {
+            "level": 7,
+            "hitDice": "d8",
+            "resourcePoints": 2,
+            "subclass": "Circle of Spores",
+            "spellslots": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [],
+                "0_extra": [],
+                "1": [],
+                "2": [],
+                "3": [],
+                "4": [],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [],
+            "armors": []
+        },
+        "stashed": {
+            "weapons": [],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [],
+        "consumables": [],
+        "kits & tools": [],
+        "general": []
+    }
+}
