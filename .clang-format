@@ -9,6 +9,11 @@ TabWidth: 4
 UseTab: Never
 ColumnLimit: 110
 
+# Keep the return type on the same line as the function name; when a signature wraps, break the
+# parameter list (with BinPackParameters: false) instead of isolating the return type.
+AlwaysBreakAfterReturnType: None
+PenaltyReturnTypeOnItsOwnLine: 2000
+
 # Constructor init lists: either one line total, or one initializer per line (no partial wrapping)
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 

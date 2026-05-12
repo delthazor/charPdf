@@ -91,6 +91,16 @@ struct SpellsCatalog
     std::unordered_map<std::string, std::string> byLowerName;
 };
 
+/// Parsed fields for one spell text block before layout (`SpellPage` maps this to `FormattedLabeledBlock`).
+struct SpellParts
+{
+    std::string name;
+    std::string props;
+    std::string concentration;
+    std::string description;
+    std::string upgrades;
+};
+
 struct DamageConfig
 {
     const std::string dice;

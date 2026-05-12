@@ -27,6 +27,9 @@ UtilType::SpellsCatalog BuildSpellsCatalog(nlohmann::ordered_json arr);
 std::vector<std::string> Split(const std::string& s, const std::string& delim);
 std::vector<std::string> SplitIntoWords(const std::string& text);
 std::string CapitalizeFirst(const std::string& s);
+void TrimTrailingAsciiSpaces(std::string& s);
+/// Last index of `": "` whose `:` is not inside parentheses in `block` (`npos` if none).
+size_t FindLastColonSpaceAtParenDepthZero(const std::string& block);
 std::string SanitizePdfStem(std::string stem);
 int CalcModFromStatVal(int statVal);
 std::string FormatSignedInt(int value);

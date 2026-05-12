@@ -492,6 +492,37 @@ std::string CapitalizeFirst(const std::string& s)
     return out;
 }
 
+void TrimTrailingAsciiSpaces(std::string& s)
+{
+    while (!s.empty() && std::isspace(static_cast<unsigned char>(s.back())))
+    {
+        s.pop_back();
+    }
+}
+
+size_t FindLastColonSpaceAtParenDepthZero(const std::string& block)
+{
+    int depth = 0;
+    size_t last = std::string::npos;
+    for (size_t i = 0; i + 1 < block.size(); ++i)
+    {
+        const char c = block[i];
+        if (c == '(')
+        {
+            ++depth;
+        }
+        else if (c == ')' && depth > 0)
+        {
+            --depth;
+        }
+        else if (c == ':' && block[i + 1] == ' ' && depth == 0)
+        {
+            last = i;
+        }
+    }
+    return last;
+}
+
 int CalcModFromStatVal(int statVal) { return (statVal - 10) / 2; }
 
 std::string FormatSignedInt(int value)
