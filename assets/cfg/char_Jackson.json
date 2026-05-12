@@ -143,8 +143,8 @@
                     "Armor of Agathys"
                 ],
                 "2": [
-                    "Hellis Rebuke (Infernal Legacy)",
-                    "Darkness (Infernal Legacy)",
+                    "Hellis Rebuke [Infernal Legacy]",
+                    "Darkness [Infernal Legacy]",
                     "Magic Weapon",
                     "Prayer of Healing",
                     "Hold Person",
@@ -268,28 +268,28 @@
         }
     },
     "backpack": {
-        "accessories": [
-            "STR Poti (+1 STR, 2-3h)",
-            "Red Cloak"
-        ],
+        "accessories": [],
         "consumables": [
-            "Candle",
-            "Torch x10",
             "Rations(1 day) x10",
-            "Sticks of incense x2"
+            "STR Poti (+1 STR, 2-3h)"
         ],
-        "kits & tools": [],
-        "general": [
+        "kits & tools": [
             "Dice set",
-            "Smith\u2019s tools",
+            "Smith's tools"
+        ],
+        "general": [
             "Blanket",
             "Tinderbox",
             "Waterskin",
             "Rope (hempen, 50 feet)",
             "Alms boy",
+            "Candle",
+            "Torch x10",
+            "Sticks of incense x2",
             "Censer",
             "Vestments",
-            "Common clothes"
+            "Common clothes",
+            "Red Cloak"
         ]
     }
 }

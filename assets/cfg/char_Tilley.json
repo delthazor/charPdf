@@ -56,7 +56,7 @@
             "charisma": 0
         },
         "tools": [
-            "Thieves\u2019 tools",
+            "Thieves' tools",
             "Disguise kit",
             "Forgery kit",
             "Carpenter Tools"
@@ -65,7 +65,7 @@
             "Common",
             "Halfling",
             "Goblin",
-            "Thieves\u2019 cant"
+            "Thieves' cant"
         ],
         "armors": [
             "Light armor"
@@ -239,23 +239,20 @@
     "backpack": {
         "accessories": [
             "Daggermaster's Ring",
-            "Ball bearings (pouch) x10",
-            "Pet mouse",
-            "Red Cloak",
-            "Potion of Flying",
             "Sending Stone",
-            "Dried Leech (fine magic ammo)",
             "Box of Paper Birds"
         ],
         "consumables": [
             "Rations (1 day) x5",
             "Arrows x20",
-            "Candle x5"
+            "Dried Leech (fine magic ammo)",
+            "Potion of Flying"
         ],
-        "kits & tools": [],
-        "general": [
+        "kits & tools": [
             "Thieves' tools",
-            "Carpenter Tools",
+            "Carpenter Tools"
+        ],
+        "general": [
             "Leather",
             "Ball",
             "Chain (10 ft)",
@@ -265,10 +262,14 @@
             "Piton x10",
             "Lantern (hooded)",
             "Oil (flask) x2",
+            "Candle x5",
             "Tinderbox",
             "Waterskin",
             "Rope (hempen, 50 ft)",
             "Common clothes",
+            "Ball bearings (pouch) x10",
+            "Pet mouse",
+            "Red Cloak",
             "Small knife",
             "Map of a city",
             "Bell"
