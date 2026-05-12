@@ -261,7 +261,7 @@ void ClassPage::AddCastInfo()
     const std::string castStat = Utilities::CapitalizeFirst(castStatRaw);
     const int castStatMod = CalcModFromStatName(castStatRaw);
     const std::string castStatModStr = castStat + " (" + Utilities::FormatSignedInt(castStatMod) + ")";
-    doc.AddText(castStatModStr, LEFT_EDGE_REF + 277, 69, headOpts);
+    doc.AddText(castStatModStr, LEFT_EDGE_REF + 274, 69, headOpts);
 
     const int spellSaveDc = 8 + castStatMod + config.getObject("proficiencies").getInt("bonus");
     doc.AddText(std::to_string(spellSaveDc), LEFT_EDGE_REF + 348, 103, dataOpts);
