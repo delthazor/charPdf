@@ -146,8 +146,8 @@
         "used": {
             "weapons": [
                 {
-                    "name": "Shortsword",
-                    "type": "Shortsword",
+                    "name": "Short Sword",
+                    "type": "Shorts Sword",
                     "extratext": "x2 equipped",
                     "props": [
                         "light",
