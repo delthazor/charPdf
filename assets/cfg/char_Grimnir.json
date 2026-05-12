@@ -57,27 +57,27 @@
             "charisma": 0
         },
         "tools": [
-            "vehicles (land)",
-            "woodcarver's tools"
+            "Vehicles (land)",
+            "Woodcarver's Tools"
         ],
         "languages": [
-            "Common",
             "Elvish",
+            "Common",
             "Orc",
             "Primordial"
         ],
         "armors": [
             "Light armor",
             "Medium armor",
-            "Shields"
+            "Shield"
         ],
         "simpleWeapons": [
             "Hand axe",
-            "Short bow"
+            "Shortbow"
         ],
         "martialWeapons": [
-            "Longsword",
-            "Shortsword",
+            "Long Sword",
+            "Short Sword",
             "Longbow"
         ]
     },
@@ -100,7 +100,6 @@
         "ranger": {
             "level": 7,
             "hitDice": "d10",
-            "resourcePoints": 0,
             "castStat": "wisdom",
             "subclass": "Fey Wanderer",
             "spellslots": {
@@ -148,8 +147,8 @@
         "used": {
             "weapons": [
                 {
-                    "name": "Longsword",
-                    "type": "Longsword",
+                    "name": "Long Sword",
+                    "type": "Long Sword",
                     "extratext": "",
                     "props": [
                         "versatile"
@@ -169,8 +168,8 @@
                     }
                 },
                 {
-                    "name": "Shortsword",
-                    "type": "Shortsword",
+                    "name": "Short Sword",
+                    "type": "Short Sword",
                     "extratext": "",
                     "props": [
                         "light",
@@ -226,7 +225,13 @@
         }
     },
     "backpack": {
-        "accessories": [],
+        "accessories": [
+            "Amulet of the Drunkard",
+            "Cloak of the Skipping Step",
+            "Bracers of Reactive Misdirection",
+            "Robe of Useful Items",
+            "Feymark Compass"
+        ],
         "consumables": [
             "Hp poti (2d4)",
             "Arrows x20",
