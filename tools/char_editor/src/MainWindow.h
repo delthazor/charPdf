@@ -144,7 +144,7 @@ class MainWindow : public QMainWindow
 
     QString ProjectRootAbsolute() const;
     QString ResolvePdfAppPath(const QString& projectRoot) const;
-    bool LaunchPdfGeneratorInNewConsole(const QString& projectRoot);
+    void RunPdfGeneratorAndShowResult(const QString& projectRoot);
 
     CharacterRepository repo;
     CharacterDocument doc;
