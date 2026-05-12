@@ -1,0 +1,295 @@
+{
+    "name": "Jackson",
+    "nameLetterSpacing": 5,
+    "background": "Soldier",
+    "race": "Tiefling",
+    "stats": {
+        "strength": 14,
+        "dexterity": 13,
+        "constitution": 13,
+        "intelligence": 10,
+        "wisdom": 10,
+        "charisma": 16,
+        "speed": 30,
+        "maxHp": 57,
+        "ac": 18,
+        "initiativeBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 3,
+        "skills": {
+            "strength": {
+                "athletics": 1
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 0,
+                "history": 0,
+                "investigation": 0,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 0,
+                "insight": 1,
+                "medicine": 0,
+                "perception": 0,
+                "survival": 0
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 1,
+                "performance": 0,
+                "persuasion": 1
+            }
+        },
+        "savingThrows": {
+            "strength": 0,
+            "dexterity": 0,
+            "constitution": 0,
+            "intelligence": 0,
+            "wisdom": 1,
+            "charisma": 1
+        },
+        "tools": [
+            "vehicles (land)",
+            "dice set",
+            "smith's tools"
+        ],
+        "languages": [
+            "Common",
+            "Infernal"
+        ],
+        "armors": [
+            "Light armor",
+            "Medium armor",
+            "Heavy armor",
+            "Shields"
+        ],
+        "simpleWeapons": [
+            "Javelin",
+            "Mace",
+            "Light Hammer"
+        ],
+        "martialWeapons": [
+            "Short Sword",
+            "Long Sword",
+            "Battle Axe",
+            "Morningstar",
+            "Warhammer"
+        ]
+    },
+    "traits": [
+        "Darkvision",
+        "Hellish Resistance",
+        "Infernal Legacy",
+        "Dueling",
+        "Divine Health",
+        "Divine Sense",
+        "Divine Smite",
+        "Lay on Hands",
+        "Military Rank (Officer)",
+        "Extra Attack",
+        "Channel Divinity",
+        "Channel Divinity - Conquering Presence",
+        "Channel Divinity - Guided Strike",
+        "Shield Master",
+        "Aura of Protection",
+        "Aura of Conquest",
+        "Noble of Phandalin"
+    ],
+    "classes": {
+        "paladin": {
+            "level": 7,
+            "hitDice": "d10",
+            "resourcePoints": 0,
+            "castStat": "charisma",
+            "subclass": "Oath of Conquest",
+            "spellslots": {
+                "1": 4,
+                "2": 3,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [
+                    "Thaumaturgy"
+                ],
+                "0_extra": [
+                    "Divine Sense",
+                    "Divine Smite",
+                    "Lay on Hands",
+                    "Channel Divinity",
+                    "-Conquering Presence",
+                    "-Guided Strike"
+                ],
+                "1": [
+                    "Command",
+                    "Thunderous Smite",
+                    "Searing Smite",
+                    "Wrathful Smite",
+                    "Divine Favor",
+                    "Shield of Faith",
+                    "Detect Magic",
+                    "Armor of Agathys"
+                ],
+                "2": [
+                    "Hellis Rebuke (Infernal Legacy)",
+                    "Darkness (Infernal Legacy)",
+                    "Magic Weapon",
+                    "Prayer of Healing",
+                    "Hold Person",
+                    "Spiritual Weapon",
+                    "Branding Smite"
+                ],
+                "3": [],
+                "4": [],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [
+                {
+                    "name": "Longsword",
+                    "type": "Longsword",
+                    "extratext": "",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {
+                            "dice": "1d10",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Battle Axe +1",
+                    "type": "Battle Axe",
+                    "extratext": "+1 magic weapon",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {
+                            "dice": "1d10",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Chain Mail",
+                    "type": "Heavy Armor",
+                    "extratext": "",
+                    "ac": {
+                        "fixmod": 16
+                    }
+                },
+                {
+                    "name": "Shield",
+                    "type": "Shield",
+                    "extratext": "",
+                    "ac": {
+                        "fixmod": 2
+                    }
+                }
+            ]
+        },
+        "stashed": {
+            "weapons": [
+                {
+                    "name": "Javelin of Lightning",
+                    "type": "Javelin",
+                    "extratext": "magical",
+                    "props": [
+                        "thrown"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "30/120"
+                },
+                {
+                    "name": "Rapier",
+                    "type": "Rapier",
+                    "extratext": "",
+                    "props": [
+                        "finesse"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [
+            "STR Poti (+1 STR, 2-3h)",
+            "Red Cloak"
+        ],
+        "consumables": [
+            "Candle",
+            "Torch x10",
+            "Rations(1 day) x10",
+            "Sticks of incense x2"
+        ],
+        "kits & tools": [],
+        "general": [
+            "Dice set",
+            "Smith\u2019s tools",
+            "Blanket",
+            "Tinderbox",
+            "Waterskin",
+            "Rope (hempen, 50 feet)",
+            "Alms boy",
+            "Censer",
+            "Vestments",
+            "Common clothes"
+        ]
+    }
+}

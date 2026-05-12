@@ -1,0 +1,272 @@
+{
+    "name": "Galador",
+    "nameLetterSpacing": 5,
+    "background": "Sage",
+    "race": "Half Elf",
+    "stats": {
+        "strength": 10,
+        "dexterity": 13,
+        "constitution": 13,
+        "intelligence": 13,
+        "wisdom": 13,
+        "charisma": 17,
+        "speed": 30,
+        "maxHp": 41,
+        "ac": 11,
+        "initiativeBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 3,
+        "skills": {
+            "strength": {
+                "athletics": 0
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 1,
+                "history": 1,
+                "investigation": 1,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 0,
+                "insight": 1,
+                "medicine": 0,
+                "perception": 1,
+                "survival": 0
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 0,
+                "performance": 0,
+                "persuasion": 1
+            }
+        },
+        "savingThrows": {
+            "strength": 0,
+            "dexterity": 0,
+            "constitution": 1,
+            "intelligence": 0,
+            "wisdom": 0,
+            "charisma": 1
+        },
+        "tools": [],
+        "languages": [
+            "Common",
+            "Elvish",
+            "Dwarcish",
+            "Goblin",
+            "Orc"
+        ],
+        "armors": [],
+        "simpleWeapons": [
+            "Dagger",
+            "Dart",
+            "Sling",
+            "Quarterstaff",
+            "Light Crossbow"
+        ],
+        "martialWeapons": [
+            "Heavy Crossbow"
+        ]
+    },
+    "traits": [
+        "Darkvision",
+        "Fey Ancestry",
+        "Researcher",
+        "Favored by the Gods",
+        "Font of Magic – Sorcery points",
+        "Font of Magic - Flexible Casting",
+        "Metamagic - Twinned Spell",
+        "Metamagic - Quickened Spell",
+        "Magical Guidance",
+        "Fey Touched",
+        "Empowered Healing",
+        "Noble of Phandalin"
+    ],
+    "classes": {
+        "sorcerer": {
+            "level": 7,
+            "hitDice": "d6",
+            "resourcePoints": 8,
+            "castStat": "charisma",
+            "subclass": "Divine Soul",
+            "spellslots": {
+                "1": 4,
+                "2": 3,
+                "3": 3,
+                "4": 1,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [
+                    "Message",
+                    "Create Bonfire",
+                    "Mage Hand",
+                    "Ray of Frost",
+                    "Fire Bolt",
+                    "Prestidigitation",
+                    "Control Flames"
+                ],
+                "0_extra": [
+                    "Metamagic:",
+                    "-Twinned Spell",
+                    "-Quickened Spell"
+                ],
+                "1": [
+                    "Feather Fall",
+                    "Magic Missile",
+                    "Cure Wounds",
+                    "Inflict Wounds",
+                    "Hex"
+                ],
+                "2": [
+                    "Scorching Ray",
+                    "Enlarge/Reduce",
+                    "Misty Step"
+                ],
+                "3": [
+                    "Fireball",
+                    "Counterspell",
+                    "Wall of Water"
+                ],
+                "4": [
+                    "Wall of Fire"
+                ],
+                "5": [
+                    "Teleportation Circle (in-training)"
+                ],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [
+                {
+                    "name": "Quarterstaff",
+                    "type": "Quarterstaff",
+                    "extratext": "",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": []
+        },
+        "stashed": {
+            "weapons": [
+                {
+                    "name": "Light Crossbow",
+                    "type": "Light Crossbow",
+                    "extratext": "",
+                    "props": [
+                        "loading",
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "80/320"
+                },
+                {
+                    "name": "Staff of the Python",
+                    "type": "Quarterstaff",
+                    "extratext": "",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {
+                            "dice": "1d10",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Wand of the War Mage",
+                    "type": "Club",
+                    "extratext": "",
+                    "props": [
+                        "light"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [
+            "Decanter of Endless Water",
+            "Sending Stone"
+        ],
+        "consumables": [
+            "Crossbow bolts x54",
+            "Rations (1 day) x11",
+            "STR Poti (+1 STR, 1h) x2"
+        ],
+        "kits & tools": [],
+        "general": [
+            "Tent",
+            "Crowbar",
+            "Hammer",
+            "Piton x10",
+            "Torch x10",
+            "Tinderbox",
+            "Waterskin",
+            "Rope (hemphen, 50 ft.)",
+            "Ink bottle (1 ounce)",
+            "Ink pen",
+            "Amall knife",
+            "Common clothes",
+            "Red cloak"
+        ]
+    }
+}

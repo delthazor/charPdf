@@ -1,0 +1,254 @@
+{
+    "name": "Grimnir",
+    "nameLetterSpacing": 5,
+    "background": "Folk Hero",
+    "race": "High Elf",
+    "stats": {
+        "strength": 14,
+        "dexterity": 12,
+        "constitution": 12,
+        "intelligence": 12,
+        "wisdom": 14,
+        "charisma": 12,
+        "speed": 30,
+        "maxHp": 65,
+        "ac": 12,
+        "initiativeBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 3,
+        "skills": {
+            "strength": {
+                "athletics": 1
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 1
+            },
+            "intelligence": {
+                "arcana": 0,
+                "history": 0,
+                "investigation": 0,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 1,
+                "insight": 1,
+                "medicine": 0,
+                "perception": 1,
+                "survival": 1
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 0,
+                "performance": 0,
+                "persuasion": 1
+            }
+        },
+        "savingThrows": {
+            "strength": 1,
+            "dexterity": 1,
+            "constitution": 0,
+            "intelligence": 0,
+            "wisdom": 0,
+            "charisma": 0
+        },
+        "tools": [
+            "vehicles (land)",
+            "woodcarver's tools"
+        ],
+        "languages": [
+            "Common",
+            "Elvish",
+            "Orc",
+            "Primordial"
+        ],
+        "armors": [
+            "Light armor",
+            "Medium armor",
+            "Shields"
+        ],
+        "simpleWeapons": [
+            "Hand axe",
+            "Short bow"
+        ],
+        "martialWeapons": [
+            "Longsword",
+            "Shortsword",
+            "Longbow"
+        ]
+    },
+    "traits": [
+        "Trance",
+        "Darkvision",
+        "Feywild Gift",
+        "Rustic Hospitality",
+        "Primeval Awareness",
+        "Dreadful Strike",
+        "Extra Attack",
+        "Favoured Enemy",
+        "Natural Explorer",
+        "Two-Wepon Fighting",
+        "Sentinel",
+        "Beguiling Twist",
+        "Noble of Phandalin"
+    ],
+    "classes": {
+        "ranger": {
+            "level": 7,
+            "hitDice": "d10",
+            "resourcePoints": 0,
+            "castStat": "wisdom",
+            "subclass": "Fey Wanderer",
+            "spellslots": {
+                "1": 4,
+                "2": 3,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [
+                    "Ray of Frost"
+                ],
+                "0_extra": [],
+                "1": [
+                    "Speak with Animals",
+                    "Hail of Thorns",
+                    "Goodberry",
+                    "Charm Person",
+                    "Primeval Awarness",
+                    "Zephyr Strike"
+                ],
+                "2": [
+                    "Magic Weapon",
+                    "Summon Beast",
+                    "Misty Step",
+                    "Barkskin"
+                ],
+                "3": [],
+                "4": [],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [
+                {
+                    "name": "Longsword",
+                    "type": "Longsword",
+                    "extratext": "",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {
+                            "dice": "1d10",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Shortsword",
+                    "type": "Shortsword",
+                    "extratext": "",
+                    "props": [
+                        "light",
+                        "finesse"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Breastplate",
+                    "type": "Medium Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 14,
+                        "modstat": "dexterity",
+                        "modcap": 2
+                    }
+                }
+            ]
+        },
+        "stashed": {
+            "weapons": [
+                {
+                    "name": "Longbow",
+                    "type": "Longbow",
+                    "extratext": "",
+                    "props": [
+                        "heavy",
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    },
+                    "range": "150/600"
+                }
+            ],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [
+            "Hp poti (2d4)",
+            "Red Cloak",
+            "Platinum ring (7G)"
+        ],
+        "consumables": [
+            "Arrows x20",
+            "Torch x10",
+            "Rations(1 day) x11",
+            "+ raw meat x3"
+        ],
+        "kits & tools": [],
+        "general": [
+            "Dice set",
+            "Woodcarver's tools",
+            "Bedroll",
+            "Mess kit",
+            "Tinderbox",
+            "Waterskin",
+            "Rope (hempen, 50 feet)",
+            "Shovel x2",
+            "Pickaxe",
+            "Pot (iron)",
+            "Common clothes",
+            "Diamod (4G) x3"
+        ]
+    }
+}
