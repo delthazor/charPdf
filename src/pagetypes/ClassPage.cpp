@@ -352,6 +352,7 @@ void ClassPage::AddSpellNames()
     }
 
     const std::vector<std::string> spell0_extra = spells.getStringArray("0_extra");
-    TextBox::CreateStandard(*this, spellBoxMatrix[10].x, spellBoxMatrix[10].y, 7, {60.0, 71.0})
+    TextBox::CreateStandard(
+        *this, spellBoxMatrix[10].x, spellBoxMatrix[10].y, 7, {62.0, 71.0, 73.0, 72.0, 62.0})
         .RenderPlainTextLines(spell0_extra);
 }
