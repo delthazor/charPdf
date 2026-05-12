@@ -346,7 +346,7 @@ void ClassPage::AddSpellNames()
         if (spells.hasKey(key))
         {
             const auto spellNames = spells.getStringArray(key);
-            TextBox::CreateStandard(*this, spellBoxMatrix[level].x, spellBoxMatrix[level].y, 7, {100.0})
+            TextBox::CreateStandard(*this, spellBoxMatrix[level].x, spellBoxMatrix[level].y, 7, {110.0})
                 .RenderPlainTextLines(spellNames);
         }
     }
