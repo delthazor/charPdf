@@ -374,21 +374,24 @@ std::map<std::string, int> MainPage::GetHitDiceMap() const
 
 std::string MainPage::GetProficiencyString(const std::string& arrayKey) const
 {
+    constexpr const char* emptyPlaceholder = " - ";
     const auto proficiencies = config.getObject("proficiencies");
     if (!proficiencies.hasKey(arrayKey))
     {
         Utilities::LogError(std::string("Warning: proficiency key '") + arrayKey + "' not found in config");
-        return "";
+        return emptyPlaceholder;
     }
 
     const auto& items = proficiencies.getStringArray(arrayKey);
-    std::string result = "";
+    if (items.empty()) { return emptyPlaceholder; }
+
+    std::string result;
     for (const auto& item : items)
     {
         result += item + ", ";
     }
     if (!result.empty()) { result = result.substr(0, result.size() - 2); }
-    return result;
+    return result.empty() ? emptyPlaceholder : result;
 }
 
 void MainPage::AddProficienciesBox()
