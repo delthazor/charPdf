@@ -13,7 +13,8 @@
         "speed": 30,
         "maxHp": 41,
         "ac": 11,
-        "initiativeBonus": 0
+        "initiativeBonus": 0,
+        "pPercBonus": 2
     },
     "proficiencies": {
         "bonus": 3,

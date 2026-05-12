@@ -180,6 +180,7 @@ class MainWindow : public QMainWindow
     QSpinBox* statMaxHp = nullptr;
     QSpinBox* statAc = nullptr;
     QSpinBox* statInitiativeBonus = nullptr;
+    QSpinBox* statPPercBonus = nullptr;
 
     // Proficiencies tab widgets (for refresh)
     QWidget* profTab = nullptr;

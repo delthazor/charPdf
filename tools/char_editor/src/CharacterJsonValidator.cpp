@@ -395,7 +395,14 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
         RequireType(issues, stats, "/stats", nlohmann::ordered_json::value_t::object);
         if (stats.is_object())
         {
-            for (const char* k : {"strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma", "initiativeBonus"})
+            for (const char* k : {"strength",
+                                 "dexterity",
+                                 "constitution",
+                                 "intelligence",
+                                 "wisdom",
+                                 "charisma",
+                                 "initiativeBonus",
+                                 "pPercBonus"})
             {
                 RequireNonNegInt(issues, stats, "/stats", k);
             }

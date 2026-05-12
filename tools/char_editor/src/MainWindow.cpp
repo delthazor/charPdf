@@ -1471,6 +1471,8 @@ QWidget* MainWindow::BuildGeneralTab()
     statAc->setProperty("jsonKey", "ac");
     statInitiativeBonus = MakeSpinBox(0, 50);
     statInitiativeBonus->setProperty("jsonKey", "initiativeBonus");
+    statPPercBonus = MakeSpinBox(0, 50);
+    statPPercBonus->setProperty("jsonKey", "pPercBonus");
 
     statsForm->addRow("Strength", statStrength);
     statsForm->addRow("Dexterity", statDexterity);
@@ -1482,6 +1484,7 @@ QWidget* MainWindow::BuildGeneralTab()
     statsForm->addRow("Max HP", statMaxHp);
     statsForm->addRow("AC", statAc);
     statsForm->addRow("Initiative bonus", statInitiativeBonus);
+    statsForm->addRow("Passive perception bonus", statPPercBonus);
 
     QObject::connect(statStrength, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
     QObject::connect(statDexterity, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
@@ -1496,6 +1499,7 @@ QWidget* MainWindow::BuildGeneralTab()
                      QOverload<int>::of(&QSpinBox::valueChanged),
                      this,
                      &MainWindow::OnStatIntChanged);
+    QObject::connect(statPPercBonus, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
 
     QGroupBox* traitsBox = new QGroupBox("Traits");
     outer->addWidget(traitsBox, 1);
@@ -2071,6 +2075,7 @@ void MainWindow::UpdateTabsFromDocument()
     SetSpinValue(statMaxHp, stats, "maxHp", 10);
     SetSpinValue(statAc, stats, "ac", 14);
     SetSpinValue(statInitiativeBonus, stats, "initiativeBonus", 0);
+    SetSpinValue(statPPercBonus, stats, "pPercBonus", 0);
 
     if (generalTraitsEditor) { generalTraitsEditor->Refresh(); }
 

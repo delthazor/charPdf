@@ -186,6 +186,7 @@ nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
     stats["maxHp"] = 10;
     stats["ac"] = 14;
     stats["initiativeBonus"] = 0;
+    stats["pPercBonus"] = 0;
 
     doc["proficiencies"] = nlohmann::ordered_json::object();
     auto& prof = doc["proficiencies"];
@@ -284,6 +285,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
     EnsureStatsNonNegInt(stats, "ac", 14);
     if (stats.contains("ac") && stats["ac"].is_number_integer() && stats["ac"].get<int>() == 0) { stats["ac"] = 14; }
     EnsureStatsNonNegInt(stats, "initiativeBonus", 0);
+    EnsureStatsNonNegInt(stats, "pPercBonus", 0);
 
     if (!doc.contains("proficiencies") || !doc["proficiencies"].is_object())
     {

@@ -153,7 +153,9 @@ void MainPage::AddInitiative()
 
 void MainPage::AddPassivePerception()
 {
-    const int passivePerception = 10 + CalcModFromStatName("wisdom");
+    const Config stats = config.getObject("stats");
+    const int pPercBonus = stats.hasKey("pPercBonus") ? stats.getInt("pPercBonus") : 0;
+    const int passivePerception = 10 + CalcModFromStatName("wisdom") + pPercBonus;
     doc.AddText(std::to_string(passivePerception), 30, 111, UtilType::TextOptions(FontType::Seagram, 18));
 }
 
