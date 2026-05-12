@@ -480,8 +480,8 @@
     },
     {
         "name": "Teleportation Circle (in-training)",
-        "description": "(1 action, range: 10ft, duration: instant, components: verbal, somatic): This spell instantly transports you to a destination you select. You can extend the effect onto up to 6 other willing creatures of your choice that you can see within range, at a cost of expending spell slots with a total level equal to (or more than) the number of creatures you want to teleport. The destination you choose must be known to you, and it must be on the same plane of existence as you. Your familiarity with the destination determines whether you arrive there successfully.",
-        "params": "in-training"
+        "description": "This spell instantly transports you to a destination you select. You can extend the effect onto up to 6 other willing creatures of your choice that you can see within range, at a cost of expending spell slots with a total level equal to (or more than) the number of creatures you want to teleport. The destination you choose must be known to you, and it must be on the same plane of existence as you. Your familiarity with the destination determines whether you arrive there successfully.",
+        "params": "1 action, range: 10ft, duration: instant, components: verbal, somatic"
     },
     {
         "name": "Dispel Magic",

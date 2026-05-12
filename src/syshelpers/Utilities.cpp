@@ -109,6 +109,36 @@ bool StripOneTrailingParenContext(std::string& s)
     return true;
 }
 
+/// If `displayName` ends with a balanced trailing ` [ ... ]` suffix, return the same base with
+/// ` ( ... )` instead. Empty return means there is no such suffix (or it is malformed).
+std::string SpellBracketSuffixAsParenForm(const std::string& displayName)
+{
+    std::string s = displayName;
+    while (!s.empty() && std::isspace(static_cast<unsigned char>(s.back()))) { s.pop_back(); }
+    size_t lead = 0;
+    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead]))) { ++lead; }
+    if (lead > 0) { s.erase(0, lead); }
+
+    const size_t pos = s.rfind(" [");
+    if (pos == std::string::npos || pos + 2 >= s.size() || s[pos + 1] != '[') { return ""; }
+    size_t depth = 1;
+    size_t j = pos + 2;
+    for (; j < s.size(); ++j)
+    {
+        if (s[j] == '[') { ++depth; }
+        else if (s[j] == ']')
+        {
+            --depth;
+            if (depth == 0) { break; }
+        }
+    }
+    if (depth != 0 || j != s.size() - 1) { return ""; }
+    std::string base = s.substr(0, pos);
+    while (!base.empty() && std::isspace(static_cast<unsigned char>(base.back()))) { base.pop_back(); }
+    const std::string inner = s.substr(pos + 2, j - (pos + 2));
+    return base + " (" + inner + ")";
+}
+
 std::string ToLowerAscii(std::string_view sv)
 {
     std::string out;
@@ -321,25 +351,51 @@ std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::S
 
             for (const std::string& name : spellsObj.getStringArray(levelKey))
             {
-                const std::string catalogKey = SpellNameForCatalogLookup(name);
-                if (catalogKey.empty())
+                std::string trimmed = name;
+                while (!trimmed.empty() && std::isspace(static_cast<unsigned char>(trimmed.back())))
                 {
-                    Utilities::LogError("ERROR: Spell name is empty after context suffix strip: " + name);
-                    continue;
+                    trimmed.pop_back();
                 }
-                auto spellIt = spellsCatalog.byName.find(catalogKey);
+                size_t lead = 0;
+                while (lead < trimmed.size() && std::isspace(static_cast<unsigned char>(trimmed[lead])))
+                {
+                    ++lead;
+                }
+                if (lead > 0) { trimmed.erase(0, lead); }
+
+                auto findSpellIt = [&](const std::string& key) -> decltype(spellsCatalog.byName.end())
+                {
+                    if (key.empty()) { return spellsCatalog.byName.end(); }
+                    auto it = spellsCatalog.byName.find(key);
+                    if (it != spellsCatalog.byName.end()) { return it; }
+                    const auto lit = spellsCatalog.byLowerName.find(ToLowerAscii(key));
+                    if (lit == spellsCatalog.byLowerName.end()) { return spellsCatalog.byName.end(); }
+                    return spellsCatalog.byName.find(lit->second);
+                };
+
+                auto spellIt = findSpellIt(trimmed);
                 if (spellIt == spellsCatalog.byName.end())
                 {
-                    const auto lit = spellsCatalog.byLowerName.find(ToLowerAscii(catalogKey));
-                    if (lit != spellsCatalog.byLowerName.end())
+                    const std::string bracketKey = SpellBracketSuffixAsParenForm(trimmed);
+                    if (!bracketKey.empty() && bracketKey != trimmed)
                     {
-                        spellIt = spellsCatalog.byName.find(lit->second);
+                        spellIt = findSpellIt(bracketKey);
                     }
                 }
                 if (spellIt == spellsCatalog.byName.end())
                 {
+                    const std::string strippedKey = SpellNameForCatalogLookup(name);
+                    if (strippedKey.empty())
+                    {
+                        Utilities::LogError("ERROR: Spell name is empty after context suffix strip: " + name);
+                        continue;
+                    }
+                    spellIt = findSpellIt(strippedKey);
+                }
+                if (spellIt == spellsCatalog.byName.end())
+                {
                     Utilities::LogError("ERROR: Spell data is missing for spell: " + name
-                                        + " (catalog key: " + catalogKey + ")");
+                                        + " (tried trimmed / bracket-as-paren / stripped keys)");
                     continue;
                 }
                 const std::string& canonicalKey = spellIt->first;
