@@ -117,13 +117,14 @@
                 "0": [
                     "Ray of Frost"
                 ],
-                "0_extra": [],
+                "0_extra": [
+                    "Primeval Awareness"
+                ],
                 "1": [
                     "Speak with Animals",
                     "Hail of Thorns",
                     "Goodberry",
                     "Charm Person",
-                    "Primeval Awarness",
                     "Zephyr Strike"
                 ],
                 "2": [

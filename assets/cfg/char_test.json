@@ -243,6 +243,7 @@
         "bard": {
             "level": 1,
             "hitDice": "d6",
+            "castStat": "charisma",
             "resourcePoints": 1,
             "subclass": "College of Valor",
             "spellslots": {
@@ -275,6 +276,7 @@
         "barbarian": {
             "level": 1,
             "hitDice": "d12",
+            "castStat": "",
             "subclass": "Totem Warrior",
             "spellslots": {
                 "1": 2,
