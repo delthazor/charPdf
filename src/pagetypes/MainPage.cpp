@@ -142,10 +142,13 @@ void MainPage::AddSpeed()
 void MainPage::AddInitiative()
 {
     const int initiativeBonus = config.getObject("stats").getInt("initiativeBonus");
-    const int initiative = initiativeBonus + config.getObject("stats").getInt("dexterity");
+    const int initiative =
+        initiativeBonus + Utilities::CalcModFromStatVal(config.getObject("stats").getInt("dexterity"));
 
-    doc.AddText(
-        std::to_string(initiative), MIDDLE_LINE - 78, 51, UtilType::TextOptions(FontType::Seagram, 18));
+    doc.AddText(Utilities::FormatSignedInt(initiative),
+                MIDDLE_LINE - 78,
+                51,
+                UtilType::TextOptions(FontType::Seagram, 18));
 }
 
 void MainPage::AddPassivePerception()
