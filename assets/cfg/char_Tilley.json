@@ -1,6 +1,6 @@
 {
     "name": "Tilley",
-    "nameLetterSpacing": 5,
+    "nameLetterSpacing": 12.5,
     "background": "Urchin",
     "race": "Halfling",
     "stats": {
@@ -56,14 +56,14 @@
             "charisma": 0
         },
         "tools": [
-            "Thieves' tools",
-            "Disguise kit",
-            "Forgery kit",
+            "Thieves' Tools",
+            "Disguise Kit",
+            "Forgery Kit",
             "Carpenter Tools"
         ],
         "languages": [
-            "Common",
             "Halfling",
+            "Common",
             "Goblin",
             "Thieves' cant"
         ],
@@ -198,7 +198,7 @@
                 {
                     "name": "Dagger",
                     "type": "Dagger",
-                    "extratext": "Daggermaster; x2",
+                    "extratext": "stashed x2, Daggermaster's Ring effect: +2 to hit, nat19 crits, dmg can be magic",
                     "props": [
                         "finesse",
                         "light"
@@ -240,6 +240,10 @@
         "accessories": [
             "Daggermaster's Ring",
             "Sending Stone",
+            "Googles of Night",
+            "Lens of Revealing Threads",
+            "Earrings of Misdirected Attention",
+            "Fedora of the Quiet Step",
             "Box of Paper Birds"
         ],
         "consumables": [
