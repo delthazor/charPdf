@@ -66,7 +66,7 @@ void WeaponPrinter::RenderProps()
 {
     if (!weaponCfg.props.empty())
     {
-        block.textSpans.push_back({", " + JoinProps(), UtilType::NORMAL_TEXT, false, false});
+        block.textSpans.push_back({", " + JoinProps(), UtilType::NORMAL_TEXT, false, false, true});
     }
 }
 
@@ -74,7 +74,7 @@ void WeaponPrinter::RenderProfLabel()
 {
     if (proficiencyBonus > 0)
     {
-        block.textSpans.push_back({", proficient", UtilType::NORMAL_TEXT, false, false});
+        block.textSpans.push_back({", proficient", UtilType::NORMAL_TEXT, false, false, true});
     }
 }
 
