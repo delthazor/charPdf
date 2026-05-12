@@ -31,7 +31,7 @@ constexpr double EQUIPMENT_TEXT_Y_OFFSET = 18.0;
 constexpr double BACKPACK_WIDTH = 422.0;
 constexpr double BACKPACK_HEIGHT = 316.0;
 
-constexpr double BACKPACK_COLUMN_WIDTH = 90.0;
+constexpr double BACKPACK_COLUMN_WIDTH = 87.0;
 constexpr double BACKPACK_COLUMN_GAP = 4.0;
 constexpr double BACKPACK_COLUMN_START_Y = 301.0;
 constexpr double BACKPACK_FIRST_COLUMN_START_X = 30.0;
