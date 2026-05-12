@@ -28,8 +28,11 @@ std::vector<std::string> Split(const std::string& s, const std::string& delim);
 std::vector<std::string> SplitIntoWords(const std::string& text);
 std::string CapitalizeFirst(const std::string& s);
 void TrimTrailingAsciiSpaces(std::string& s);
-/// Last index of `": "` whose `:` is not inside parentheses in `block` (`npos` if none).
-size_t FindLastColonSpaceAtParenDepthZero(const std::string& block);
+/// Spell blocks are `header: description` with `header` like `Name (casting props…)`. Any `:` inside
+/// the parenthesis blocks belongs to props (e.g. `range: 30 ft`) and must not split header/body.
+/// This returns the index of the first `": "` whose `:` sits at parenthesis depth zero — the
+/// separator after the header. Spell names are assumed not to contain such a colon-space pair.
+size_t FindFirstColonSpaceAtParenDepthZero(const std::string& block);
 std::string SanitizePdfStem(std::string stem);
 int CalcModFromStatVal(int statVal);
 std::string FormatSignedInt(int value);

@@ -14,56 +14,41 @@ constexpr std::string_view UPGRADES_LABEL_TEXT = "At Higher Levels:";
 constexpr std::string_view CONCENTRATION_STRING = "Requires Concentration!";
 constexpr size_t CONCENTRATION_STRING_LEN = CONCENTRATION_STRING.size();
 
-bool LooksLikeCastingParams(std::string_view inner)
+bool FindOpeningParenMatchingFinalClose(const std::string& label, size_t& outOpenParenIdx)
 {
-    while (!inner.empty() && std::isspace(static_cast<unsigned char>(inner.front())))
+    if (label.empty() || label.back() != ')') { return false; }
+    if (label.size() < 2) { return false; }
+    int depth = 1;
+    for (size_t i = label.size() - 2;; --i)
     {
-        inner.remove_prefix(1);
+        const char c = label[i];
+        if (c == ')') { ++depth; }
+        else if (c == '(')
+        {
+            --depth;
+            if (depth == 0)
+            {
+                outOpenParenIdx = i;
+                return true;
+            }
+        }
+        if (i == 0) { break; }
     }
-    if (inner.empty()) { return false; }
-    if (inner.find(',') != std::string_view::npos) { return true; }
-    if (inner.find("range") != std::string_view::npos) { return true; }
-    if (inner.find("components") != std::string_view::npos) { return true; }
-    if (inner.find("duration") != std::string_view::npos) { return true; }
-    return std::isdigit(static_cast<unsigned char>(inner.front())) != 0;
+    return false;
 }
 
 void SplitSpellLabelIntoNameAndProps(const std::string& label, std::string& outName, std::string& outProps)
 {
     outProps.clear();
-    const size_t spacePos = label.rfind(" (");
-    if (spacePos == std::string::npos || spacePos + 1 >= label.size() || label[spacePos + 1] != '(')
+    size_t openParenIdx = 0;
+    if (!FindOpeningParenMatchingFinalClose(label, openParenIdx))
     {
         outName = label;
         return;
     }
-    const size_t openParenAt = spacePos + 1;
-    size_t depth = 1;
-    size_t j = openParenAt + 1;
-    for (; j < label.size(); ++j)
-    {
-        if (label[j] == '(') { ++depth; }
-        else if (label[j] == ')')
-        {
-            --depth;
-            if (depth == 0) { break; }
-        }
-    }
-    if (depth != 0 || j != label.size() - 1)
-    {
-        outName = label;
-        return;
-    }
-    const size_t innerStart = openParenAt + 1;
-    const std::string_view inner(label.data() + innerStart, j - innerStart);
-    if (!LooksLikeCastingParams(inner))
-    {
-        outName = label;
-        return;
-    }
-    outName = label.substr(0, spacePos);
+    outProps = label.substr(openParenIdx, label.size() - openParenIdx);
+    outName = label.substr(0, openParenIdx);
     Utilities::TrimTrailingAsciiSpaces(outName);
-    outProps = label.substr(openParenAt, j - openParenAt + 1);
 }
 
 void AssignDescriptionAndUpgrades(const std::string& source,
@@ -204,7 +189,7 @@ SpellPage::SpellBlock SpellPage::parseSpellBlock(const std::string& block)
         return b;
     };
 
-    const size_t splitColon = Utilities::FindLastColonSpaceAtParenDepthZero(block);
+    const size_t splitColon = Utilities::FindFirstColonSpaceAtParenDepthZero(block);
     if (splitColon == std::string::npos) { return spellPartsToBlock(ParseSimpleSpellBlock(block)); }
     return spellPartsToBlock(ParseStructuredSpellBlock(block, splitColon));
 }
@@ -214,7 +199,7 @@ UtilType::FormattedLabeledBlock SpellPage::CreateFormattedBlock(const SpellBlock
     UtilType::FormattedLabeledBlock block;
     block.labelParts.push_back({spellBlock.name, UtilType::TextOptions(FontType::ArialBold, 10), false});
     block.textSpans.push_back({spellBlock.props, UtilType::TextOptions(FontType::ArialItalic, 10), false});
-    block.textSpans.push_back({":", UtilType::TextOptions(FontType::Arial, 10), false});
+    block.textSpans.push_back({":", UtilType::TextOptions(FontType::Arial, 10), false, false, true});
     block.textSpans.push_back(
         {spellBlock.concentration, UtilType::TextOptions(FontType::ArialBold, 10), false});
     block.textSpans.push_back({spellBlock.description, UtilType::TextOptions(FontType::Arial, 10), false});

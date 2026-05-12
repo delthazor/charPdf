@@ -82,7 +82,10 @@ bool StripOneTrailingBracketContext(std::string& s)
     }
     if (depth != 0 || j != s.size() - 1) { return false; }
     s.resize(pos);
-    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    while (!s.empty() && s.back() == ' ')
+    {
+        s.pop_back();
+    }
     return true;
 }
 
@@ -105,7 +108,10 @@ bool StripOneTrailingParenContext(std::string& s)
     }
     if (depth != 0 || j != s.size() - 1) { return false; }
     s.resize(pos);
-    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    while (!s.empty() && s.back() == ' ')
+    {
+        s.pop_back();
+    }
     return true;
 }
 
@@ -114,9 +120,15 @@ bool StripOneTrailingParenContext(std::string& s)
 std::string SpellBracketSuffixAsParenForm(const std::string& displayName)
 {
     std::string s = displayName;
-    while (!s.empty() && std::isspace(static_cast<unsigned char>(s.back()))) { s.pop_back(); }
+    while (!s.empty() && std::isspace(static_cast<unsigned char>(s.back())))
+    {
+        s.pop_back();
+    }
     size_t lead = 0;
-    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead]))) { ++lead; }
+    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead])))
+    {
+        ++lead;
+    }
     if (lead > 0) { s.erase(0, lead); }
 
     const size_t pos = s.rfind(" [");
@@ -134,7 +146,10 @@ std::string SpellBracketSuffixAsParenForm(const std::string& displayName)
     }
     if (depth != 0 || j != s.size() - 1) { return ""; }
     std::string base = s.substr(0, pos);
-    while (!base.empty() && std::isspace(static_cast<unsigned char>(base.back()))) { base.pop_back(); }
+    while (!base.empty() && std::isspace(static_cast<unsigned char>(base.back())))
+    {
+        base.pop_back();
+    }
     const std::string inner = s.substr(pos + 2, j - (pos + 2));
     return base + " (" + inner + ")";
 }
@@ -229,7 +244,7 @@ std::vector<UtilType::StyledWord> CollectStyledLine(const std::vector<UtilType::
         if (w.forceLineBreakBefore && !outLine.empty()) { return outLine; }
 
         const bool firstOnLine = outLine.empty();
-        const double spaceW = firstOnLine ? 0 : measure(" ", w.textOptions);
+        const double spaceW = (firstOnLine || w.noSpaceBefore) ? 0 : measure(" ", w.textOptions);
         const double wordW = measure(w.text, w.textOptions);
         const double withWord = runW + spaceW + wordW;
         if (!firstOnLine && withWord > maxWidth) { return outLine; }
@@ -315,9 +330,15 @@ std::string BuildFullTraitsText(const Config& characterConfig, const UtilType::T
 std::string SpellNameForCatalogLookup(const std::string& displayName)
 {
     std::string s = displayName;
-    while (!s.empty() && s.back() == ' ') { s.pop_back(); }
+    while (!s.empty() && s.back() == ' ')
+    {
+        s.pop_back();
+    }
     size_t lead = 0;
-    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead]))) { ++lead; }
+    while (lead < s.size() && std::isspace(static_cast<unsigned char>(s[lead])))
+    {
+        ++lead;
+    }
     if (lead > 0) { s.erase(0, lead); }
 
     for (;;)
@@ -377,10 +398,7 @@ std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::S
                 if (spellIt == spellsCatalog.byName.end())
                 {
                     const std::string bracketKey = SpellBracketSuffixAsParenForm(trimmed);
-                    if (!bracketKey.empty() && bracketKey != trimmed)
-                    {
-                        spellIt = findSpellIt(bracketKey);
-                    }
+                    if (!bracketKey.empty() && bracketKey != trimmed) { spellIt = findSpellIt(bracketKey); }
                 }
                 if (spellIt == spellsCatalog.byName.end())
                 {
@@ -394,8 +412,8 @@ std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::S
                 }
                 if (spellIt == spellsCatalog.byName.end())
                 {
-                    Utilities::LogError("ERROR: Spell data is missing for spell: " + name
-                                        + " (tried trimmed / bracket-as-paren / stripped keys)");
+                    Utilities::LogError("ERROR: Spell data is missing for spell: " + name +
+                                        " (tried trimmed / bracket-as-paren / stripped keys)");
                     continue;
                 }
                 const std::string& canonicalKey = spellIt->first;
@@ -410,8 +428,8 @@ std::string BuildFullSpellsText(const Config& characterConfig, const UtilType::S
                     }
 
                     std::string desc = spellIt->second.value("description", std::string());
-                    if (spellIt->second.contains("concentration")
-                        && spellIt->second.value("concentration", true))
+                    if (spellIt->second.contains("concentration") &&
+                        spellIt->second.value("concentration", true))
                     {
                         desc = "Requires Concentration! " + desc;
                     }
@@ -500,37 +518,24 @@ void TrimTrailingAsciiSpaces(std::string& s)
     }
 }
 
-size_t FindLastColonSpaceAtParenDepthZero(const std::string& block)
+size_t FindFirstColonSpaceAtParenDepthZero(const std::string& block)
 {
     int depth = 0;
-    size_t last = std::string::npos;
     for (size_t i = 0; i + 1 < block.size(); ++i)
     {
         const char c = block[i];
-        if (c == '(')
-        {
-            ++depth;
-        }
-        else if (c == ')' && depth > 0)
-        {
-            --depth;
-        }
-        else if (c == ':' && block[i + 1] == ' ' && depth == 0)
-        {
-            last = i;
-        }
+        if (c == '(') { ++depth; }
+        else if (c == ')' && depth > 0) { --depth; }
+        else if (c == ':' && block[i + 1] == ' ' && depth == 0) { return i; }
     }
-    return last;
+    return std::string::npos;
 }
 
 int CalcModFromStatVal(int statVal) { return (statVal - 10) / 2; }
 
 std::string FormatSignedInt(int value)
 {
-    if (value >= 0)
-    {
-        return "+" + std::to_string(value);
-    }
+    if (value >= 0) { return "+" + std::to_string(value); }
     return std::to_string(value);
 }
 

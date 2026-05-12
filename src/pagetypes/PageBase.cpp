@@ -20,23 +20,48 @@ void PageBase::PrintStyledWordsLine(const UtilType::MeasureFn& measure,
                                     double currentY,
                                     double fontSize)
 {
-    double x = lineStartX;
-    for (size_t i = 0; i < lineWords.size(); ++i)
+    const size_t n = lineWords.size();
+    std::vector<double> edge(n + 1);
+    std::vector<double> runW(n);
+    edge[0] = lineStartX;
+    for (size_t i = 0; i < n; ++i)
     {
         const UtilType::StyledWord& w = lineWords[i];
-        const std::string run = (i > 0 ? " " : "") + w.text;
-        const double runWidth = measure(run, w.textOptions);
-        if (w.underline) { doc.DrawTextUnderline(x, currentY, runWidth, w.textOptions.fontType, fontSize); }
-        x += runWidth;
+        const std::string run =
+            ((i > 0 && !lineWords[i].noSpaceBefore) ? " " : "") + w.text;
+        runW[i] = measure(run, w.textOptions);
+        edge[i + 1] = edge[i] + runW[i];
     }
-    x = lineStartX;
-    for (size_t i = 0; i < lineWords.size(); ++i)
+
+    auto sameUnderlineStyle = [](const UtilType::StyledWord& a, const UtilType::StyledWord& b)
+    {
+        return a.textOptions.fontType == b.textOptions.fontType
+               && a.textOptions.fontSize == b.textOptions.fontSize;
+    };
+
+    for (size_t i = 0; i < n;)
+    {
+        if (!lineWords[i].underline)
+        {
+            ++i;
+            continue;
+        }
+        size_t j = i;
+        while (j + 1 < n && lineWords[j + 1].underline && sameUnderlineStyle(lineWords[i], lineWords[j + 1]))
+        {
+            ++j;
+        }
+        doc.DrawTextUnderline(
+            edge[i], currentY, edge[j + 1] - edge[i], lineWords[i].textOptions.fontType, fontSize);
+        i = j + 1;
+    }
+
+    for (size_t i = 0; i < n; ++i)
     {
         const UtilType::StyledWord& w = lineWords[i];
-        const std::string run = (i > 0 ? " " : "") + w.text;
-        const double runWidth = measure(run, w.textOptions);
-        doc.AddText(run, x, currentY, w.textOptions);
-        x += runWidth;
+        const std::string run =
+            ((i > 0 && !lineWords[i].noSpaceBefore) ? " " : "") + w.text;
+        doc.AddText(run, edge[i], currentY, w.textOptions);
     }
 }
 
@@ -167,7 +192,11 @@ size_t PageBase::AddWrappedFormattedText(double startX,
         bool firstWord = true;
         for (const auto& word : Utilities::SplitIntoWords(span.text))
         {
-            words.push_back({word, opts, span.underline, firstWord && span.forceLineBreakBefore});
+            words.push_back({word,
+                             opts,
+                             span.underline,
+                             firstWord && span.forceLineBreakBefore,
+                             firstWord && span.joinToPrevious});
             firstWord = false;
         }
     }

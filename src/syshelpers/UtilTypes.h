@@ -61,6 +61,8 @@ struct FormattedTextSpan
     TextOptions textOptions;
     bool underline = false;
     bool forceLineBreakBefore = false;
+    /// If true, the first word of this span is set flush against the previous word (no glue space).
+    bool joinToPrevious = false;
 };
 
 struct FormattedLabeledBlock
@@ -75,6 +77,7 @@ struct StyledWord
     TextOptions textOptions;
     bool underline = false;
     bool forceLineBreakBefore = false;
+    bool noSpaceBefore = false;
 };
 
 struct TraitsCatalog
