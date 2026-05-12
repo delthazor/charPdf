@@ -120,8 +120,13 @@ void TextBox::RenderPlainTextLines(const std::vector<std::string>& lines)
             continue;
         }
 
-        const size_t linesUsed = page.AddWrappedPlainText(
-            line, x, formatter.GetCurrentY(), formatter.GetRemainingLineWidthsSpan(), lineHeight, opts);
+        const size_t linesUsed = page.AddWrappedPlainText(line,
+                                                          x,
+                                                          formatter.GetCurrentY(),
+                                                          formatter.GetRemainingLineWidthsSpan(),
+                                                          lineHeight,
+                                                          opts,
+                                                          true);
         formatter.AdvanceLines(linesUsed);
     }
 }

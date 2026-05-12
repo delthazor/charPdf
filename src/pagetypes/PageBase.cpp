@@ -146,7 +146,8 @@ size_t PageBase::AddWrappedPlainText(const std::string& text,
                                      double startY,
                                      std::span<const double> lineWidths,
                                      double lineHeight,
-                                     const UtilType::TextOptions& textOpts)
+                                     const UtilType::TextOptions& textOpts,
+                                     bool indentWrappedContinuationLines)
 {
     if (lineWidths.empty() || lineHeight <= 0) { return 0; }
 
@@ -158,13 +159,19 @@ size_t PageBase::AddWrappedPlainText(const std::string& text,
     const UtilType::MeasureFn measure = [this](const std::string& t, const UtilType::TextOptions& o)
     { return CalculateTextWidth(t, o); };
 
+    const double oneSpaceW =
+        indentWrappedContinuationLines ? measure(" ", textOpts) : 0.0;
+
     while (wordIndex < words.size())
     {
         Utilities::EnsureLineLimit(totalLines);
-        const double maxWidth = Utilities::RemainingLineWidth(lineWidths, totalLines);
+        const bool isContinuation = indentWrappedContinuationLines && totalLines > 0;
+        const double fullWidth = Utilities::RemainingLineWidth(lineWidths, totalLines);
+        const double maxWidth = isContinuation ? std::max(0.0, fullWidth - oneSpaceW) : fullWidth;
+        const double lineX = isContinuation ? startX + oneSpaceW : startX;
         const std::string line = Utilities::CollectPlainLine(words, wordIndex, maxWidth, textOpts, measure);
         if (line.empty()) { break; }
-        doc.AddText(line, startX, currentY, textOpts);
+        doc.AddText(line, lineX, currentY, textOpts);
         currentY += lineHeight;
         totalLines++;
     }

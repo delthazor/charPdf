@@ -37,7 +37,8 @@ class PageBase
                                double startY,
                                std::span<const double> lineWidths,
                                double lineHeight,
-                               const UtilType::TextOptions& textOpts);
+                               const UtilType::TextOptions& textOpts,
+                               bool indentWrappedContinuationLines = false);
 
     size_t AddWrappedFormattedText(double startX,
                                    double startY,
