@@ -138,6 +138,24 @@ void RequireNonNegInt(std::vector<Issue>& out,
     }
 }
 
+/// If `key` is absent, no issue. If present, must be a non-negative int.
+void OptionalNonNegInt(std::vector<Issue>& out,
+                        const nlohmann::ordered_json& obj,
+                        const std::string& path,
+                        const char* key)
+{
+    if (!obj.is_object() || !obj.contains(key)) { return; }
+    if (!obj.at(key).is_number_integer())
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "expected int"});
+        return;
+    }
+    if (obj.at(key).get<int>() < 0)
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "must be >= 0"});
+    }
+}
+
 void RequireNonZeroNonNegInt(std::vector<Issue>& out,
                              const nlohmann::ordered_json& obj,
                              const std::string& path,
@@ -492,7 +510,7 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
                 RequireNonZeroNonNegInt(issues, classObj, basePath, "level");
 
                 RequireNonEmptyString(issues, classObj, basePath, "hitDice");
-                RequireNonNegInt(issues, classObj, basePath, "resourcePoints");
+                OptionalNonNegInt(issues, classObj, basePath, "resourcePoints");
                 RequireString(issues, classObj, basePath, "castStat");
                 RequireString(issues, classObj, basePath, "subclass");
 
