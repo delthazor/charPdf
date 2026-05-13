@@ -33,6 +33,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QResizeEvent>
 #include <QSignalBlocker>
 #include <QShowEvent>
@@ -1074,10 +1075,19 @@ void MainWindow::LoadSelectedEquipmentIntoEditor()
     else
     {
         if (!obj.contains("ac") || !obj["ac"].is_object()) { obj["ac"] = nlohmann::ordered_json::object(); }
-        if (equipAcBase) { equipAcBase->setValue(GetIntOrDefault(obj["ac"], "base", 0)); }
-        if (equipAcModStat) { equipAcModStat->setText(QString::fromStdString(GetStringOrDefault(obj["ac"], "modstat", ""))); }
+        const bool statMode = obj["ac"].contains("base");
+        if (equipAcModeStat && equipAcModeFix)
+        {
+            QSignalBlocker blockStat(equipAcModeStat);
+            QSignalBlocker blockFix(equipAcModeFix);
+            equipAcModeStat->setChecked(statMode);
+            equipAcModeFix->setChecked(!statMode);
+        }
+        if (equipArmorAcStack) { equipArmorAcStack->setCurrentIndex(statMode ? 0 : 1); }
+        if (equipAcBase) { equipAcBase->setValue(GetIntOrDefault(obj["ac"], "base", 14)); }
+        if (equipAcModStat) { equipAcModStat->setText(QString::fromStdString(GetStringOrDefault(obj["ac"], "modstat", "dexterity"))); }
         if (equipAcModCap) { equipAcModCap->setValue(GetIntOrDefault(obj["ac"], "modcap", 0)); }
-        if (equipAcFixMod) { equipAcFixMod->setValue(GetIntOrDefault(obj["ac"], "fixmod", 0)); }
+        if (equipAcFixMod) { equipAcFixMod->setValue(GetIntOrDefault(obj["ac"], "fixmod", 2)); }
     }
 }
 
@@ -1145,40 +1155,111 @@ void MainWindow::OnEquipmentCommonFieldChanged(const QString& value)
 
 void MainWindow::OnEquipmentAcBaseChanged(int value)
 {
+    if (!equipAcModeStat || !equipAcModeStat->isChecked()) { return; }
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
     if (!obj) { return; }
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["base"] = value;
+    (*obj)["ac"].erase("fixmod");
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
 
 void MainWindow::OnEquipmentAcModStatChanged(const QString& value)
 {
+    if (!equipAcModeStat || !equipAcModeStat->isChecked()) { return; }
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
     if (!obj) { return; }
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["modstat"] = value.toStdString();
+    (*obj)["ac"].erase("fixmod");
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
 
 void MainWindow::OnEquipmentAcModCapChanged(int value)
 {
+    if (!equipAcModeStat || !equipAcModeStat->isChecked()) { return; }
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
     if (!obj) { return; }
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["modcap"] = value;
+    (*obj)["ac"].erase("fixmod");
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
 
 void MainWindow::OnEquipmentAcFixModChanged(int value)
 {
+    if (!equipAcModeFix || !equipAcModeFix->isChecked()) { return; }
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
     if (!obj) { return; }
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["fixmod"] = value;
+    (*obj)["ac"].erase("base");
+    (*obj)["ac"].erase("modstat");
+    (*obj)["ac"].erase("modcap");
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
+void MainWindow::ApplyArmorAcModeToDocument(bool statBased)
+{
+    nlohmann::ordered_json* obj = CurrentEquipmentItem();
+    if (!obj || !equipKind || equipKind->currentText().toStdString() != "armors") { return; }
+
+    if (statBased)
+    {
+        int b = equipAcBase ? equipAcBase->value() : 14;
+        if (b < 1) { b = 14; }
+        std::string ms = equipAcModStat ? equipAcModStat->text().toStdString() : "";
+        if (ms.empty()) { ms = "dexterity"; }
+        int mc = equipAcModCap ? equipAcModCap->value() : 0;
+        if (mc < 0) { mc = 0; }
+        (*obj)["ac"] = nlohmann::ordered_json({{"base", b}, {"modstat", ms}, {"modcap", mc}});
+        if (equipArmorAcStack) { equipArmorAcStack->setCurrentIndex(0); }
+        if (equipAcBase)
+        {
+            QSignalBlocker blockBase(equipAcBase);
+            equipAcBase->setValue(b);
+        }
+        if (equipAcModStat)
+        {
+            QSignalBlocker blockMs(equipAcModStat);
+            equipAcModStat->setText(QString::fromStdString(ms));
+        }
+        if (equipAcModCap)
+        {
+            QSignalBlocker blockMc(equipAcModCap);
+            equipAcModCap->setValue(mc);
+        }
+    }
+    else
+    {
+        int fm = equipAcFixMod ? equipAcFixMod->value() : 2;
+        if (fm < 1) { fm = 2; }
+        (*obj)["ac"] = nlohmann::ordered_json({{"fixmod", fm}});
+        if (equipArmorAcStack) { equipArmorAcStack->setCurrentIndex(1); }
+        if (equipAcFixMod)
+        {
+            QSignalBlocker blockFm(equipAcFixMod);
+            equipAcFixMod->setValue(fm);
+        }
+    }
+}
+
+void MainWindow::OnEquipmentAcModeStatToggled(bool checked)
+{
+    if (!checked) { return; }
+    ApplyArmorAcModeToDocument(true);
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
+void MainWindow::OnEquipmentAcModeFixToggled(bool checked)
+{
+    if (!checked) { return; }
+    ApplyArmorAcModeToDocument(false);
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
@@ -1906,19 +1987,41 @@ QWidget* MainWindow::BuildEquipmentTab()
 
     equipArmorBox = new QGroupBox("Armor AC");
     editorLayout->addWidget(equipArmorBox);
-    QFormLayout* armorForm = new QFormLayout();
-    equipArmorBox->setLayout(armorForm);
+    QVBoxLayout* armorOuter = new QVBoxLayout();
+    equipArmorBox->setLayout(armorOuter);
+    QHBoxLayout* acModeRow = new QHBoxLayout();
+    acModeRow->addWidget(new QLabel("AC mode:"));
+    equipAcModeStat = new QRadioButton("Stat-based AC");
+    equipAcModeFix = new QRadioButton("Fixed AC (fixmod)");
+    acModeRow->addWidget(equipAcModeStat);
+    acModeRow->addWidget(equipAcModeFix);
+    acModeRow->addStretch();
+    armorOuter->addLayout(acModeRow);
+
+    equipArmorAcStack = new QStackedWidget();
+    armorOuter->addWidget(equipArmorAcStack);
+
+    QWidget* statAcPage = new QWidget();
+    QFormLayout* statAcForm = new QFormLayout();
+    statAcPage->setLayout(statAcForm);
     equipAcBase = new QSpinBox();
     equipAcBase->setRange(1, 50);
     equipAcModStat = new QLineEdit();
     equipAcModCap = new QSpinBox();
     equipAcModCap->setRange(0, 20);
+    statAcForm->addRow("Base AC", equipAcBase);
+    statAcForm->addRow("Mod stat (e.g. dexterity)", equipAcModStat);
+    statAcForm->addRow("Mod cap (0 = none)", equipAcModCap);
+
+    QWidget* fixAcPage = new QWidget();
+    QFormLayout* fixAcForm = new QFormLayout();
+    fixAcPage->setLayout(fixAcForm);
     equipAcFixMod = new QSpinBox();
     equipAcFixMod->setRange(1, 20);
-    armorForm->addRow("Base AC", equipAcBase);
-    armorForm->addRow("Mod stat (e.g. dexterity)", equipAcModStat);
-    armorForm->addRow("Mod cap (0 = none)", equipAcModCap);
-    armorForm->addRow("Fix mod (shield etc.)", equipAcFixMod);
+    fixAcForm->addRow("AC bonus (shield, etc.)", equipAcFixMod);
+
+    equipArmorAcStack->addWidget(statAcPage);
+    equipArmorAcStack->addWidget(fixAcPage);
 
     equipWeaponBox->setVisible(false);
     equipDmgBaseGroup->setVisible(false);
@@ -1942,6 +2045,9 @@ QWidget* MainWindow::BuildEquipmentTab()
     QObject::connect(equipAltDmgDice, &QLineEdit::textChanged, this, &MainWindow::OnEquipmentAltDmgDiceChanged);
     QObject::connect(equipAltDmgBonus, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnEquipmentAltDmgBonusChanged);
     QObject::connect(equipAltDmgType, &QLineEdit::textChanged, this, &MainWindow::OnEquipmentAltDmgTypeChanged);
+
+    QObject::connect(equipAcModeStat, &QRadioButton::toggled, this, &MainWindow::OnEquipmentAcModeStatToggled);
+    QObject::connect(equipAcModeFix, &QRadioButton::toggled, this, &MainWindow::OnEquipmentAcModeFixToggled);
 
     QObject::connect(equipAcBase, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnEquipmentAcBaseChanged);
     QObject::connect(equipAcModStat, &QLineEdit::textChanged, this, &MainWindow::OnEquipmentAcModStatChanged);

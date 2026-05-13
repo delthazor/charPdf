@@ -464,13 +464,20 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
                 EnsureNonZeroNonNegInt(ac, "base", 14);
                 EnsureNonEmptyString(ac, "modstat", "dexterity");
                 EnsureNonNegInt(ac, "modcap", 2);
-                if (ac.contains("fixmod")) { ac.erase("fixmod"); }
+                const int baseVal = ac["base"].get<int>();
+                const std::string modstatVal = ac["modstat"].get<std::string>();
+                const int modcapVal = ac["modcap"].get<int>();
+                ac = nlohmann::ordered_json(
+                    {{"base", baseVal}, {"modstat", modstatVal}, {"modcap", modcapVal}});
             }
             else
             {
                 EnsureNonZeroNonNegInt(ac, "fixmod", 2);
                 if (ac.contains("modstat")) { ac.erase("modstat"); }
                 if (ac.contains("modcap")) { ac.erase("modcap"); }
+                if (ac.contains("base")) { ac.erase("base"); }
+                const int fixVal = ac["fixmod"].get<int>();
+                ac = nlohmann::ordered_json({{"fixmod", fixVal}});
             }
         }
     }

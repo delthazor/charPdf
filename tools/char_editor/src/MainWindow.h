@@ -25,6 +25,7 @@ class QComboBox;
 class QGroupBox;
 class QListWidgetItem;
 class QStackedWidget;
+class QRadioButton;
 class QEvent;
 
 namespace CharEditor
@@ -98,6 +99,9 @@ class MainWindow : public QMainWindow
     void OnEquipmentAcModStatChanged(const QString& value);
     void OnEquipmentAcModCapChanged(int value);
     void OnEquipmentAcFixModChanged(int value);
+    void OnEquipmentAcModeStatToggled(bool checked);
+    void OnEquipmentAcModeFixToggled(bool checked);
+    void ApplyArmorAcModeToDocument(bool statBased);
     void OnEquipmentRangeChanged(const QString& value);
     void OnEquipmentDmgDiceChanged(const QString& value);
     void OnEquipmentDmgBonusChanged(int value);
@@ -225,6 +229,9 @@ class MainWindow : public QMainWindow
     QLineEdit* equipAltDmgType = nullptr;
     StringListEditor* equipDmgExtra = nullptr;
     QGroupBox* equipArmorBox = nullptr;
+    QRadioButton* equipAcModeStat = nullptr;
+    QRadioButton* equipAcModeFix = nullptr;
+    QStackedWidget* equipArmorAcStack = nullptr;
     QSpinBox* equipAcBase = nullptr;
     QLineEdit* equipAcModStat = nullptr;
     QSpinBox* equipAcModCap = nullptr;
