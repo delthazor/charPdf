@@ -1,6 +1,6 @@
 {
     "name": "Grimnir",
-    "nameLetterSpacing": 5,
+    "nameLetterSpacing": 5.0,
     "background": "Folk Hero",
     "race": "High Elf",
     "stats": {
@@ -100,6 +100,7 @@
         "ranger": {
             "level": 7,
             "hitDice": "d10",
+            "resourcePoints": 0,
             "castStat": "wisdom",
             "subclass": "Fey Wanderer",
             "spellslots": {
@@ -164,7 +165,9 @@
                             "bonus": 0,
                             "type": "slashing"
                         },
-                        "extra": []
+                        "extra": [
+                            "+1 fire"
+                        ]
                     }
                 },
                 {
@@ -204,7 +207,6 @@
                 {
                     "name": "Longbow",
                     "type": "Longbow",
-                    "extratext": "",
                     "props": [
                         "heavy",
                         "two-handed"
@@ -218,7 +220,8 @@
                         "alt": {},
                         "extra": []
                     },
-                    "range": "150/600"
+                    "range": "150/600",
+                    "extratext": ""
                 }
             ],
             "armors": []

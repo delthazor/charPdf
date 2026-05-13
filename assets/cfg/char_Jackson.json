@@ -62,14 +62,14 @@
             "smith's tools"
         ],
         "languages": [
-            "Common",
-            "Infernal"
+            "Infernal",
+            "Common"
         ],
         "armors": [
             "Light armor",
             "Medium armor",
             "Heavy armor",
-            "Shields"
+            "Shield"
         ],
         "simpleWeapons": [
             "Javelin",
@@ -130,8 +130,8 @@
                     "Divine Smite",
                     "Lay on Hands",
                     "Channel Divinity",
-                    "-Conquering Presence",
-                    "-Guided Strike"
+                    " - Conquering Presence",
+                    " - Guided Strike"
                 ],
                 "1": [
                     "Command",
@@ -189,19 +189,19 @@
                 {
                     "name": "Battle Axe +1",
                     "type": "Battle Axe",
-                    "extratext": "+1 magic weapon",
+                    "extratext": "",
                     "props": [
                         "versatile"
                     ],
                     "damage": {
                         "base": {
                             "dice": "1d8",
-                            "bonus": 0,
+                            "bonus": 1,
                             "type": "slashing"
                         },
                         "alt": {
                             "dice": "1d10",
-                            "bonus": 0,
+                            "bonus": 1,
                             "type": "slashing"
                         },
                         "extra": []
@@ -218,7 +218,7 @@
                     }
                 },
                 {
-                    "name": "Shield",
+                    "name": "Bulwark of the Iron Will",
                     "type": "Shield",
                     "extratext": "",
                     "ac": {
@@ -269,7 +269,9 @@
         }
     },
     "backpack": {
-        "accessories": [],
+        "accessories": [
+            "Banner of the Iron Vanguard"
+        ],
         "consumables": [
             "Rations(1 day) x10",
             "STR Poti (+1 STR, 2-3h)"

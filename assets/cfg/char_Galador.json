@@ -1,6 +1,6 @@
 {
     "name": "Galador",
-    "nameLetterSpacing": 5,
+    "nameLetterSpacing": 5.0,
     "background": "Sage",
     "race": "Half Elf",
     "stats": {
@@ -60,9 +60,9 @@
         "languages": [
             "Elvish",
             "Common",
-            "Dwarcish",
             "Goblin",
-            "Orc"
+            "Orc",
+            "Dwarvish"
         ],
         "armors": [],
         "simpleWeapons": [
@@ -179,7 +179,6 @@
                 {
                     "name": "Light Crossbow",
                     "type": "Light Crossbow",
-                    "extratext": "",
                     "props": [
                         "loading",
                         "two-handed"
@@ -193,10 +192,20 @@
                         "alt": {},
                         "extra": []
                     },
-                    "range": "80/320"
+                    "range": "80/320",
+                    "extratext": ""
                 }
             ],
-            "armors": []
+            "armors": [
+                {
+                    "name": "Enchanted Red Cloack",
+                    "type": "Acessory",
+                    "extratext": "",
+                    "ac": {
+                        "fixmod": 1
+                    }
+                }
+            ]
         },
         "stashed": {
             "weapons": [
@@ -245,9 +254,8 @@
             "Rope (hemphen, 50 ft.)",
             "Ink bottle (1 ounce)",
             "Ink pen",
-            "Amall knife",
-            "Common clothes",
-            "Red cloak"
+            "Small knife",
+            "Common clothes"
         ]
     }
 }
