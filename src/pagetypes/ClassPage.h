@@ -26,5 +26,6 @@ class ClassPage : public PageBase
 
     const Config classData;
     std::vector<std::vector<Coords>> const spellSlotMarker;
+    std::vector<std::vector<Coords>> const resourcePointMarker;
     std::vector<Coords> const spellBoxMatrix;
 };

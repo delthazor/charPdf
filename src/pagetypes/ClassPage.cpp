@@ -1,5 +1,6 @@
 #include "pagetypes/ClassPage.h"
 #include "elements/TextBox.h"
+#include "syshelpers/PageConstants.h"
 #include "syshelpers/Utilities.h"
 
 using namespace PageConstants;
@@ -94,6 +95,67 @@ std::vector<std::vector<Coords>> MakeSpellSlotMarkers(double leftEdgeRef)
     return out;
 }
 
+std::vector<std::vector<Coords>> MakeResourcePointMarkers(double leftEdgeRef)
+{
+    std::vector<std::vector<Coords>> out;
+    out.push_back({Coords(leftEdgeRef + 212.0, 146.0)});
+    out.push_back({Coords(leftEdgeRef + 207.0, 146.0), Coords(leftEdgeRef + 217.0, 146.0)});
+    out.push_back({Coords(leftEdgeRef + 207.2, 144.0),
+                   Coords(leftEdgeRef + 218.2, 144.0),
+                   Coords(leftEdgeRef + 212.6, 152.5)});
+    out.push_back({Coords(leftEdgeRef + 207.6, 140.6),
+                   Coords(leftEdgeRef + 219.5, 140.0),
+                   Coords(leftEdgeRef + 202.5, 150.6),
+                   Coords(leftEdgeRef + 213.8, 149.8)});
+    out.push_back({Coords(leftEdgeRef + 211.5, 146.5),
+                   Coords(leftEdgeRef + 203.6, 138.5),
+                   Coords(leftEdgeRef + 219.9, 138.5),
+                   Coords(leftEdgeRef + 203.6, 153.0),
+                   Coords(leftEdgeRef + 219.9, 153.0)});
+    out.push_back({Coords(leftEdgeRef + 211.5, 146.5),
+                   Coords(leftEdgeRef + 207.1, 137.8),
+                   Coords(leftEdgeRef + 219.5, 138.9),
+                   Coords(leftEdgeRef + 202.0, 148.3),
+                   Coords(leftEdgeRef + 221.0, 149.0),
+                   Coords(leftEdgeRef + 212.5, 156.3)});
+    out.push_back({Coords(leftEdgeRef + 212.0, 146.5),
+                   Coords(leftEdgeRef + 209.0, 134.5),
+                   Coords(leftEdgeRef + 201.5, 141.5),
+                   Coords(leftEdgeRef + 220.5, 138.4),
+                   Coords(leftEdgeRef + 202.5, 151.5),
+                   Coords(leftEdgeRef + 222.0, 149.5),
+                   Coords(leftEdgeRef + 213.5, 157.0)});
+    out.push_back({Coords(leftEdgeRef + 212.0, 146.0),
+                   Coords(leftEdgeRef + 210.0, 130.5),
+                   Coords(leftEdgeRef + 201.5, 135.5),
+                   Coords(leftEdgeRef + 198.5, 145.0),
+                   Coords(leftEdgeRef + 222.0, 135.5),
+                   Coords(leftEdgeRef + 201.5, 155.0),
+                   Coords(leftEdgeRef + 224.5, 147.0),
+                   Coords(leftEdgeRef + 215.5, 157.0)});
+    out.push_back({Coords(leftEdgeRef + 195.0, 146.5),
+                   Coords(leftEdgeRef + 205.0, 146.5),
+                   Coords(leftEdgeRef + 215.0, 146.5),
+                   Coords(leftEdgeRef + 225.0, 146.5),
+                   Coords(leftEdgeRef + 198.0, 136.5),
+                   Coords(leftEdgeRef + 208.0, 136.5),
+                   Coords(leftEdgeRef + 222.0, 136.5),
+                   Coords(leftEdgeRef + 208.0, 126.5),
+                   Coords(leftEdgeRef + 200.0, 156.5)});
+    out.push_back({Coords(leftEdgeRef + 195.0, 146.5),
+                   Coords(leftEdgeRef + 205.0, 146.5),
+                   Coords(leftEdgeRef + 215.0, 146.5),
+                   Coords(leftEdgeRef + 225.0, 146.5),
+                   Coords(leftEdgeRef + 198.0, 136.5),
+                   Coords(leftEdgeRef + 208.0, 136.5),
+                   Coords(leftEdgeRef + 222.0, 136.5),
+                   Coords(leftEdgeRef + 208.0, 126.5),
+                   Coords(leftEdgeRef + 200.0, 156.5),
+                   Coords(leftEdgeRef + 215.0, 156.5)});
+
+    return out;
+}
+
 std::vector<Coords> MakeSpellBoxMatrix(double leftEdgeRef)
 {
     std::vector<Coords> out;
@@ -121,6 +183,7 @@ ClassPage::ClassPage(PdfDoc& doc, const Config& config, PageSide side, const Pag
     : PageBase(doc, config, side, params),
       classData(config.getObject("classes").getObject(params.at("classname"))),
       spellSlotMarker(MakeSpellSlotMarkers(LEFT_EDGE_REF)),
+      resourcePointMarker(MakeResourcePointMarkers(LEFT_EDGE_REF)),
       spellBoxMatrix(MakeSpellBoxMatrix(LEFT_EDGE_REF))
 {
 }
@@ -227,10 +290,25 @@ void ClassPage::AddResourcePoints()
 
     Utilities::LogInfo(" - Adding resource points");
     const int resourcePoints = classData.getInt("resourcePoints");
-    doc.AddText(std::to_string(resourcePoints),
-                LEFT_EDGE_REF + 202,
-                130,
-                UtilType::TextOptions(FontType::Seagram, 26));
+
+    if (resourcePoints < 1)
+    {
+        Utilities::LogError("Resource point amount invalid");
+        return;
+    }
+
+    if (resourcePointMarker.size() < static_cast<size_t>(resourcePoints))
+    {
+        Utilities::LogError("No coord set given for resource points: " + std::to_string(resourcePoints));
+        return;
+    }
+
+    const auto& row = resourcePointMarker[resourcePoints - 1];
+    for (size_t i = 0; i < row.size(); ++i)
+    {
+        const auto& coords = row[i];
+        doc.DrawCircle(coords.x, coords.y, 4);
+    }
 }
 
 void ClassPage::AddCastInfo()
