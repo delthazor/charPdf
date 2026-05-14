@@ -142,7 +142,8 @@ std::string WeaponPrinter::BuildWeaponTotalString(const int abilityMod,
                                                   const UtilType::DamageConfig& damage) const
 {
     const int hitTotal = abilityMod + (weaponCfg.proficient ? proficiencyBonus : 0) + damage.bonus;
-    const std::string dmgDisplay = BuildDamageSumDisplay(abilityMod, damage) + " " + damage.type;
+    const std::string dmgDisplay =
+        BuildDamageSumDisplay(abilityMod, damage) + " " + damage.type + BuildExtraDamages();
 
     return std::string(" Hit Chance: ") + Utilities::FormatSignedInt(hitTotal) + ", Dmg: " + dmgDisplay;
 }
@@ -154,7 +155,6 @@ std::string WeaponPrinter::BuildDamageSumDisplay(const int abilityMod,
     int bonus = damage.bonus;
     if (weaponCfg.proficient && abilityMod != 0) { bonus += abilityMod; }
     if (bonus != 0) { out += Utilities::FormatSignedInt(bonus); }
-    out += BuildExtraDamages();
     return out;
 }
 
