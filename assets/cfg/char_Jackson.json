@@ -107,7 +107,7 @@
         "paladin": {
             "level": 7,
             "hitDice": "d10",
-            "resourcePoints": 0,
+            "resourcePoints": 1,
             "castStat": "charisma",
             "subclass": "Oath of Conquest",
             "spellslots": {
