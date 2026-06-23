@@ -1,3 +1,4 @@
+# Deploy tools/webrender/ to GitHub Pages (Actions-based; not branch/folder publish).
 name: Deploy Webrender to GitHub Pages
 
 on:
@@ -26,6 +27,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
       - name: Set base URL
         run: |
           OWNER="${{ github.repository_owner }}"
@@ -33,7 +37,7 @@ jobs:
           echo "WEBRENDER_BASE_URL=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_ENV"
 
       - name: Sync webrender cfg and share pages
-        run: tools/webrender/scripts/sync-webrender.sh
+        run: bash tools/webrender/scripts/sync-webrender.sh
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
@@ -49,4 +53,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
