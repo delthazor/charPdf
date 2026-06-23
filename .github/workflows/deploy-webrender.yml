@@ -8,6 +8,7 @@ on:
       - 'assets/cfg/**'
       - 'tools/webrender/**'
       - '.github/workflows/deploy-webrender.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,14 +17,11 @@ permissions:
 
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,6 +40,13 @@ jobs:
         with:
           path: tools/webrender
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
