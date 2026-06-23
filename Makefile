@@ -17,7 +17,7 @@ SOURCES = $(shell find $(SRC_DIR) -name '*.cpp')
 OBJECTS = $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SOURCES))
 DEPS = $(OBJECTS:.o=.d)
 
-.PHONY: all clean run editor run_editor check-character-json
+.PHONY: all clean run editor run_editor check-character-json sync-webrender-cfg serve-webrender webrender
 
 all: $(TARGET)
 
@@ -81,6 +81,17 @@ run_editor: $(EDITOR_TARGET) | $(BUILD_DIR)/assets
 
 clean:
 	rm -rf $(OBJ_DIR) $(TARGET) $(EDITOR_TARGET) $(BUILD_DIR)/*.pdf
+
+WEBRENDER_DIR = tools/webrender
+SYNC_WEBRENDER = $(WEBRENDER_DIR)/scripts/sync-webrender.sh
+
+sync-webrender-cfg:
+	@$(SYNC_WEBRENDER)
+
+serve-webrender: sync-webrender-cfg
+	@cd $(WEBRENDER_DIR) && python3 -m http.server 8765
+
+webrender: serve-webrender
 
 info:
 	@echo "Compiler: $(CXX)"

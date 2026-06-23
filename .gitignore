@@ -16,3 +16,7 @@ assets/*.ttf
 .DS_Store
 output.pdf
 
+# Webrender: local sync output (CI generates fresh copies on deploy)
+tools/webrender/cfg/*.json
+tools/webrender/c/*.html
+

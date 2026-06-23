@@ -48,6 +48,7 @@ class MainWindow : public QMainWindow
     void OnToolbarSave();
     void OnToolbarSaveAs();
     void OnToolbarGenerate();
+    void OnToolbarViewOnWeb();
     void OnRefreshFileListButton();
 
     void OnRootStringChanged(const QString& value);
@@ -148,7 +149,10 @@ class MainWindow : public QMainWindow
 
     QString ProjectRootAbsolute() const;
     QString ResolvePdfAppPath(const QString& projectRoot) const;
+    QString ResolveWebrenderBaseUrl() const;
+    QString DeriveWebrenderSlugFromPath(const QString& filePath) const;
     void RunPdfGeneratorAndShowResult(const QString& projectRoot);
+    void OpenCharacterOnWeb();
 
     CharacterRepository repo;
     CharacterDocument doc;

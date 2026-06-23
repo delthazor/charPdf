@@ -1,0 +1,47 @@
+name: Deploy Webrender to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assets/cfg/**'
+      - 'tools/webrender/**'
+      - '.github/workflows/deploy-webrender.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set base URL
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          echo "WEBRENDER_BASE_URL=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_ENV"
+
+      - name: Sync webrender cfg and share pages
+        run: tools/webrender/scripts/sync-webrender.sh
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: tools/webrender
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

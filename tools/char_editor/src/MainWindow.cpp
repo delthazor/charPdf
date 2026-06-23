@@ -8,6 +8,8 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
+#include <QDesktopServices>
+#include <QUrl>
 #include <QDoubleSpinBox>
 #include <QFormLayout>
 #include <QGroupBox>
@@ -154,11 +156,13 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     QAction* actSave = toolbar->addAction("Save");
     QAction* actSaveAs = toolbar->addAction("Save As");
     QAction* actGenerate = toolbar->addAction("Generate");
+    QAction* actViewOnWeb = toolbar->addAction("View on web");
 
     QObject::connect(actNew, &QAction::triggered, this, &MainWindow::OnToolbarNew);
     QObject::connect(actSave, &QAction::triggered, this, &MainWindow::OnToolbarSave);
     QObject::connect(actSaveAs, &QAction::triggered, this, &MainWindow::OnToolbarSaveAs);
     QObject::connect(actGenerate, &QAction::triggered, this, &MainWindow::OnToolbarGenerate);
+    QObject::connect(actViewOnWeb, &QAction::triggered, this, &MainWindow::OnToolbarViewOnWeb);
 
     QWidget* central = new QWidget();
     setCentralWidget(central);
@@ -335,6 +339,81 @@ void MainWindow::OnToolbarGenerate()
     }
 
     RunPdfGeneratorAndShowResult(root);
+}
+
+void MainWindow::OnToolbarViewOnWeb()
+{
+    OpenCharacterOnWeb();
+}
+
+QString MainWindow::ResolveWebrenderBaseUrl() const
+{
+    const QByteArray env = qgetenv("PDF_WEBRENDER_BASE_URL");
+    if (!env.isEmpty())
+    {
+        QString base = QString::fromUtf8(env).trimmed();
+        while (base.endsWith('/'))
+        {
+            base.chop(1);
+        }
+        return base;
+    }
+    return QStringLiteral("https://delthazor.github.io/charPdf");
+}
+
+QString MainWindow::DeriveWebrenderSlugFromPath(const QString& filePath) const
+{
+    const QString baseName = QFileInfo(filePath).fileName();
+    if (!baseName.startsWith(QStringLiteral("char_"), Qt::CaseInsensitive)
+        || !baseName.endsWith(QStringLiteral(".json"), Qt::CaseInsensitive))
+    {
+        return {};
+    }
+    const QString stem = baseName.left(baseName.size() - 5);
+    return stem.mid(5).toLower();
+}
+
+void MainWindow::OpenCharacterOnWeb()
+{
+    if (!editorWorkspaceOpen_)
+    {
+        QMessageBox::information(
+            this,
+            QStringLiteral("View on web"),
+            QStringLiteral("Select a character file or choose New first."));
+        return;
+    }
+
+    const std::optional<std::string>& pathOpt = doc.FilePath();
+    if (!pathOpt.has_value() || pathOpt->empty())
+    {
+        QMessageBox::information(
+            this,
+            QStringLiteral("View on web"),
+            QStringLiteral("Save the character as char_<name>.json first, then try again."));
+        return;
+    }
+
+    const QString filePath = QString::fromStdString(*pathOpt);
+    const QString slug = DeriveWebrenderSlugFromPath(filePath);
+    if (slug.isEmpty())
+    {
+        QMessageBox::information(
+            this,
+            QStringLiteral("View on web"),
+            QStringLiteral("The character file must be named char_<name>.json (for example char_Celdrick.json)."));
+        return;
+    }
+
+    const QString baseUrl = ResolveWebrenderBaseUrl();
+    const QUrl url(baseUrl + QStringLiteral("/c/") + slug + QStringLiteral(".html"));
+    if (!QDesktopServices::openUrl(url))
+    {
+        QMessageBox::warning(
+            this,
+            QStringLiteral("View on web"),
+            QStringLiteral("Could not open the default browser for:\n%1").arg(url.toString()));
+    }
 }
 
 QString MainWindow::ProjectRootAbsolute() const
