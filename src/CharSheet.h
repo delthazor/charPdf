@@ -10,7 +10,8 @@ class CharSheet
   public:
     CharSheet(const Config& config,
               const UtilType::TraitsCatalog& traitsCatalog,
-              const UtilType::SpellsCatalog& spellsCatalog);
+              const UtilType::SpellsCatalog& spellsCatalog,
+              const std::string& outputPath);
     ~CharSheet() = default;
 
   private:

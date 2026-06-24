@@ -3,18 +3,31 @@ import {
     stripSpellNameForLookup,
 } from './dnd.js';
 
-export function resolveCfgBase() {
-    if (window.location.pathname.includes('/c/')) {
-        return '../cfg/';
+function sharePageDepth() {
+    const marker = '/c/';
+    const idx = window.location.pathname.indexOf(marker);
+    if (idx < 0) {
+        return 0;
     }
-    return 'cfg/';
+    const after = window.location.pathname.slice(idx + marker.length);
+    const segments = after.split('/').filter(Boolean);
+    return segments.length;
+}
+
+function relativePrefix(depth) {
+    if (depth <= 0) {
+        return './';
+    }
+    return '../'.repeat(depth);
+}
+
+export function resolveCfgBase() {
+    const depth = sharePageDepth();
+    return relativePrefix(depth) + 'cfg/';
 }
 
 export function resolveSiteBase() {
-    if (window.location.pathname.includes('/c/')) {
-        return '../';
-    }
-    return './';
+    return relativePrefix(sharePageDepth());
 }
 
 export function getSlugFromPage() {
@@ -43,12 +56,26 @@ export async function loadCharacterManifest() {
     return fetchJson(base + 'characters.json');
 }
 
+export function findManifestEntry(manifest, slug) {
+    if (!manifest || !Array.isArray(manifest.campaigns)) {
+        return null;
+    }
+    const normalized = slug.trim().toLowerCase();
+    for (const campaign of manifest.campaigns) {
+        const characters = campaign.characters || [];
+        for (const entry of characters) {
+            if (entry.slug === normalized) {
+                return entry;
+            }
+        }
+    }
+    return null;
+}
+
 export async function loadCharacterBundle(slug) {
     const base = resolveCfgBase();
     const manifest = await loadCharacterManifest();
-    const entry = manifest.find(function (item) {
-        return item.slug === slug;
-    });
+    const entry = findManifestEntry(manifest, slug);
     if (!entry) {
         throw new Error('Character not found: ' + slug);
     }

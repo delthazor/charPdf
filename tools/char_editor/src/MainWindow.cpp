@@ -16,10 +16,18 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QStringList>
+#include <QDialog>
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QListWidget>
+#include <QMenu>
 #include <QMessageBox>
 #include <QPlainTextEdit>
+#include <QRegularExpression>
+#include <QTreeWidget>
+#include <QTreeWidgetItem>
+#include <QTreeWidgetItemIterator>
+#include <QToolButton>
 #include <QInputDialog>
 #include <QSplitter>
 #include <QSpinBox>
@@ -143,6 +151,62 @@ class ProficiencySkillsGrid : public QWidget
     std::vector<QGroupBox*> groups_;
 };
 
+bool IsValidCampaignName(const QString& campaign)
+{
+    static const QRegularExpression pattern(QStringLiteral("^[A-Za-z0-9_-]+$"));
+    return pattern.match(campaign).hasMatch();
+}
+
+class CampaignSaveDialog : public QDialog
+{
+  public:
+    CampaignSaveDialog(QWidget* parent,
+                       const std::vector<std::string>& campaigns,
+                       const QString& defaultCampaign,
+                       const QString& defaultFilename)
+        : QDialog(parent)
+    {
+        setWindowTitle(QStringLiteral("Save As"));
+
+        auto* layout = new QVBoxLayout(this);
+
+        auto* campaignLabel = new QLabel(QStringLiteral("Campaign folder (under assets/cfg/chars/):"));
+        layout->addWidget(campaignLabel);
+
+        campaignCombo = new QComboBox();
+        campaignCombo->setEditable(true);
+        for (const std::string& campaign : campaigns)
+        {
+            campaignCombo->addItem(QString::fromStdString(campaign));
+        }
+        if (!defaultCampaign.isEmpty())
+        {
+            const int idx = campaignCombo->findText(defaultCampaign);
+            if (idx >= 0) { campaignCombo->setCurrentIndex(idx); }
+            else { campaignCombo->setEditText(defaultCampaign); }
+        }
+        layout->addWidget(campaignCombo);
+
+        auto* filenameLabel = new QLabel(QStringLiteral("Filename:"));
+        layout->addWidget(filenameLabel);
+
+        filenameEdit = new QLineEdit(defaultFilename);
+        layout->addWidget(filenameEdit);
+
+        auto* buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+        QObject::connect(buttons, &QDialogButtonBox::accepted, this, &QDialog::accept);
+        QObject::connect(buttons, &QDialogButtonBox::rejected, this, &QDialog::reject);
+        layout->addWidget(buttons);
+    }
+
+    QString campaign() const { return campaignCombo->currentText().trimmed(); }
+    QString filename() const { return filenameEdit->text().trimmed(); }
+
+  private:
+    QComboBox* campaignCombo = nullptr;
+    QLineEdit* filenameEdit = nullptr;
+};
+
 }
 
 MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam))
@@ -155,13 +219,23 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     QAction* actNew = toolbar->addAction("New");
     QAction* actSave = toolbar->addAction("Save");
     QAction* actSaveAs = toolbar->addAction("Save As");
-    QAction* actGenerate = toolbar->addAction("Generate");
+
+    auto* generateButton = new QToolButton();
+    generateButton->setText(QStringLiteral("Generate"));
+    generateButton->setPopupMode(QToolButton::InstantPopup);
+    QMenu* generateMenu = new QMenu(generateButton);
+    QAction* actGenerateAll = generateMenu->addAction(QStringLiteral("Generate all"));
+    QAction* actGenerateFolder = generateMenu->addAction(QStringLiteral("Generate current folder"));
+    generateButton->setMenu(generateMenu);
+    toolbar->addWidget(generateButton);
+
     QAction* actViewOnWeb = toolbar->addAction("View on web");
 
     QObject::connect(actNew, &QAction::triggered, this, &MainWindow::OnToolbarNew);
     QObject::connect(actSave, &QAction::triggered, this, &MainWindow::OnToolbarSave);
     QObject::connect(actSaveAs, &QAction::triggered, this, &MainWindow::OnToolbarSaveAs);
-    QObject::connect(actGenerate, &QAction::triggered, this, &MainWindow::OnToolbarGenerate);
+    QObject::connect(actGenerateAll, &QAction::triggered, this, &MainWindow::OnToolbarGenerateAll);
+    QObject::connect(actGenerateFolder, &QAction::triggered, this, &MainWindow::OnToolbarGenerateCurrentFolder);
     QObject::connect(actViewOnWeb, &QAction::triggered, this, &MainWindow::OnToolbarViewOnWeb);
 
     QWidget* central = new QWidget();
@@ -192,8 +266,10 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     fileListPanelLayout->setSpacing(6);
     fileListColumnLayout->addWidget(fileListPanel, 1);
 
-    fileList = new QListWidget();
+    fileList = new QTreeWidget();
+    fileList->setHeaderHidden(true);
     fileList->setFrameShape(QFrame::NoFrame);
+    fileList->setRootIsDecorated(true);
     fileListPanelLayout->addWidget(fileList, 1);
     QPushButton* refreshFileListButton = new QPushButton("Refresh List");
     refreshFileListButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -202,9 +278,9 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
 
     splitter->addWidget(fileListColumn);
     QObject::connect(fileList,
-                     &QListWidget::currentItemChanged,
+                     &QTreeWidget::currentItemChanged,
                      this,
-                     &MainWindow::OnCharacterFileListCurrentItemChanged);
+                     &MainWindow::OnCharacterFileTreeCurrentItemChanged);
     fileList->installEventFilter(this);
 
     QWidget* right = new QWidget();
@@ -251,7 +327,7 @@ MainWindow::~MainWindow()
 
 bool MainWindow::eventFilter(QObject* watched, QEvent* event)
 {
-    // QListView delivers mouse events to viewport(), not the QListWidget itself.
+    // QTreeWidget delivers mouse events to viewport(), not the widget itself.
     const bool onFileListSurface =
         (fileList != nullptr && (watched == fileList || watched == fileList->viewport()));
     if (onFileListSurface)
@@ -301,11 +377,30 @@ void MainWindow::OnToolbarNew()
 void MainWindow::OnToolbarSave() { Save(); }
 void MainWindow::OnToolbarSaveAs() { SaveAs(); }
 
-void MainWindow::OnToolbarGenerate()
+void MainWindow::OnToolbarGenerateAll()
+{
+    const QString root = ProjectRootAbsolute();
+    if (root.isEmpty() || !QDir(root).exists())
+    {
+        QMessageBox::critical(
+            this,
+            QStringLiteral("Generate"),
+            QString("Could not resolve the PDF project root from the cfg folder:\n%1\n\n"
+                    "Expected that path under the current working directory (repo root, or build/ when using make run_editor).")
+                .arg(QString::fromStdString(repo.RootDir())));
+        return;
+    }
+
+    RunPdfGeneratorAndShowResult(root, {});
+}
+
+void MainWindow::OnToolbarGenerateCurrentFolder()
 {
     if (!editorWorkspaceOpen_)
     {
-        QMessageBox::information(this, "Generate", "Select a character file or choose New first.");
+        QMessageBox::information(this,
+                                 QStringLiteral("Generate"),
+                                 QStringLiteral("Select a character file or choose New first."));
         return;
     }
 
@@ -314,22 +409,41 @@ void MainWindow::OnToolbarGenerate()
     {
         QMessageBox::critical(
             this,
-            "Generate",
+            QStringLiteral("Generate"),
             QString("Could not resolve the PDF project root from the cfg folder:\n%1\n\n"
                     "Expected that path under the current working directory (repo root, or build/ when using make run_editor).")
                 .arg(QString::fromStdString(repo.RootDir())));
         return;
     }
 
+    const std::optional<std::string>& pathOpt = doc.FilePath();
+    if (!pathOpt.has_value() || pathOpt->empty())
+    {
+        QMessageBox::information(
+            this,
+            QStringLiteral("Generate"),
+            QStringLiteral("Save under assets/cfg/chars/<campaign>/ first."));
+        return;
+    }
+
+    const QString campaign = DeriveCampaignFromPath(QString::fromStdString(*pathOpt));
+    if (campaign.isEmpty())
+    {
+        QMessageBox::information(
+            this,
+            QStringLiteral("Generate"),
+            QStringLiteral("Save under assets/cfg/chars/<campaign>/ first."));
+        return;
+    }
+
     if (doc.IsDirty())
     {
-        const int answer =
-            QMessageBox::question(this,
-                                  "Generate",
-                                  "Save changes before generating PDFs?\n\n"
-                                  "The generator reads character JSON files from disk.",
-                                  QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
-                                  QMessageBox::Save);
+        const int answer = QMessageBox::question(this,
+                                                 QStringLiteral("Generate"),
+                                                 QStringLiteral("Save changes before generating PDFs?\n\n"
+                                                                "The generator reads character JSON files from disk."),
+                                                 QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                                 QMessageBox::Save);
         if (answer == QMessageBox::Cancel) { return; }
         if (answer == QMessageBox::Save)
         {
@@ -338,7 +452,7 @@ void MainWindow::OnToolbarGenerate()
         }
     }
 
-    RunPdfGeneratorAndShowResult(root);
+    RunPdfGeneratorAndShowResult(root, {campaign});
 }
 
 void MainWindow::OnToolbarViewOnWeb()
@@ -361,16 +475,33 @@ QString MainWindow::ResolveWebrenderBaseUrl() const
     return QStringLiteral("https://delthazor.github.io/charPdf");
 }
 
+QString MainWindow::DeriveCampaignFromPath(const QString& filePath) const
+{
+    const QString charsMarker = QStringLiteral("/chars/");
+    const int charsIdx = filePath.indexOf(charsMarker, 0, Qt::CaseInsensitive);
+    if (charsIdx < 0) { return {}; }
+
+    const QString afterChars = filePath.mid(charsIdx + charsMarker.size());
+    const int slashIdx = afterChars.indexOf(QLatin1Char('/'));
+    if (slashIdx <= 0) { return {}; }
+
+    return afterChars.left(slashIdx);
+}
+
 QString MainWindow::DeriveWebrenderSlugFromPath(const QString& filePath) const
 {
+    const QString campaign = DeriveCampaignFromPath(filePath);
+    if (campaign.isEmpty()) { return {}; }
+
     const QString baseName = QFileInfo(filePath).fileName();
     if (!baseName.startsWith(QStringLiteral("char_"), Qt::CaseInsensitive)
         || !baseName.endsWith(QStringLiteral(".json"), Qt::CaseInsensitive))
     {
         return {};
     }
+
     const QString stem = baseName.left(baseName.size() - 5);
-    return stem.mid(5).toLower();
+    return campaign + QLatin1Char('/') + stem.mid(5).toLower();
 }
 
 void MainWindow::OpenCharacterOnWeb()
@@ -479,7 +610,7 @@ QStringList ExtractPdfGeneratorErrorLines(const QString& mergedOutput)
 }
 }
 
-void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot)
+void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot, const QStringList& args)
 {
     const QString pdfApp = ResolvePdfAppPath(projectRoot);
     const QFileInfo exe(pdfApp);
@@ -503,6 +634,9 @@ void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot)
         return;
     }
 
+    QString outputDir = QDir(buildDir).filePath(QStringLiteral("chars"));
+    if (args.size() == 1) { outputDir = QDir(outputDir).filePath(args.at(0)); }
+
     struct WaitCursor
     {
         WaitCursor() { QApplication::setOverrideCursor(Qt::WaitCursor); }
@@ -511,7 +645,7 @@ void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot)
 
     QProcess proc;
     proc.setProgram(pdfApp);
-    proc.setArguments({});
+    proc.setArguments(args);
     proc.setWorkingDirectory(buildDir);
     proc.setProcessChannelMode(QProcess::MergedChannels);
 
@@ -549,7 +683,7 @@ void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot)
             QStringLiteral("Generate"),
             QStringLiteral("PDF generation completed successfully with no reported errors.\n\n"
                            "PDFs were written to:\n%1")
-                .arg(QDir::toNativeSeparators(buildDir)));
+                .arg(QDir::toNativeSeparators(outputDir)));
         return;
     }
 
@@ -574,7 +708,7 @@ void MainWindow::RunPdfGeneratorAndShowResult(const QString& projectRoot)
     msg.setIcon(QMessageBox::Warning);
     msg.setText(QStringLiteral("PDF generation reported problems. Use \"Show Details…\" for the full list."));
     msg.setInformativeText(
-        QStringLiteral("Output directory:\n%1").arg(QDir::toNativeSeparators(buildDir)));
+        QStringLiteral("Output directory:\n%1").arg(QDir::toNativeSeparators(outputDir)));
     msg.setDetailedText(detail);
     msg.exec();
 }
@@ -2290,27 +2424,54 @@ void MainWindow::RefreshFileList()
 
     QSignalBlocker block(fileList);
     fileList->clear();
+
+    QString currentCampaign;
     const auto files = repo.ListCharacterFiles();
+    QTreeWidgetItem* campaignNode = nullptr;
+
     for (const auto& f : files)
     {
-        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(f.filename));
-        item->setData(Qt::UserRole, QString::fromStdString(f.fullPath));
-        fileList->addItem(item);
+        const QString campaign = QString::fromStdString(f.campaign);
+        if (!campaignNode || currentCampaign != campaign)
+        {
+            currentCampaign = campaign;
+            campaignNode = new QTreeWidgetItem(QStringList{campaign});
+            campaignNode->setFlags(Qt::ItemIsEnabled);
+            fileList->addTopLevelItem(campaignNode);
+            campaignNode->setExpanded(true);
+        }
+
+        auto* fileItem = new QTreeWidgetItem(QStringList{QString::fromStdString(f.filename)});
+        fileItem->setData(0, Qt::UserRole, QString::fromStdString(f.fullPath));
+        fileItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        campaignNode->addChild(fileItem);
     }
-    fileList->setCurrentRow(-1);
+
+    fileList->clearSelection();
+    fileList->setCurrentItem(nullptr);
 
     if (editorWorkspaceOpen_ && hadPath)
     {
-        const QString want = QString::fromStdString(savedPath);
-        for (int i = 0; i < fileList->count(); ++i)
+        SelectFileTreeItemByPath(QString::fromStdString(savedPath));
+    }
+}
+
+void MainWindow::SelectFileTreeItemByPath(const QString& fullPath)
+{
+    if (fullPath.isEmpty() || fileList == nullptr) { return; }
+
+    QTreeWidgetItemIterator it(fileList);
+    while (*it)
+    {
+        QTreeWidgetItem* item = *it;
+        if (item->data(0, Qt::UserRole).toString() == fullPath)
         {
-            QListWidgetItem* it = fileList->item(i);
-            if (it && it->data(Qt::UserRole).toString() == want)
-            {
-                fileList->setCurrentRow(i);
-                break;
-            }
+            QTreeWidgetItem* parent = item->parent();
+            if (parent) { parent->setExpanded(true); }
+            fileList->setCurrentItem(item);
+            return;
         }
+        ++it;
     }
 }
 
@@ -2334,7 +2495,7 @@ bool MainWindow::MaybeDiscardUnsavedChanges()
     return TrySaveCurrentDocument();
 }
 
-void MainWindow::OnCharacterFileListCurrentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
+void MainWindow::OnCharacterFileTreeCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
     if (suppressFileListNavigation) { return; }
 
@@ -2344,14 +2505,15 @@ void MainWindow::OnCharacterFileListCurrentItemChanged(QListWidgetItem* current,
         {
             suppressFileListNavigation = true;
             fileList->clearSelection();
-            fileList->setCurrentRow(-1);
+            fileList->setCurrentItem(nullptr);
             suppressFileListNavigation = false;
         }
         return;
     }
 
     if (!current) { return; }
-    const QString fullPath = current->data(Qt::UserRole).toString();
+
+    const QString fullPath = current->data(0, Qt::UserRole).toString();
     if (fullPath.isEmpty()) { return; }
 
     if (doc.FilePath().has_value() && fullPath.toStdString() == doc.FilePath().value() && !doc.IsDirty()) { return; }
@@ -2359,8 +2521,15 @@ void MainWindow::OnCharacterFileListCurrentItemChanged(QListWidgetItem* current,
     if (!MaybeDiscardUnsavedChanges())
     {
         suppressFileListNavigation = true;
-        if (previous) { fileList->setCurrentItem(previous); }
-        else { fileList->clearSelection(); }
+        if (previous && !previous->data(0, Qt::UserRole).toString().isEmpty())
+        {
+            fileList->setCurrentItem(previous);
+        }
+        else
+        {
+            fileList->clearSelection();
+            fileList->setCurrentItem(nullptr);
+        }
         suppressFileListNavigation = false;
         return;
     }
@@ -2393,19 +2562,12 @@ void MainWindow::LoadJsonFromPath(const std::string& fullPath)
         suppressFileListNavigation = true;
         if (doc.FilePath().has_value())
         {
-            const QString want = QString::fromStdString(doc.FilePath().value());
-            for (int i = 0; i < fileList->count(); ++i)
-            {
-                QListWidgetItem* it = fileList->item(i);
-                if (it && it->data(Qt::UserRole).toString() == want)
-                {
-                    fileList->setCurrentRow(i);
-                    suppressFileListNavigation = false;
-                    return;
-                }
-            }
+            SelectFileTreeItemByPath(QString::fromStdString(doc.FilePath().value()));
+            suppressFileListNavigation = false;
+            return;
         }
         fileList->clearSelection();
+        fileList->setCurrentItem(nullptr);
         suppressFileListNavigation = false;
     }
 }
@@ -2416,6 +2578,7 @@ void MainWindow::NewCharacter()
     SetEditorWorkspaceOpen(true);
     suppressFileListNavigation = true;
     fileList->clearSelection();
+    fileList->setCurrentItem(nullptr);
     suppressFileListNavigation = false;
 }
 
@@ -2463,15 +2626,33 @@ void MainWindow::SaveAs()
         QMessageBox::information(this, "Character editor", "Select a character file or choose New first.");
         return;
     }
-    const QString filename = QInputDialog::getText(
-        this, "Save As", "Filename (will be saved under assets/cfg):", QLineEdit::Normal, "char_New.json");
+
+    QString defaultCampaign;
+    if (doc.FilePath().has_value())
+    {
+        defaultCampaign = DeriveCampaignFromPath(QString::fromStdString(doc.FilePath().value()));
+    }
+
+    CampaignSaveDialog dialog(this, repo.ListCampaigns(), defaultCampaign, QStringLiteral("char_New.json"));
+    if (dialog.exec() != QDialog::Accepted) { return; }
+
+    const QString campaign = dialog.campaign();
+    if (campaign.isEmpty() || !IsValidCampaignName(campaign))
+    {
+        QMessageBox::critical(this,
+                              QStringLiteral("Save As"),
+                              QStringLiteral("Campaign folder name must contain only letters, digits, underscores, or hyphens."));
+        return;
+    }
+
+    QString filename = dialog.filename();
     if (filename.isEmpty()) { return; }
 
     std::string name = filename.toStdString();
     if (name.rfind("char_", 0) != 0) { name = "char_" + name; }
     if (name.size() < 5 || name.substr(name.size() - 5) != ".json") { name += ".json"; }
 
-    const std::string fullPath = repo.RootDir() + "/" + name;
+    const std::string fullPath = repo.CharsDir() + "/" + campaign.toStdString() + "/" + name;
 
     CharacterSchema::NormalizeInPlace(doc.Json());
 
@@ -2491,6 +2672,7 @@ void MainWindow::SaveAs()
         doc.SetFilePath(fullPath);
         doc.MarkClean();
         RefreshFileList();
+        SelectFileTreeItemByPath(QString::fromStdString(fullPath));
         UpdateValidationSummary();
     }
     catch (const std::exception& e)

@@ -12,6 +12,12 @@ import {
     updateDocumentTitle,
 } from './render.js';
 
+function getCampaignFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    const campaign = params.get('campaign');
+    return campaign ? campaign.trim() : null;
+}
+
 async function bootstrap() {
     const app = document.getElementById('app');
     if (!app) {
@@ -20,14 +26,15 @@ async function bootstrap() {
 
     const siteBase = resolveSiteBase();
     const slug = getSlugFromPage();
+    const campaign = getCampaignFromQuery();
 
     if (!slug) {
         renderLoading(app);
         try {
             const manifest = await loadCharacterManifest();
-            renderLanding(app, manifest, siteBase);
+            renderLanding(app, manifest, siteBase, campaign);
         } catch (err) {
-            renderError(app, 'Failed to load character list.', siteBase);
+            renderError(app, 'Failed to load character list.', siteBase, campaign);
             console.error(err);
         }
         return;
@@ -42,7 +49,7 @@ async function bootstrap() {
         const message = err.message && err.message.startsWith('Character not found')
             ? err.message
             : 'Failed to load character data';
-        renderError(app, message, siteBase);
+        renderError(app, message, siteBase, campaign);
         console.error(err);
     }
 }

@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+class QTreeWidget;
 class QListWidget;
 class QPlainTextEdit;
 class QLabel;
@@ -24,6 +25,7 @@ class QVBoxLayout;
 class QComboBox;
 class QGroupBox;
 class QListWidgetItem;
+class QTreeWidgetItem;
 class QStackedWidget;
 class QRadioButton;
 class QEvent;
@@ -47,7 +49,8 @@ class MainWindow : public QMainWindow
     void OnToolbarNew();
     void OnToolbarSave();
     void OnToolbarSaveAs();
-    void OnToolbarGenerate();
+    void OnToolbarGenerateAll();
+    void OnToolbarGenerateCurrentFolder();
     void OnToolbarViewOnWeb();
     void OnRefreshFileListButton();
 
@@ -124,7 +127,8 @@ class MainWindow : public QMainWindow
     void SetTraits(const std::vector<std::string>& items);
 
     void RefreshFileList();
-    void OnCharacterFileListCurrentItemChanged(QListWidgetItem* current, QListWidgetItem* previous);
+    void OnCharacterFileTreeCurrentItemChanged(QTreeWidgetItem* current, QTreeWidgetItem* previous);
+    void SelectFileTreeItemByPath(const QString& fullPath);
     bool MaybeDiscardUnsavedChanges();
     bool TrySaveCurrentDocument();
     void LoadJsonFromPath(const std::string& fullPath);
@@ -150,8 +154,9 @@ class MainWindow : public QMainWindow
     QString ProjectRootAbsolute() const;
     QString ResolvePdfAppPath(const QString& projectRoot) const;
     QString ResolveWebrenderBaseUrl() const;
+    QString DeriveCampaignFromPath(const QString& filePath) const;
     QString DeriveWebrenderSlugFromPath(const QString& filePath) const;
-    void RunPdfGeneratorAndShowResult(const QString& projectRoot);
+    void RunPdfGeneratorAndShowResult(const QString& projectRoot, const QStringList& args);
     void OpenCharacterOnWeb();
 
     CharacterRepository repo;
@@ -161,7 +166,7 @@ class MainWindow : public QMainWindow
     bool fileListLoadsNeedUserGesture_ = true;
     bool editorWorkspaceOpen_ = false;
 
-    QListWidget* fileList = nullptr;
+    QTreeWidget* fileList = nullptr;
     QStackedWidget* editorStack = nullptr;
     QTabWidget* tabs = nullptr;
 

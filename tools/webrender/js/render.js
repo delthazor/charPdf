@@ -21,20 +21,56 @@ import {
 } from './dnd.js';
 import { lookupSpell, lookupTrait } from './data.js';
 
-export function renderLanding(app, manifest, siteBase) {
+export function renderCampaignPicker(app, manifest, siteBase) {
     app.replaceChildren();
 
     const wrap = el('div', 'landing');
-    wrap.appendChild(el('h1', 'landing-title', 'You have to choose a character'));
+    wrap.appendChild(el('h1', 'landing-title', 'Choose a campaign'));
 
-    if (!manifest || manifest.length === 0) {
-        wrap.appendChild(el('p', 'muted', 'No characters available. Run make sync-webrender-cfg first.'));
+    const campaigns = manifest && Array.isArray(manifest.campaigns) ? manifest.campaigns : [];
+    if (campaigns.length === 0) {
+        wrap.appendChild(el('p', 'muted', 'No campaigns available. Run make sync-webrender-cfg first.'));
         app.appendChild(wrap);
         return;
     }
 
     const grid = el('div', 'picker-grid');
-    for (const entry of manifest) {
+    for (const campaign of campaigns) {
+        const card = el('a', 'picker-card');
+        card.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaign.id);
+        card.appendChild(el('span', 'picker-name', campaign.label || campaign.id));
+        const count = (campaign.characters || []).length;
+        const meta = el('span', 'picker-meta');
+        meta.textContent = count === 1 ? '1 character' : count + ' characters';
+        card.appendChild(meta);
+        grid.appendChild(card);
+    }
+    wrap.appendChild(grid);
+    app.appendChild(wrap);
+}
+
+export function renderCharacterPicker(app, campaignId, characters, siteBase) {
+    app.replaceChildren();
+
+    const wrap = el('div', 'landing');
+    wrap.appendChild(el('h1', 'landing-title', 'Choose a character'));
+
+    const back = el('a', 'back-link');
+    back.href = siteBase + 'index.html';
+    back.textContent = 'Back to campaigns';
+    wrap.appendChild(back);
+
+    if (!characters || characters.length === 0) {
+        wrap.appendChild(el('p', 'muted', 'No characters in this campaign.'));
+        app.appendChild(wrap);
+        return;
+    }
+
+    const subtitle = el('p', 'muted', campaignId);
+    wrap.appendChild(subtitle);
+
+    const grid = el('div', 'picker-grid');
+    for (const entry of characters) {
         const card = el('a', 'picker-card');
         card.href = siteBase + 'c/' + entry.slug + '.html';
         card.appendChild(el('span', 'picker-name', entry.name));
@@ -50,13 +86,29 @@ export function renderLanding(app, manifest, siteBase) {
     app.appendChild(wrap);
 }
 
-export function renderError(app, message, siteBase) {
+export function renderLanding(app, manifest, siteBase, campaignId) {
+    if (campaignId) {
+        const group = (manifest.campaigns || []).find(function (item) {
+            return item.id === campaignId;
+        });
+        renderCharacterPicker(app, campaignId, group ? group.characters : [], siteBase);
+        return;
+    }
+    renderCampaignPicker(app, manifest, siteBase);
+}
+
+export function renderError(app, message, siteBase, campaignId) {
     app.replaceChildren();
     const wrap = el('div', 'state-message error-state');
     wrap.appendChild(el('h1', null, message));
     const link = el('a', 'back-link');
-    link.href = siteBase + 'index.html';
-    link.textContent = 'Back to character list';
+    if (campaignId) {
+        link.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
+        link.textContent = 'Back to character list';
+    } else {
+        link.href = siteBase + 'index.html';
+        link.textContent = 'Back to campaigns';
+    }
     wrap.appendChild(link);
     app.appendChild(wrap);
 }

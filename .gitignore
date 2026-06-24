@@ -17,6 +17,8 @@ assets/*.ttf
 output.pdf
 
 # Webrender: local sync output (CI generates fresh copies on deploy)
-tools/webrender/cfg/*.json
-tools/webrender/c/*.html
+tools/webrender/cfg/config_*.json
+tools/webrender/cfg/characters.json
+tools/webrender/cfg/chars/
+tools/webrender/c/
 

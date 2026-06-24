@@ -1,5 +1,6 @@
 #include "CharacterRepository.h"
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
@@ -22,20 +23,51 @@ bool IsCharJsonFilename(const std::string& name)
 
 }
 
-CharacterRepository::CharacterRepository(std::string rootDir) : rootDir(std::move(rootDir)) {}
+CharacterRepository::CharacterRepository(std::string rootDirParam) : rootDir(std::move(rootDirParam)) {}
+
+std::string CharacterRepository::CharsDir() const { return rootDir + "/chars"; }
+
+std::vector<std::string> CharacterRepository::ListCampaigns() const
+{
+    std::vector<std::string> campaigns;
+    const fs::path charsRoot(CharsDir());
+    if (!fs::exists(charsRoot) || !fs::is_directory(charsRoot)) { return campaigns; }
+
+    for (const auto& entry : fs::directory_iterator(charsRoot))
+    {
+        if (entry.is_directory()) { campaigns.push_back(entry.path().filename().string()); }
+    }
+
+    std::sort(campaigns.begin(), campaigns.end());
+    return campaigns;
+}
 
 std::vector<CharacterFile> CharacterRepository::ListCharacterFiles() const
 {
     std::vector<CharacterFile> out;
-    if (!fs::exists(rootDir)) { return out; }
+    const fs::path charsRoot(CharsDir());
+    if (!fs::exists(charsRoot) || !fs::is_directory(charsRoot)) { return out; }
 
-    for (const auto& entry : fs::directory_iterator(rootDir))
+    for (const auto& campaignEntry : fs::directory_iterator(charsRoot))
     {
-        if (!entry.is_regular_file()) { continue; }
-        const std::string filename = entry.path().filename().string();
-        if (!IsCharJsonFilename(filename)) { continue; }
-        out.push_back({filename, entry.path().string()});
+        if (!campaignEntry.is_directory()) { continue; }
+
+        const std::string campaign = campaignEntry.path().filename().string();
+        for (const auto& fileEntry : fs::directory_iterator(campaignEntry.path()))
+        {
+            if (!fileEntry.is_regular_file()) { continue; }
+
+            const std::string filename = fileEntry.path().filename().string();
+            if (!IsCharJsonFilename(filename)) { continue; }
+
+            const std::string relativePath = std::string("chars/") + campaign + "/" + filename;
+            out.push_back({campaign, filename, relativePath, fileEntry.path().string()});
+        }
     }
+
+    std::sort(out.begin(), out.end(), [](const CharacterFile& a, const CharacterFile& b) {
+        return a.relativePath < b.relativePath;
+    });
 
     return out;
 }
@@ -50,6 +82,10 @@ nlohmann::ordered_json CharacterRepository::Load(const std::string& fullPath) co
 void CharacterRepository::SaveAtomic(const std::string& fullPath, const nlohmann::ordered_json& doc) const
 {
     const fs::path target(fullPath);
+    std::error_code ec;
+    fs::create_directories(target.parent_path(), ec);
+    if (ec) { throw std::runtime_error("cannot create directory: " + target.parent_path().string()); }
+
     const fs::path tmp = target.parent_path() / (target.filename().string() + ".tmp");
 
     {
@@ -60,7 +96,7 @@ void CharacterRepository::SaveAtomic(const std::string& fullPath, const nlohmann
         if (!out) { throw std::runtime_error("failed writing temp file: " + tmp.string()); }
     }
 
-    std::error_code ec;
+    ec.clear();
     fs::rename(tmp, target, ec);
     if (ec)
     {
@@ -72,4 +108,3 @@ void CharacterRepository::SaveAtomic(const std::string& fullPath, const nlohmann
 }
 
 }
-

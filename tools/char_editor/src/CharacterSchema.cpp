@@ -118,7 +118,7 @@ void RestoreTopLevelKeyOrder(nlohmann::ordered_json& obj, const std::vector<std:
     obj.swap(rebuilt);
 }
 
-// Matches hand-edited character JSON (e.g. assets/cfg/char_Celdrick.json).
+// Matches hand-edited character JSON (e.g. assets/cfg/chars/bnd/char_Celdrick.json).
 void RestoreClassObjectKeyOrder(nlohmann::ordered_json& classObj)
 {
     static const char* kOrder[] = {

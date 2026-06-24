@@ -12,9 +12,10 @@ using namespace PageConstants;
 
 CharSheet::CharSheet(const Config& cfg,
                      const UtilType::TraitsCatalog& traitsCat,
-                     const UtilType::SpellsCatalog& spellsCat)
+                     const UtilType::SpellsCatalog& spellsCat,
+                     const std::string& outputPath)
     : config(cfg), traitsCatalog(traitsCat), spellsCatalog(spellsCat),
-      doc(Utilities::SanitizePdfStem(config.getString("name")) + ".pdf",
+      doc(outputPath,
           A4_LANDSCAPE_WIDTH,
           A4_LANDSCAPE_HEIGHT),
       currentSlot(PageSide::LEFT_SIDE), afterFirstPage(false)

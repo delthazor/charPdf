@@ -19,6 +19,8 @@ DEPS = $(OBJECTS:.o=.d)
 
 .PHONY: all clean run editor run_editor check-character-json sync-webrender-cfg serve-webrender webrender
 
+PARAM ?=
+
 all: $(TARGET)
 
 # Runtime loads paths like assets/... relative to cwd; make run uses $(BUILD_DIR).
@@ -42,10 +44,10 @@ $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
 
 run: $(TARGET)
-	@cd $(BUILD_DIR) && ./$(notdir $(TARGET))
+	@cd $(BUILD_DIR) && ./$(notdir $(TARGET)) $(PARAM)
 
 check-character-json: $(TARGET) | $(BUILD_DIR)/assets
-	@cd $(BUILD_DIR) && ./$(notdir $(TARGET))
+	@cd $(BUILD_DIR) && ./$(notdir $(TARGET)) $(PARAM)
 
 # Character JSON editor (Qt6 Widgets, optional)
 QT_CFLAGS := $(shell pkg-config --cflags Qt6Widgets 2>/dev/null)
@@ -80,7 +82,7 @@ run_editor: $(EDITOR_TARGET) | $(BUILD_DIR)/assets
 -include $(EDITOR_DEPS)
 
 clean:
-	rm -rf $(OBJ_DIR) $(TARGET) $(EDITOR_TARGET) $(BUILD_DIR)/*.pdf
+	rm -rf $(OBJ_DIR) $(TARGET) $(EDITOR_TARGET) $(BUILD_DIR)/chars $(BUILD_DIR)/*.pdf
 
 WEBRENDER_DIR = tools/webrender
 SYNC_WEBRENDER = $(WEBRENDER_DIR)/scripts/sync-webrender.sh
