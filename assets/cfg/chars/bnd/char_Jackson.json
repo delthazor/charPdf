@@ -1,6 +1,7 @@
 {
     "name": "Jackson",
     "nameLetterSpacing": 5,
+    "nameFontSize": 34,
     "background": "Soldier",
     "race": "Tiefling",
     "stats": {

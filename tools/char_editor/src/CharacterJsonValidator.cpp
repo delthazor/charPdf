@@ -126,6 +126,26 @@ void RequireNameLetterSpacing(std::vector<Issue>& out,
     }
 }
 
+void RequireNameFontSize(std::vector<Issue>& out,
+                         const nlohmann::ordered_json& obj,
+                         const std::string& path,
+                         const char* key)
+{
+    RequireKey(out, obj, path, key);
+    if (!obj.is_object() || !obj.contains(key)) { return; }
+    const auto& n = obj.at(key);
+    if (!n.is_number_integer())
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "expected int"});
+        return;
+    }
+    const int v = n.get<int>();
+    if (v < 1 || v > 99)
+    {
+        out.push_back({Issue::Severity::Error, JoinPath(path, key), "must be between 1 and 99"});
+    }
+}
+
 void RequireNonNegInt(std::vector<Issue>& out,
                       const nlohmann::ordered_json& obj,
                       const std::string& path,
@@ -402,6 +422,7 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
 
     RequireString(issues, doc, "/", "name");
     RequireNameLetterSpacing(issues, doc, "/", "nameLetterSpacing");
+    RequireNameFontSize(issues, doc, "/", "nameFontSize");
     RequireNonEmptyString(issues, doc, "/", "race");
     RequireString(issues, doc, "/", "background");
     RequireNonEmptyString(issues, doc, "/", "name");
@@ -423,7 +444,7 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
                                  "pPercBonus",
                                  "acBonus"})
             {
-                if (std::string(k) == "acBonus")
+                if (std::string(k) == "acBonus" || std::string(k) == "initiativeBonus")
                 {
                     RequireInt(issues, stats, "/stats", k);
                 }

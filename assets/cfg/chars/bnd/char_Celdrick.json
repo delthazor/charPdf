@@ -1,6 +1,7 @@
 {
     "name": "Celdrick",
     "nameLetterSpacing": 5,
+    "nameFontSize": 34,
     "background": "Knight",
     "race": "Human",
     "stats": {

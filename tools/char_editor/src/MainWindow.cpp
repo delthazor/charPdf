@@ -1770,6 +1770,8 @@ QWidget* MainWindow::BuildGeneralTab()
     generalNameSpacing->setDecimals(2);
     generalNameSpacing->setSingleStep(0.1);
     generalNameSpacing->setProperty("jsonKey", "nameLetterSpacing");
+    generalNameFontSize = MakeSpinBox(1, 99);
+    generalNameFontSize->setProperty("jsonKey", "nameFontSize");
     generalRace = new QLineEdit();
     generalRace->setProperty("jsonKey", "race");
     generalBackground = new QLineEdit();
@@ -1777,6 +1779,7 @@ QWidget* MainWindow::BuildGeneralTab()
 
     generalForm->addRow("Name", generalName);
     generalForm->addRow("Name letter spacing", generalNameSpacing);
+    generalForm->addRow("Name font size", generalNameFontSize);
     generalForm->addRow("Race", generalRace);
     generalForm->addRow("Background", generalBackground);
 
@@ -1787,6 +1790,10 @@ QWidget* MainWindow::BuildGeneralTab()
                      QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                      this,
                      &MainWindow::OnRootDoubleChanged);
+    QObject::connect(generalNameFontSize,
+                     QOverload<int>::of(&QSpinBox::valueChanged),
+                     this,
+                     &MainWindow::OnRootIntChanged);
 
     statStrength = MakeSpinBox(0, 30);
     statStrength->setProperty("jsonKey", "strength");
@@ -1806,7 +1813,7 @@ QWidget* MainWindow::BuildGeneralTab()
     statMaxHp->setProperty("jsonKey", "maxHp");
     statAcBonus = MakeSpinBox(-20, 20);
     statAcBonus->setProperty("jsonKey", "acBonus");
-    statInitiativeBonus = MakeSpinBox(0, 50);
+    statInitiativeBonus = MakeSpinBox(-20, 20);
     statInitiativeBonus->setProperty("jsonKey", "initiativeBonus");
     statPPercBonus = MakeSpinBox(0, 50);
     statPPercBonus->setProperty("jsonKey", "pPercBonus");
@@ -2421,6 +2428,12 @@ void MainWindow::UpdateTabsFromDocument()
         generalNameSpacing->blockSignals(true);
         generalNameSpacing->setValue(GetDoubleOrDefault(root, "nameLetterSpacing", 1.0));
         generalNameSpacing->blockSignals(false);
+    }
+    if (generalNameFontSize)
+    {
+        generalNameFontSize->blockSignals(true);
+        generalNameFontSize->setValue(GetIntOrDefault(root, "nameFontSize", 34));
+        generalNameFontSize->blockSignals(false);
     }
     if (generalRace) { generalRace->setText(QString::fromStdString(GetStringOrDefault(root, "race", "Human"))); }
     if (generalBackground)

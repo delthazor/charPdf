@@ -1,6 +1,7 @@
 {
     "name": "Tilley",
     "nameLetterSpacing": 12.5,
+    "nameFontSize": 34,
     "background": "Urchin",
     "race": "Halfling",
     "stats": {

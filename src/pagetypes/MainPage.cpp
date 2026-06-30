@@ -71,9 +71,12 @@ void MainPage::DrawLayer2()
 void MainPage::AddName()
 {
     doc.AddText(config.getString("name"),
-                MIDDLE_LINE / 2 - 72,
+                MIDDLE_LINE / 2 - 78,
                 14,
-                UtilType::TextOptions(FontType::Seagram, 34, 0, config.getDouble("nameLetterSpacing")));
+                UtilType::TextOptions(FontType::Seagram,
+                                      config.getInt("nameFontSize"),
+                                      0,
+                                      config.getDouble("nameLetterSpacing")));
 }
 
 void MainPage::AddRace()

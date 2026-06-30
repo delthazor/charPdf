@@ -1,6 +1,7 @@
 {
     "name": "Grimnir",
     "nameLetterSpacing": 5.0,
+    "nameFontSize": 34,
     "background": "Folk Hero",
     "race": "High Elf",
     "stats": {

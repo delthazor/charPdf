@@ -1,6 +1,7 @@
 {
     "name": "Someone",
     "nameLetterSpacing": 5,
+    "nameFontSize": 34,
     "background": "Soldier",
     "race": "Human",
     "stats": {

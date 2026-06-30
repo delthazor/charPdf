@@ -1,6 +1,7 @@
 {
     "name": "Galador",
     "nameLetterSpacing": 5.0,
+    "nameFontSize": 34,
     "background": "Sage",
     "race": "Half Elf",
     "stats": {

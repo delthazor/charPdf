@@ -181,6 +181,7 @@ class MainWindow : public QMainWindow
     QWidget* generalTab = nullptr;
     QLineEdit* generalName = nullptr;
     QDoubleSpinBox* generalNameSpacing = nullptr;
+    QSpinBox* generalNameFontSize = nullptr;
     QLineEdit* generalRace = nullptr;
     QLineEdit* generalBackground = nullptr;
     StringListEditor* generalTraitsEditor = nullptr;

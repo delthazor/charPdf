@@ -51,6 +51,22 @@ void EnsureNameLetterSpacing(nlohmann::ordered_json& doc)
     doc["nameLetterSpacing"] = v;
 }
 
+void EnsureNameFontSize(nlohmann::ordered_json& doc)
+{
+    constexpr int kDef = 34;
+    constexpr int kMin = 1;
+    constexpr int kMax = 99;
+    if (!doc.contains("nameFontSize") || !doc["nameFontSize"].is_number_integer())
+    {
+        doc["nameFontSize"] = kDef;
+        return;
+    }
+    int v = doc["nameFontSize"].get<int>();
+    if (v < kMin) { v = kMin; }
+    if (v > kMax) { v = kMax; }
+    doc["nameFontSize"] = v;
+}
+
 void EnsureNonNegInt(nlohmann::ordered_json& obj, const char* key, int def)
 {
     EnsureInt(obj, key, def);
@@ -209,6 +225,7 @@ nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
     nlohmann::ordered_json doc;
     doc["name"] = "New Character";
     doc["nameLetterSpacing"] = 1.0;
+    doc["nameFontSize"] = 34;
     doc["background"] = "";
     doc["race"] = "Human";
 
@@ -302,6 +319,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
 
     EnsureNonEmptyString(doc, "name", "New Character");
     EnsureNameLetterSpacing(doc);
+    EnsureNameFontSize(doc);
     EnsureString(doc, "background", "");
     EnsureNonEmptyString(doc, "race", "Human");
 
@@ -321,7 +339,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
     EnsureStatsNonNegInt(stats, "maxHp", 10);
     if (stats.contains("maxHp") && stats["maxHp"].is_number_integer() && stats["maxHp"].get<int>() == 0) { stats["maxHp"] = 10; }
     EnsureInt(stats, "acBonus", 0);
-    EnsureStatsNonNegInt(stats, "initiativeBonus", 0);
+    EnsureInt(stats, "initiativeBonus", 0);
     EnsureStatsNonNegInt(stats, "pPercBonus", 0);
 
     if (!doc.contains("proficiencies") || !doc["proficiencies"].is_object())

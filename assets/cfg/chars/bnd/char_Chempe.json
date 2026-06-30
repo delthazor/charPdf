@@ -1,6 +1,7 @@
 {
     "name": "Chempe",
     "nameLetterSpacing": 3.5,
+    "nameFontSize": 34,
     "background": "Hermit",
     "race": "Forest Gnome",
     "stats": {
