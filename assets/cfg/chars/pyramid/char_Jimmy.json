@@ -1,0 +1,164 @@
+{
+    "name": "Jimmy Phu'elig",
+    "nameLetterSpacing": 2,
+    "background": "Pirate",
+    "race": "Drow",
+    "stats": {
+        "strength": 14,
+        "dexterity": 16,
+        "constitution": 14,
+        "intelligence": 10,
+        "wisdom": 8,
+        "charisma": 13,
+        "speed": 30,
+        "maxHp": 12,
+        "acBonus": 0,
+        "initiativeBonus": 0,
+        "pPercBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 2,
+        "skills": {
+            "strength": {
+                "athletics": 1
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 1,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 0,
+                "history": 0,
+                "investigation": 0,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 0,
+                "insight": 0,
+                "medicine": 0,
+                "perception": 1,
+                "survival": 1
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 1,
+                "performance": 0,
+                "persuasion": 0
+            }
+        },
+        "savingThrows": {
+            "strength": 1,
+            "dexterity": 0,
+            "constitution": 1,
+            "intelligence": 0,
+            "wisdom": 0,
+            "charisma": 0
+        },
+        "tools": [
+            "Navigator's Tools",
+            "Vehicles (water)"
+        ],
+        "languages": [
+            "Elvish",
+            "Common",
+            "Celestial"
+        ],
+        "armors": [
+            "Light Armor",
+            "Medium Armor",
+            "Shield"
+        ],
+        "simpleWeapons": [
+            "Light Crossbow",
+            "Shortbow",
+            "Dart",
+            "Sling",
+            "Dagger",
+            "Sickle"
+        ],
+        "martialWeapons": [
+            "Rapier",
+            "Scimitar",
+            "Shortsword",
+            "Whip",
+            "Hand Crossbow",
+            "Net"
+        ]
+    },
+    "traits": [
+        "Darkvision",
+        "Fey Ancestry",
+        "Trance",
+        "Sunlight Sensitivity",
+        "Fighting Style - Dueling",
+        "Drow Magic - Innate Spellcasting",
+        "Bad Reputation",
+        "Sacral Body"
+    ],
+    "classes": {
+        "fighter": {
+            "level": 1,
+            "hitDice": "d10",
+            "resourcePoints": 0,
+            "castStat": "",
+            "subclass": "",
+            "spellslots": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [
+                    "Dancing Lights"
+                ],
+                "0_extra": [
+                ],
+                "1": [
+                ],
+                "2": [
+                ],
+                "3": [
+                ],
+                "4": [
+                ],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [
+            ],
+            "armors": [
+            ]
+        },
+        "stashed": {
+            "weapons": [
+            ],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [
+        ],
+        "consumables": [
+        ],
+        "kits & tools": [
+        ],
+        "general": [
+            "Ragged Leather Cloths"
+        ]
+    }
+}
