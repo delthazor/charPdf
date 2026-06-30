@@ -28,6 +28,7 @@ class QListWidgetItem;
 class QTreeWidgetItem;
 class QStackedWidget;
 class QRadioButton;
+class QCheckBox;
 class QEvent;
 
 namespace CharEditor
@@ -102,10 +103,12 @@ class MainWindow : public QMainWindow
     void OnEquipmentAcBaseChanged(int value);
     void OnEquipmentAcModStatChanged(const QString& value);
     void OnEquipmentAcModCapChanged(int value);
+    void OnEquipmentAcCapEnabledChanged(bool checked);
     void OnEquipmentAcFixModChanged(int value);
     void OnEquipmentAcModeStatToggled(bool checked);
     void OnEquipmentAcModeFixToggled(bool checked);
     void ApplyArmorAcModeToDocument(bool statBased);
+    void WriteStatBasedArmorAcToDocument();
     void OnEquipmentRangeChanged(const QString& value);
     void OnEquipmentDmgDiceChanged(const QString& value);
     void OnEquipmentDmgBonusChanged(int value);
@@ -191,7 +194,7 @@ class MainWindow : public QMainWindow
     QSpinBox* statCharisma = nullptr;
     QSpinBox* statSpeed = nullptr;
     QSpinBox* statMaxHp = nullptr;
-    QSpinBox* statAc = nullptr;
+    QSpinBox* statAcBonus = nullptr;
     QSpinBox* statInitiativeBonus = nullptr;
     QSpinBox* statPPercBonus = nullptr;
 
@@ -244,6 +247,7 @@ class MainWindow : public QMainWindow
     QSpinBox* equipAcBase = nullptr;
     QLineEdit* equipAcModStat = nullptr;
     QSpinBox* equipAcModCap = nullptr;
+    QCheckBox* equipAcCapEnabled = nullptr;
     QSpinBox* equipAcFixMod = nullptr;
 
     // Backpack tab (fixed sections: accessories, consumables, kits & tools, general)

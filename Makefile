@@ -54,7 +54,9 @@ QT_CFLAGS := $(shell pkg-config --cflags Qt6Widgets 2>/dev/null)
 QT_LIBS := $(shell pkg-config --libs Qt6Widgets 2>/dev/null)
 EDITOR_SRC_DIR = tools/char_editor/src
 EDITOR_SOURCES = $(shell find $(EDITOR_SRC_DIR) -name '*.cpp')
-EDITOR_OBJECTS = $(patsubst $(EDITOR_SRC_DIR)/%.cpp,$(OBJ_DIR)/char_editor/%.o,$(EDITOR_SOURCES))
+EDITOR_SHARED_SOURCES = src/syshelpers/AcCalculation.cpp src/syshelpers/Utilities.cpp
+EDITOR_OBJECTS = $(patsubst $(EDITOR_SRC_DIR)/%.cpp,$(OBJ_DIR)/char_editor/%.o,$(EDITOR_SOURCES)) \
+	$(OBJ_DIR)/char_editor/shared/AcCalculation.o $(OBJ_DIR)/char_editor/shared/Utilities.o
 EDITOR_DEPS = $(EDITOR_OBJECTS:.o=.d)
 
 .PHONY: editor
@@ -74,6 +76,22 @@ $(OBJ_DIR)/char_editor/%.o: $(EDITOR_SRC_DIR)/%.cpp | $(OBJ_DIR)
 	fi
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) $(QT_CFLAGS) -I./$(EDITOR_SRC_DIR) -c $< -o $@
+
+$(OBJ_DIR)/char_editor/shared/AcCalculation.o: src/syshelpers/AcCalculation.cpp | $(OBJ_DIR)
+	@if [ -z "$(QT_CFLAGS)" ]; then \
+		echo "error: Qt6Widgets not found via pkg-config. Install Qt6 + pkg-config and ensure Qt6Widgets.pc is visible." >&2; \
+		exit 1; \
+	fi
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(QT_CFLAGS) -c $< -o $@
+
+$(OBJ_DIR)/char_editor/shared/Utilities.o: src/syshelpers/Utilities.cpp | $(OBJ_DIR)
+	@if [ -z "$(QT_CFLAGS)" ]; then \
+		echo "error: Qt6Widgets not found via pkg-config. Install Qt6 + pkg-config and ensure Qt6Widgets.pc is visible." >&2; \
+		exit 1; \
+	fi
+	@mkdir -p $(dir $@)
+	$(CXX) $(CXXFLAGS) $(QT_CFLAGS) -c $< -o $@
 
 run_editor: $(EDITOR_TARGET) | $(BUILD_DIR)/assets
 	@cd $(BUILD_DIR) && ./$(notdir $(EDITOR_TARGET))

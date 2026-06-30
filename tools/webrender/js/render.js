@@ -8,6 +8,7 @@ import {
     formatClassName,
     formatSignedInt,
     formatWeaponDamage,
+    getAc,
     getHitDiceString,
     getInitiative,
     getPassivePerception,
@@ -231,7 +232,7 @@ function buildCombatBox(character) {
     const card = cardSection('Combat', 'accent-gold');
     const stats = character.stats || {};
     const rows = [
-        ['AC', String(stats.ac ?? '—')],
+        ['AC', String(getAc(character))],
         ['HP', String(stats.maxHp ?? '—')],
         ['Speed', String(stats.speed ?? '—') + ' ft'],
         ['Initiative', formatSignedInt(getInitiative(character))],

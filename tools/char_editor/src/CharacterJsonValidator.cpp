@@ -287,7 +287,7 @@ void ValidateArmorAc(std::vector<Issue>& out, const nlohmann::ordered_json& ac, 
     {
         RequireNonZeroNonNegInt(out, ac, path, "base");
         RequireNonEmptyString(out, ac, path, "modstat");
-        RequireNonNegInt(out, ac, path, "modcap");
+        OptionalNonNegInt(out, ac, path, "modcap");
     }
     else
     {
@@ -420,11 +420,19 @@ std::vector<Issue> Validate(const nlohmann::ordered_json& doc)
                                  "wisdom",
                                  "charisma",
                                  "initiativeBonus",
-                                 "pPercBonus"})
+                                 "pPercBonus",
+                                 "acBonus"})
             {
-                RequireNonNegInt(issues, stats, "/stats", k);
+                if (std::string(k) == "acBonus")
+                {
+                    RequireInt(issues, stats, "/stats", k);
+                }
+                else
+                {
+                    RequireNonNegInt(issues, stats, "/stats", k);
+                }
             }
-            for (const char* k : {"speed", "maxHp", "ac"})
+            for (const char* k : {"speed", "maxHp"})
             {
                 RequireNonZeroNonNegInt(issues, stats, "/stats", k);
             }

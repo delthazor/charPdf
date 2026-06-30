@@ -3,6 +3,7 @@
 #include <QAbstractSpinBox>
 #include <QAction>
 #include <QApplication>
+#include <QCheckBox>
 #include <QComboBox>
 #include <QDir>
 #include <QFile>
@@ -1299,7 +1300,18 @@ void MainWindow::LoadSelectedEquipmentIntoEditor()
         if (equipArmorAcStack) { equipArmorAcStack->setCurrentIndex(statMode ? 0 : 1); }
         if (equipAcBase) { equipAcBase->setValue(GetIntOrDefault(obj["ac"], "base", 14)); }
         if (equipAcModStat) { equipAcModStat->setText(QString::fromStdString(GetStringOrDefault(obj["ac"], "modstat", "dexterity"))); }
-        if (equipAcModCap) { equipAcModCap->setValue(GetIntOrDefault(obj["ac"], "modcap", 0)); }
+        const bool hasModcap = obj["ac"].contains("modcap");
+        if (equipAcCapEnabled)
+        {
+            QSignalBlocker blockCap(equipAcCapEnabled);
+            equipAcCapEnabled->setChecked(hasModcap);
+        }
+        if (equipAcModCap)
+        {
+            QSignalBlocker blockMc(equipAcModCap);
+            equipAcModCap->setValue(hasModcap ? GetIntOrDefault(obj["ac"], "modcap", 0) : 0);
+            equipAcModCap->setEnabled(hasModcap);
+        }
         if (equipAcFixMod) { equipAcFixMod->setValue(GetIntOrDefault(obj["ac"], "fixmod", 2)); }
     }
 }
@@ -1374,6 +1386,7 @@ void MainWindow::OnEquipmentAcBaseChanged(int value)
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["base"] = value;
     (*obj)["ac"].erase("fixmod");
+    WriteStatBasedArmorAcToDocument();
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
@@ -1386,6 +1399,7 @@ void MainWindow::OnEquipmentAcModStatChanged(const QString& value)
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["modstat"] = value.toStdString();
     (*obj)["ac"].erase("fixmod");
+    WriteStatBasedArmorAcToDocument();
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
@@ -1393,11 +1407,21 @@ void MainWindow::OnEquipmentAcModStatChanged(const QString& value)
 void MainWindow::OnEquipmentAcModCapChanged(int value)
 {
     if (!equipAcModeStat || !equipAcModeStat->isChecked()) { return; }
+    if (!equipAcCapEnabled || !equipAcCapEnabled->isChecked()) { return; }
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
     if (!obj) { return; }
     if (!obj->contains("ac") || !(*obj)["ac"].is_object()) { (*obj)["ac"] = nlohmann::ordered_json::object(); }
     (*obj)["ac"]["modcap"] = value;
     (*obj)["ac"].erase("fixmod");
+    UpdateValidationSummary();
+    UpdateRawJsonView();
+}
+
+void MainWindow::OnEquipmentAcCapEnabledChanged(bool checked)
+{
+    if (!equipAcModeStat || !equipAcModeStat->isChecked()) { return; }
+    if (equipAcModCap) { equipAcModCap->setEnabled(checked); }
+    WriteStatBasedArmorAcToDocument();
     UpdateValidationSummary();
     UpdateRawJsonView();
 }
@@ -1416,6 +1440,26 @@ void MainWindow::OnEquipmentAcFixModChanged(int value)
     UpdateRawJsonView();
 }
 
+void MainWindow::WriteStatBasedArmorAcToDocument()
+{
+    nlohmann::ordered_json* obj = CurrentEquipmentItem();
+    if (!obj || !equipKind || equipKind->currentText().toStdString() != "armors") { return; }
+
+    int b = equipAcBase ? equipAcBase->value() : 14;
+    if (b < 1) { b = 14; }
+    std::string ms = equipAcModStat ? equipAcModStat->text().toStdString() : "";
+    if (ms.empty()) { ms = "dexterity"; }
+
+    nlohmann::ordered_json ac = {{"base", b}, {"modstat", ms}};
+    if (equipAcCapEnabled && equipAcCapEnabled->isChecked())
+    {
+        int mc = equipAcModCap ? equipAcModCap->value() : 0;
+        if (mc < 0) { mc = 0; }
+        ac["modcap"] = mc;
+    }
+    (*obj)["ac"] = ac;
+}
+
 void MainWindow::ApplyArmorAcModeToDocument(bool statBased)
 {
     nlohmann::ordered_json* obj = CurrentEquipmentItem();
@@ -1427,9 +1471,7 @@ void MainWindow::ApplyArmorAcModeToDocument(bool statBased)
         if (b < 1) { b = 14; }
         std::string ms = equipAcModStat ? equipAcModStat->text().toStdString() : "";
         if (ms.empty()) { ms = "dexterity"; }
-        int mc = equipAcModCap ? equipAcModCap->value() : 0;
-        if (mc < 0) { mc = 0; }
-        (*obj)["ac"] = nlohmann::ordered_json({{"base", b}, {"modstat", ms}, {"modcap", mc}});
+        WriteStatBasedArmorAcToDocument();
         if (equipArmorAcStack) { equipArmorAcStack->setCurrentIndex(0); }
         if (equipAcBase)
         {
@@ -1441,10 +1483,11 @@ void MainWindow::ApplyArmorAcModeToDocument(bool statBased)
             QSignalBlocker blockMs(equipAcModStat);
             equipAcModStat->setText(QString::fromStdString(ms));
         }
-        if (equipAcModCap)
+        if (equipAcModCap && equipAcCapEnabled)
         {
             QSignalBlocker blockMc(equipAcModCap);
-            equipAcModCap->setValue(mc);
+            equipAcModCap->setEnabled(equipAcCapEnabled->isChecked());
+            if (equipAcCapEnabled->isChecked()) { equipAcModCap->setValue(equipAcModCap->value()); }
         }
     }
     else
@@ -1761,8 +1804,8 @@ QWidget* MainWindow::BuildGeneralTab()
     statSpeed->setProperty("jsonKey", "speed");
     statMaxHp = MakeSpinBox(1, 999);
     statMaxHp->setProperty("jsonKey", "maxHp");
-    statAc = MakeSpinBox(1, 99);
-    statAc->setProperty("jsonKey", "ac");
+    statAcBonus = MakeSpinBox(-20, 20);
+    statAcBonus->setProperty("jsonKey", "acBonus");
     statInitiativeBonus = MakeSpinBox(0, 50);
     statInitiativeBonus->setProperty("jsonKey", "initiativeBonus");
     statPPercBonus = MakeSpinBox(0, 50);
@@ -1776,7 +1819,7 @@ QWidget* MainWindow::BuildGeneralTab()
     statsForm->addRow("Charisma", statCharisma);
     statsForm->addRow("Speed", statSpeed);
     statsForm->addRow("Max HP", statMaxHp);
-    statsForm->addRow("AC", statAc);
+    statsForm->addRow("AC Bonus", statAcBonus);
     statsForm->addRow("Initiative bonus", statInitiativeBonus);
     statsForm->addRow("Passive perception bonus", statPPercBonus);
 
@@ -1788,7 +1831,7 @@ QWidget* MainWindow::BuildGeneralTab()
     QObject::connect(statCharisma, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
     QObject::connect(statSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
     QObject::connect(statMaxHp, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
-    QObject::connect(statAc, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
+    QObject::connect(statAcBonus, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnStatIntChanged);
     QObject::connect(statInitiativeBonus,
                      QOverload<int>::of(&QSpinBox::valueChanged),
                      this,
@@ -2222,9 +2265,10 @@ QWidget* MainWindow::BuildEquipmentTab()
     equipAcModStat = new QLineEdit();
     equipAcModCap = new QSpinBox();
     equipAcModCap->setRange(0, 20);
+    equipAcCapEnabled = new QCheckBox("Cap stat bonus");
     statAcForm->addRow("Base AC", equipAcBase);
     statAcForm->addRow("Mod stat (e.g. dexterity)", equipAcModStat);
-    statAcForm->addRow("Mod cap (0 = none)", equipAcModCap);
+    statAcForm->addRow(equipAcCapEnabled, equipAcModCap);
 
     QWidget* fixAcPage = new QWidget();
     QFormLayout* fixAcForm = new QFormLayout();
@@ -2265,6 +2309,7 @@ QWidget* MainWindow::BuildEquipmentTab()
     QObject::connect(equipAcBase, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnEquipmentAcBaseChanged);
     QObject::connect(equipAcModStat, &QLineEdit::textChanged, this, &MainWindow::OnEquipmentAcModStatChanged);
     QObject::connect(equipAcModCap, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnEquipmentAcModCapChanged);
+    QObject::connect(equipAcCapEnabled, &QCheckBox::toggled, this, &MainWindow::OnEquipmentAcCapEnabledChanged);
     QObject::connect(equipAcFixMod, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::OnEquipmentAcFixModChanged);
 
     EnsureEquipmentStructure();
@@ -2392,7 +2437,7 @@ void MainWindow::UpdateTabsFromDocument()
     SetSpinValue(statCharisma, stats, "charisma", 0);
     SetSpinValue(statSpeed, stats, "speed", 30);
     SetSpinValue(statMaxHp, stats, "maxHp", 10);
-    SetSpinValue(statAc, stats, "ac", 14);
+    SetSpinValue(statAcBonus, stats, "acBonus", 0);
     SetSpinValue(statInitiativeBonus, stats, "initiativeBonus", 0);
     SetSpinValue(statPPercBonus, stats, "pPercBonus", 0);
 

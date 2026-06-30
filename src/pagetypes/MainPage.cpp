@@ -5,6 +5,7 @@
 
 #include "elements/TextBox.h"
 #include "pagetypes/MainPage.h"
+#include "syshelpers/AcCalculation.h"
 #include "syshelpers/Utilities.h"
 
 using namespace PageConstants;
@@ -125,7 +126,7 @@ void MainPage::AddStat(const std::string& statName, unsigned int statIndex)
 
 void MainPage::AddAc()
 {
-    doc.AddText(std::to_string(config.getObject("stats").getInt("ac")),
+    doc.AddText(std::to_string(AcCalculation::CalcAc(config)),
                 MIDDLE_LINE - 53,
                 101,
                 UtilType::TextOptions(FontType::Seagram, 18));

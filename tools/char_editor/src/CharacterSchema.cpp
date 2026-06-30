@@ -2,6 +2,9 @@
 
 #include "CharacterJsonValidator.h"
 
+#include "syshelpers/AcCalculation.h"
+#include "syshelpers/Config.h"
+
 #include <cmath>
 #include <string>
 #include <vector>
@@ -164,6 +167,41 @@ void ReorderWeaponKeysRangeBeforeExtraText(nlohmann::ordered_json& w)
     w = reordered;
 }
 
+void NormalizeArmorAcObject(nlohmann::ordered_json& a)
+{
+    if (!a.is_object()) { a = nlohmann::ordered_json::object(); }
+    if (!a.contains("ac") || !a["ac"].is_object()) { a["ac"] = nlohmann::ordered_json::object(); }
+    auto& ac = a["ac"];
+
+    if (ac.contains("base"))
+    {
+        EnsureNonZeroNonNegInt(ac, "base", 14);
+        EnsureNonEmptyString(ac, "modstat", "dexterity");
+        const int baseVal = ac["base"].get<int>();
+        const std::string modstatVal = ac["modstat"].get<std::string>();
+        nlohmann::ordered_json normalized = {{"base", baseVal}, {"modstat", modstatVal}};
+        if (ac.contains("modcap"))
+        {
+            EnsureNonNegInt(ac, "modcap", 0);
+            normalized["modcap"] = ac["modcap"].get<int>();
+        }
+        ac = normalized;
+    }
+    else if (!ac.contains("fixmod"))
+    {
+        ac = nlohmann::ordered_json({{"base", 14}, {"modstat", "dexterity"}, {"modcap", 2}});
+    }
+    else
+    {
+        EnsureNonZeroNonNegInt(ac, "fixmod", 2);
+        if (ac.contains("modstat")) { ac.erase("modstat"); }
+        if (ac.contains("modcap")) { ac.erase("modcap"); }
+        if (ac.contains("base")) { ac.erase("base"); }
+        const int fixVal = ac["fixmod"].get<int>();
+        ac = nlohmann::ordered_json({{"fixmod", fixVal}});
+    }
+}
+
 }
 
 nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
@@ -184,7 +222,7 @@ nlohmann::ordered_json CharacterSchema::MakeDefaultCharacter()
     stats["charisma"] = 0;
     stats["speed"] = 30;
     stats["maxHp"] = 10;
-    stats["ac"] = 14;
+    stats["acBonus"] = 0;
     stats["initiativeBonus"] = 0;
     stats["pPercBonus"] = 0;
 
@@ -282,8 +320,7 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
     if (stats.contains("speed") && stats["speed"].is_number_integer() && stats["speed"].get<int>() == 0) { stats["speed"] = 30; }
     EnsureStatsNonNegInt(stats, "maxHp", 10);
     if (stats.contains("maxHp") && stats["maxHp"].is_number_integer() && stats["maxHp"].get<int>() == 0) { stats["maxHp"] = 10; }
-    EnsureStatsNonNegInt(stats, "ac", 14);
-    if (stats.contains("ac") && stats["ac"].is_number_integer() && stats["ac"].get<int>() == 0) { stats["ac"] = 14; }
+    EnsureInt(stats, "acBonus", 0);
     EnsureStatsNonNegInt(stats, "initiativeBonus", 0);
     EnsureStatsNonNegInt(stats, "pPercBonus", 0);
 
@@ -448,37 +485,26 @@ void CharacterSchema::NormalizeInPlace(nlohmann::ordered_json& doc)
             EnsureNonEmptyString(a, "name", "Breastplate");
             EnsureNonEmptyString(a, "type", "Medium Armor");
             EnsureString(a, "extratext", "");
-            if (!a.contains("ac") || !a["ac"].is_object()) { a["ac"] = nlohmann::ordered_json::object(); }
-            auto& ac = a["ac"];
+            NormalizeArmorAcObject(a);
+        }
+    }
 
-            const bool hasFix = ac.contains("fixmod");
-            const bool hasBase = ac.contains("base");
-            if (!hasFix && !hasBase)
+    if (doc.contains("stats") && doc["stats"].is_object())
+    {
+        auto& stats = doc["stats"];
+        if (stats.contains("ac") && stats["ac"].is_number_integer())
+        {
+            const int legacyAc = stats["ac"].get<int>();
+            if (!stats.contains("acBonus") || !stats["acBonus"].is_number_integer())
             {
-                ac["base"] = 14;
-                ac["modstat"] = "dexterity";
-                ac["modcap"] = 2;
+                const Config cfg(doc);
+                stats["acBonus"] = legacyAc - AcCalculation::CalcAc(cfg);
             }
-            if (ac.contains("base"))
-            {
-                EnsureNonZeroNonNegInt(ac, "base", 14);
-                EnsureNonEmptyString(ac, "modstat", "dexterity");
-                EnsureNonNegInt(ac, "modcap", 2);
-                const int baseVal = ac["base"].get<int>();
-                const std::string modstatVal = ac["modstat"].get<std::string>();
-                const int modcapVal = ac["modcap"].get<int>();
-                ac = nlohmann::ordered_json(
-                    {{"base", baseVal}, {"modstat", modstatVal}, {"modcap", modcapVal}});
-            }
-            else
-            {
-                EnsureNonZeroNonNegInt(ac, "fixmod", 2);
-                if (ac.contains("modstat")) { ac.erase("modstat"); }
-                if (ac.contains("modcap")) { ac.erase("modcap"); }
-                if (ac.contains("base")) { ac.erase("base"); }
-                const int fixVal = ac["fixmod"].get<int>();
-                ac = nlohmann::ordered_json({{"fixmod", fixVal}});
-            }
+            stats.erase("ac");
+        }
+        else if (!stats.contains("acBonus") || !stats["acBonus"].is_number_integer())
+        {
+            stats["acBonus"] = 0;
         }
     }
 

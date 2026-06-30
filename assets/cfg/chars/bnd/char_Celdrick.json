@@ -12,7 +12,7 @@
         "charisma": 12,
         "speed": 30,
         "maxHp": 48,
-        "ac": 17,
+        "acBonus": 0,
         "initiativeBonus": 0,
         "pPercBonus": 0
     },

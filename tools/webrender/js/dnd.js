@@ -96,6 +96,54 @@ export function getPassivePerception(character) {
     return 10 + getStatMod(character, 'wisdom') + bonus;
 }
 
+function isBaseTypeArmor(armor) {
+    return typeof armor.ac?.base === 'number';
+}
+
+function isFixmodTypeArmor(armor) {
+    return typeof armor.ac?.fixmod === 'number';
+}
+
+export function armorStatContribution(armorAc, statMod) {
+    if (typeof armorAc.modcap !== 'number') {
+        return statMod;
+    }
+    return Math.min(statMod, armorAc.modcap);
+}
+
+function sumFixmodBonuses(armors) {
+    let total = 0;
+    for (const armor of armors) {
+        if (isFixmodTypeArmor(armor)) {
+            total += armor.ac.fixmod;
+        }
+    }
+    return total;
+}
+
+export function getAc(character) {
+    const acBonus = character.stats?.acBonus ?? 0;
+    const usedArmors = character.equipment?.used?.armors ?? [];
+
+    const baseTypeArmors = usedArmors.filter(isBaseTypeArmor);
+    if (baseTypeArmors.length > 1) {
+        const charName = character.name || 'character';
+        console.warn('Warning: multiple base-type armors for ' + charName + ', using last');
+    }
+
+    let bodyAc = 0;
+    if (baseTypeArmors.length === 0) {
+        bodyAc = 10 + getStatMod(character, 'dexterity') + acBonus;
+    } else {
+        const armor = baseTypeArmors[baseTypeArmors.length - 1];
+        const ac = armor.ac;
+        const statMod = getStatMod(character, ac.modstat || 'dexterity');
+        bodyAc = ac.base + armorStatContribution(ac, statMod) + acBonus;
+    }
+
+    return bodyAc + sumFixmodBonuses(usedArmors);
+}
+
 export function getSpellSaveDc(character, castStat) {
     if (!castStat) {
         return null;
@@ -291,7 +339,7 @@ export function formatArmorAc(armor) {
         let text = 'AC ' + String(ac.base);
         if (ac.modstat) {
             text += ' + ' + capitalizeFirst(ac.modstat);
-            if (typeof ac.modcap === 'number') {
+            if (Object.prototype.hasOwnProperty.call(ac, 'modcap')) {
                 text += ' (max ' + String(ac.modcap) + ')';
             }
         }

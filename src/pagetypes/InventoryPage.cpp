@@ -86,7 +86,7 @@ std::string ArmorTextAfterColon(const Config& armorCfg)
     {
         const std::string modstat = ac.getString("modstat");
         std::string tail = std::string(" AC ") + std::to_string(base) + " + " + modstat + " modifier";
-        if (ac.hasKey("modcap") && ac.getInt("modcap") != 0)
+        if (ac.hasKey("modcap"))
         {
             tail += " (max " + std::to_string(ac.getInt("modcap")) + ")";
         }
