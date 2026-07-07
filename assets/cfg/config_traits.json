@@ -109,7 +109,7 @@
     },
     {
         "name": "Researcher",
-        "description": "When you attempt to learn or recall a piece of lore, if you do not know that iformation, you often know where and from whom you can obtain it."
+        "description": "When you attempt to learn or recall a piece of lore, if you do not know that information, you often know where and from whom you can obtain it."
     },
     {
         "name": "Favored by the Gods",
@@ -298,5 +298,13 @@
     {
         "name": "Vessel-bound Celestial",
         "description": "When you die, you can choose to resurrect in your current body, with half of your max HP and a permanent incurable injury, that only disappears when you regain your Celestial form."
+    },
+    {
+        "name": "Draconic Ancestry",
+        "description": "You are distantly related to a particular kind of dragon. You have access to a breath weapon with a certain shape and damage type depending on the type of dragon you are related to. When you use your breath weapon, all creatures in the area must make a saving throw, the type of which is determined by your ancestry. The DC of this saving throw is 8 + your Constitution modifier + your proficiency bonus. A creature takes 2d6 damage on a failed save, and half as much damage on a successful one. The damage increase to 3d6 at 6th level, 4d6 at 11th, and 5d6 at 16th level. After using your breath weapon, you cannot use it again until you complete a short or long rest."
+    },
+    {
+        "name": "Draconic Ancestry - Brass Dragon",
+        "description": "The damage type of your breath weapon and your corresponding resistence is fire. The shape of your breath weapon is a 30 ft. long line in front of you (5 ft. wide). The type of save targets should roll is Dexterity."
     }
 ]

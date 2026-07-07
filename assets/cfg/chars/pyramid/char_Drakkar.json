@@ -1,0 +1,170 @@
+{
+    "name": "Drakkar",
+    "nameLetterSpacing": 5.1,
+    "nameFontSize": 38,
+    "background": "Sage",
+    "race": "Dragonborn",
+    "stats": {
+        "strength": 14,
+        "dexterity": 10,
+        "constitution": 12,
+        "intelligence": 12,
+        "wisdom": 12,
+        "charisma": 16,
+        "speed": 30,
+        "maxHp": 12,
+        "acBonus": 0,
+        "initiativeBonus": 0,
+        "pPercBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 2,
+        "skills": {
+            "strength": {
+                "athletics": 1
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 1,
+                "history": 1,
+                "investigation": 0,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 0,
+                "insight": 1,
+                "medicine": 0,
+                "perception": 0,
+                "survival": 0
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 0,
+                "performance": 0,
+                "persuasion": 0
+            }
+        },
+        "savingThrows": {
+            "strength": 0,
+            "dexterity": 0,
+            "constitution": 0,
+            "intelligence": 0,
+            "wisdom": 1,
+            "charisma": 1
+        },
+        "tools": [],
+        "languages": [
+            "Elvish",
+            "Draconic",
+            "Celestial",
+            "Undercommon",
+            "Common"
+        ],
+        "armors": [
+            "Light Armor",
+            "Medium Armor",
+            "Heavy Armor",
+            "Shield"
+        ],
+        "simpleWeapons": [
+            "Club",
+            "Greatclub",
+            "Handaxe",
+            "Javelin",
+            "Light Hammer",
+            "Mace",
+            "Spear",
+            "Light Crossbow",
+            "Shortbow"
+        ],
+        "martialWeapons": [
+            "Battleaxe",
+            "Flail",
+            "Glaive",
+            "Greataxe",
+            "Greatsword",
+            "Halberd",
+            "Lance",
+            "Longsword",
+            "Maul",
+            "Morningstar",
+            "Pike",
+            "Shortsword",
+            "Trident",
+            "Warhammer",
+            "Hand Crossbow",
+            "Heavy Crossbow",
+            "Longbow"
+        ]
+    },
+    "traits": [
+        "Divine Sense",
+        "Lay on Hands",
+        "Draconic Ancestry",
+        "Draconic Ancestry - Brass Dragon",
+        "Researcher",
+        "Sacral Body",
+        "Holy Experience",
+        "Vessel-bound Celestial"
+    ],
+    "classes": {
+        "paladin": {
+            "level": 1,
+            "hitDice": "d10",
+            "resourcePoints": 0,
+            "castStat": "",
+            "subclass": "",
+            "spellslots": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [],
+                "0_extra": [
+                    "Breath Weapon",
+                    "Divine Sense",
+                    "Lay on Hands"
+                ],
+                "1": [],
+                "2": [],
+                "3": [],
+                "4": [],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [],
+            "armors": []
+        },
+        "stashed": {
+            "weapons": [],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [],
+        "consumables": [],
+        "kits & tools": [],
+        "general": [
+            "Ragged Leather Cloths"
+        ]
+    }
+}
