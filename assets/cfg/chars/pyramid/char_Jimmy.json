@@ -1,6 +1,7 @@
 {
     "name": "Jimmy Phu'elig",
-    "nameLetterSpacing": 2,
+    "nameLetterSpacing": -2,
+    "nameFontSize": 29,
     "background": "Pirate",
     "race": "Drow",
     "stats": {
@@ -95,7 +96,9 @@
         "Fighting Style - Dueling",
         "Drow Magic - Innate Spellcasting",
         "Bad Reputation",
-        "Sacral Body"
+        "Sacral Body",
+        "Holy Experience",
+        "Vessel-bound Celestial"
     ],
     "classes": {
         "fighter": {
