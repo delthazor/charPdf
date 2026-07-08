@@ -1,18 +1,18 @@
 {
-    "name": "Drakkar",
-    "nameLetterSpacing": 5.1,
-    "nameFontSize": 38,
-    "background": "Sage",
-    "race": "Dragonborn",
+    "name": "Nephys",
+    "nameLetterSpacing": 8.2,
+    "nameFontSize": 40,
+    "background": "Farmer",
+    "race": "Tiefling",
     "stats": {
-        "strength": 14,
-        "dexterity": 10,
-        "constitution": 12,
-        "intelligence": 12,
-        "wisdom": 12,
-        "charisma": 16,
+        "strength": 13,
+        "dexterity": 12,
+        "constitution": 14,
+        "intelligence": 13,
+        "wisdom": 11,
+        "charisma": 15,
         "speed": 30,
-        "maxHp": 11,
+        "maxHp": 12,
         "acBonus": 0,
         "initiativeBonus": 0,
         "pPercBonus": 0
@@ -21,7 +21,7 @@
         "bonus": 2,
         "skills": {
             "strength": {
-                "athletics": 1
+                "athletics": 0
             },
             "dexterity": {
                 "acrobatics": 0,
@@ -29,17 +29,17 @@
                 "stealth": 0
             },
             "intelligence": {
-                "arcana": 1,
-                "history": 1,
+                "arcana": 0,
+                "history": 0,
                 "investigation": 0,
-                "nature": 0,
+                "nature": 1,
                 "religion": 0
             },
             "wisdom": {
-                "animalHandling": 0,
-                "insight": 1,
+                "animalHandling": 1,
+                "insight": 0,
                 "medicine": 0,
-                "perception": 0,
+                "perception": 1,
                 "survival": 0
             },
             "charisma": {
@@ -53,74 +53,63 @@
             "strength": 0,
             "dexterity": 0,
             "constitution": 0,
-            "intelligence": 0,
+            "intelligence": 1,
             "wisdom": 1,
-            "charisma": 1
+            "charisma": 0
         },
-        "tools": [],
+        "tools": [
+            "Carpenter's Tools",
+            "Herbalism Kit"
+        ],
         "languages": [
-            "Elvish",
+            "Giant",
             "Draconic",
             "Celestial",
-            "Undercommon",
             "Common"
         ],
         "armors": [
             "Light Armor",
-            "Medium Armor",
-            "Heavy Armor",
-            "Shield"
+            "Medium Armor"
         ],
         "simpleWeapons": [
             "Club",
-            "Greatclub",
-            "Handaxe",
-            "Javelin",
-            "Light Hammer",
-            "Mace",
+            "Quarterstaff",
+            "Sickle",
             "Spear",
-            "Light Crossbow",
-            "Shortbow"
+            "Mace",
+            "Shortbow",
+            "Dart",
+            "Sling"
         ],
         "martialWeapons": [
-            "Battleaxe",
-            "Flail",
-            "Glaive",
-            "Greataxe",
-            "Greatsword",
-            "Halberd",
-            "Lance",
-            "Longsword",
-            "Maul",
-            "Morningstar",
-            "Pike",
             "Shortsword",
-            "Trident",
-            "Warhammer",
-            "Hand Crossbow",
-            "Heavy Crossbow",
-            "Longbow"
+            "Longsword",
+            "Morningstar",
+            "Flail",
+            "Whip",
+            "Longbow",
+            "Net"
         ]
     },
     "traits": [
-        "Divine Sense",
-        "Lay on Hands",
-        "Draconic Ancestry",
-        "Draconic Ancestry - Brass Dragon",
-        "Researcher",
+        "Darkvision",
+        "Druidic",
+        "Fiendish Legacy",
+        "Fiendish Legacy - Chthonic",
+        "Tough (2024)",
         "Sacral Body",
         "Holy Experience",
         "Vessel-bound Celestial"
     ],
     "classes": {
-        "paladin": {
+        "druid": {
             "level": 1,
-            "hitDice": "d10",
+            "hitDice": "d8",
             "resourcePoints": 0,
-            "castStat": "",
+            "castStat": "wisdom",
             "subclass": "",
             "spellslots": {
-                "1": 0,
+                "1": 2,
                 "2": 0,
                 "3": 0,
                 "4": 0,
@@ -131,13 +120,23 @@
                 "9": 0
             },
             "spells": {
-                "0": [],
-                "0_extra": [
-                    "Breath Weapon",
-                    "Divine Sense",
-                    "Lay on Hands"
+                "0": [
+                    "Thaumaturgy",
+                    "Chill Touch",
+                    "Thunderwave",
+                    "Guideance"
                 ],
-                "1": [],
+                "0_extra": [
+                    "Fiendish Legacy:",
+                    " - Chill Touch"
+                ],
+                "1": [
+                    "Speak with Animals",
+                    "Thunderwave",
+                    "Create or Destroy Water",
+                    "Detecct Poison and Disease",
+                    "Cure wounds"
+                ],
                 "2": [],
                 "3": [],
                 "4": [],

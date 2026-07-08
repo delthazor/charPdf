@@ -1,18 +1,18 @@
 {
-    "name": "Drakkar",
-    "nameLetterSpacing": 5.1,
-    "nameFontSize": 38,
-    "background": "Sage",
-    "race": "Dragonborn",
+    "name": "Lylral",
+    "nameLetterSpacing": 8.2,
+    "nameFontSize": 40,
+    "background": "Entertainer",
+    "race": "Aasimar",
     "stats": {
-        "strength": 14,
-        "dexterity": 10,
-        "constitution": 12,
-        "intelligence": 12,
-        "wisdom": 12,
+        "strength": 10,
+        "dexterity": 13,
+        "constitution": 14,
+        "intelligence": 10,
+        "wisdom": 14,
         "charisma": 16,
         "speed": 30,
-        "maxHp": 11,
+        "maxHp": 9,
         "acBonus": 0,
         "initiativeBonus": 0,
         "pPercBonus": 0
@@ -21,10 +21,10 @@
         "bonus": 2,
         "skills": {
             "strength": {
-                "athletics": 1
+                "athletics": 0
             },
             "dexterity": {
-                "acrobatics": 0,
+                "acrobatics": 1,
                 "sleightOfHand": 0,
                 "stealth": 0
             },
@@ -33,11 +33,11 @@
                 "history": 1,
                 "investigation": 0,
                 "nature": 0,
-                "religion": 0
+                "religion": 1
             },
             "wisdom": {
                 "animalHandling": 0,
-                "insight": 1,
+                "insight": 0,
                 "medicine": 0,
                 "perception": 0,
                 "survival": 0
@@ -45,82 +45,75 @@
             "charisma": {
                 "deception": 0,
                 "intimidation": 0,
-                "performance": 0,
+                "performance": 1,
                 "persuasion": 0
             }
         },
         "savingThrows": {
             "strength": 0,
-            "dexterity": 0,
+            "dexterity": 1,
             "constitution": 0,
             "intelligence": 0,
-            "wisdom": 1,
+            "wisdom": 0,
             "charisma": 1
         },
-        "tools": [],
+        "tools": [
+            "Lyre",
+            "Flute",
+            "Pan flute",
+            "Lute"
+        ],
         "languages": [
             "Elvish",
-            "Draconic",
+            "Dwarvish",
             "Celestial",
-            "Undercommon",
             "Common"
         ],
         "armors": [
-            "Light Armor",
-            "Medium Armor",
-            "Heavy Armor",
-            "Shield"
+            "Light Armor"
         ],
         "simpleWeapons": [
             "Club",
-            "Greatclub",
+            "Dagger",
             "Handaxe",
             "Javelin",
             "Light Hammer",
-            "Mace",
-            "Spear",
+            "Quarterstaff",
+            "Sickle",
             "Light Crossbow",
-            "Shortbow"
+            "Shortbow",
+            "Dart",
+            "Sling"
         ],
         "martialWeapons": [
-            "Battleaxe",
-            "Flail",
-            "Glaive",
-            "Greataxe",
-            "Greatsword",
-            "Halberd",
-            "Lance",
-            "Longsword",
-            "Maul",
-            "Morningstar",
-            "Pike",
+            "Rapier",
             "Shortsword",
-            "Trident",
-            "Warhammer",
+            "Scimitar",
+            "Whip",
             "Hand Crossbow",
-            "Heavy Crossbow",
-            "Longbow"
+            "Longbow",
+            "Net"
         ]
     },
     "traits": [
-        "Divine Sense",
-        "Lay on Hands",
-        "Draconic Ancestry",
-        "Draconic Ancestry - Brass Dragon",
-        "Researcher",
+        "Darkvision",
+        "Bardic Inspiration",
+        "Healing Hands",
+        "Encouraging Song",
+        "Celestial Resistance",
         "Sacral Body",
         "Holy Experience",
         "Vessel-bound Celestial"
     ],
     "classes": {
-        "paladin": {
+        "bard": {
             "level": 1,
-            "hitDice": "d10",
-            "resourcePoints": 0,
-            "castStat": "",
+            "hitDice": "d8",
+            "resourcePoints": 3,
+            "castStat": "charisma",
             "subclass": "",
             "spellslots": {
-                "1": 0,
+                "1": 2,
                 "2": 0,
                 "3": 0,
                 "4": 0,
@@ -131,13 +124,21 @@
                 "9": 0
             },
             "spells": {
-                "0": [],
-                "0_extra": [
-                    "Breath Weapon",
-                    "Divine Sense",
-                    "Lay on Hands"
+                "0": [
+                    "Light",
+                    "Blade Ward",
+                    "Mage Hand"
                 ],
-                "1": [],
+                "0_extra": [
+                    "Healing Hands",
+                    "Bardic Inspiration"
+                ],
+                "1": [
+                    "Speak with Animals",
+                    "Command",
+                    "Healing Word",
+                    "Bane"
+                ],
                 "2": [],
                 "3": [],
                 "4": [],
