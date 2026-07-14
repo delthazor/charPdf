@@ -13,7 +13,7 @@
         "charisma": 17,
         "speed": 30,
         "maxHp": 41,
-        "acBonus": 0,
+        "acBonus": 1,
         "initiativeBonus": 0,
         "pPercBonus": 2
     },
@@ -236,7 +236,8 @@
             "Decanter of Endless Water",
             "Sending Stone",
             "Dragoncrest Medalion",
-            "Boots of the Vigiliant Wing"
+            "Boots of the Vigiliant Wing",
+            "Kira Elyson naplója"
         ],
         "consumables": [
             "Crossbow bolts x54",

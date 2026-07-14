@@ -190,12 +190,13 @@
             ],
             "armors": [
                 {
-                    "name": "Leather Armor",
-                    "type": "Light Armor",
+                    "name": "Dragonguard Chestplate",
+                    "type": "Medium Armor",
                     "extratext": "",
                     "ac": {
-                        "base": 11,
-                        "modstat": "dexterity"
+                        "base": 14,
+                        "modstat": "dexterity",
+                        "modcap": 2
                     }
                 }
             ]
