@@ -1,0 +1,177 @@
+{
+    "name": "Neferet",
+    "nameLetterSpacing": 7.2,
+    "nameFontSize": 38,
+    "background": "Soldier",
+    "race": "Aasimar",
+    "stats": {
+        "strength": 15,
+        "dexterity": 14,
+        "constitution": 14,
+        "intelligence": 8,
+        "wisdom": 12,
+        "charisma": 8,
+        "speed": 30,
+        "maxHp": 14,
+        "acBonus": 3,
+        "initiativeBonus": 0,
+        "pPercBonus": 0
+    },
+    "proficiencies": {
+        "bonus": 2,
+        "skills": {
+            "strength": {
+                "athletics": 1
+            },
+            "dexterity": {
+                "acrobatics": 0,
+                "sleightOfHand": 0,
+                "stealth": 0
+            },
+            "intelligence": {
+                "arcana": 0,
+                "history": 0,
+                "investigation": 0,
+                "nature": 0,
+                "religion": 0
+            },
+            "wisdom": {
+                "animalHandling": 0,
+                "insight": 0,
+                "medicine": 0,
+                "perception": 1,
+                "survival": 1
+            },
+            "charisma": {
+                "deception": 0,
+                "intimidation": 1,
+                "performance": 0,
+                "persuasion": 0
+            }
+        },
+        "savingThrows": {
+            "strength": 1,
+            "dexterity": 0,
+            "constitution": 1,
+            "intelligence": 0,
+            "wisdom": 0,
+            "charisma": 0
+        },
+        "tools": [
+            "Vehicles (land)",
+            "Cards (Gaming Cards)"
+        ],
+        "languages": [
+            "Elvish",
+            "Celestial",
+            "Common"
+        ],
+        "armors": [
+            "Light Armor",
+            "Medium Armor",
+            "Shield"
+        ],
+        "simpleWeapons": [
+            "Club",
+            "Greatclub",
+            "Handaxe",
+            "Javelin",
+            "Light Hammer",
+            "Mace",
+            "Quarterstaff",
+            "Sickle",
+            "Spear",
+            "Light Crossbow",
+            "Shortbow",
+            "Sling"
+        ],
+        "martialWeapons": [
+            "Battleaxe",
+            "Flail",
+            "Glaive",
+            "Greataxe",
+            "Greatsword",
+            "Halberd",
+            "Lance",
+            "Longsword",
+            "Maul",
+            "Morningstar",
+            "Pike",
+            "Trident",
+            "Warhammer",
+            "Shortsword",
+            "Scimitar",
+            "War Pick",
+            "Whip",
+            "Hand Crossbow",
+            "Longbow",
+            "Net"
+        ]
+    },
+    "traits": [
+        "Darkvision",
+        "Rage",
+        "Unarmored Defense",
+        "Military Rank (Officer)",
+        "Healing Hands",
+        "Celestial Resistance",
+        "Sacral Body",
+        "Holy Experience",
+        "Vessel-bound Celestial"
+    ],
+    "classes": {
+        "barbarian": {
+            "level": 1,
+            "hitDice": "d12",
+            "resourcePoints": 2,
+            "castStat": "intelligence",
+            "subclass": "",
+            "spellslots": {
+                "1": 0,
+                "2": 0,
+                "3": 0,
+                "4": 0,
+                "5": 0,
+                "6": 0,
+                "7": 0,
+                "8": 0,
+                "9": 0
+            },
+            "spells": {
+                "0": [
+                    "Light"
+                ],
+                "0_extra": [
+                    "Rage"
+                ],
+                "1": [],
+                "2": [],
+                "3": [],
+                "4": [],
+                "5": [],
+                "6": [],
+                "7": [],
+                "8": [],
+                "9": []
+            }
+        }
+    },
+    "equipment": {
+        "used": {
+            "weapons": [],
+            "armors": []
+        },
+        "stashed": {
+            "weapons": [],
+            "armors": []
+        }
+    },
+    "backpack": {
+        "accessories": [],
+        "consumables": [],
+        "kits & tools": [],
+        "general": [
+            "Ragged Leather Cloths"
+        ]
+    }
+}
