@@ -26,7 +26,7 @@ all: $(TARGET)
 # Runtime loads paths like assets/... relative to cwd; make run uses $(BUILD_DIR).
 $(BUILD_DIR)/assets: | $(BUILD_DIR)
 	@if [ -e "$(BUILD_DIR)/assets" ] && [ ! -L "$(BUILD_DIR)/assets" ]; then \
-		echo "error: $(BUILD_DIR)/assets exists and is not a symlink; remove or merge with $(ASSETS_DIR)" >&2; exit 1; \
+		cp -fR ../$(ASSETS_DIR) $(BUILD_DIR)/assets; exit 1; \
 	fi
 	ln -snf ../$(ASSETS_DIR) "$(BUILD_DIR)/assets"
 
