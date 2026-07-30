@@ -150,17 +150,91 @@
     },
     "equipment": {
         "used": {
-            "weapons": [],
-            "armors": []
+            "weapons": [
+                {
+                    "name": "Sickle",
+                    "type": "Sickle",
+                    "extratext": "",
+                    "props": [
+                        "light"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Quarterstaff",
+                    "type": "Quarterstaff",
+                    "extratext": "",
+                    "props": [
+                        "versatile"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "extra": []
+                    }
+                }
+
+            ],
+            "armors": [
+                {
+                    "name": "Leather Armor",
+                    "type": "Light Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 12,
+                        "modstat": "dexterity"
+                    }
+                }
+            ]
         },
         "stashed": {
-            "weapons": [],
+            "weapons": [
+                {
+                    "name": "Longbow",
+                    "type": "Longbow",
+                    "extratext": "",
+                    "props": [
+                        "heavy",
+                        "two-handed"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d8",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
             "armors": []
         }
     },
     "backpack": {
-        "accessories": [],
-        "consumables": [],
+        "accessories": [
+            "Linen Backpack",
+            "Leather Sack & Belt"
+        ],
+        "consumables": [
+            "Long Arrows x20"
+        ],
         "kits & tools": [],
         "general": [
             "Ragged Leather Cloths"

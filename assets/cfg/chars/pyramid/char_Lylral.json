@@ -152,8 +152,36 @@
     },
     "equipment": {
         "used": {
-            "weapons": [],
-            "armors": []
+            "weapons": [
+                {
+                    "name": "Shortbow",
+                    "type": "Shortbow",
+                    "extratext": "",
+                    "props": [
+                        "light"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Leather Armor",
+                    "type": "Light Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 12,
+                        "modstat": "dexterity"
+                    }
+                }
+            ]
         },
         "stashed": {
             "weapons": [],
@@ -161,8 +189,13 @@
         }
     },
     "backpack": {
-        "accessories": [],
-        "consumables": [],
+        "accessories": [
+            "Linen Backpack",
+            "Leather Sack & Belt"
+        ],
+        "consumables": [
+            "Short Arrows x20"
+        ],
         "kits & tools": [],
         "general": [
             "Ragged Leather Cloths"

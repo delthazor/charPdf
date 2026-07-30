@@ -143,8 +143,53 @@
     "equipment": {
         "used": {
             "weapons": [
+                {
+                    "name": "Dagger",
+                    "type": "Dagger",
+                    "extratext": "",
+                    "props": [
+                        "light",
+                        "thrown"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Hand Crossbow",
+                    "type": "Hand Crossbow",
+                    "extratext": "",
+                    "props": [
+                        "light"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
             ],
             "armors": [
+                {
+                    "name": "Hide Armor",
+                    "type": "Medium Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 12,
+                        "modstat": "dexterity",
+                        "modcap": 2
+                    }
+                }
             ]
         },
         "stashed": {
@@ -155,8 +200,12 @@
     },
     "backpack": {
         "accessories": [
+            "Linen Backpack",
+            "Leather Belt with Sack"
         ],
         "consumables": [
+            "Hand Crossbow Ammo x30",
+            "Net (special thrown weapon)"
         ],
         "kits & tools": [
         ],
