@@ -151,8 +151,36 @@
     },
     "equipment": {
         "used": {
-            "weapons": [],
-            "armors": []
+            "weapons": [
+                {
+                    "name": "Mace",
+                    "type": "Mace",
+                    "extratext": "",
+                    "props": [
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
+            "armors": [
+                {
+                    "name": "Rusty Breastplate",
+                    "type": "Heavy Armor",
+                    "extratext": "",
+                    "ac": {
+                        "base": 14,
+                        "modstat": "dexterity",
+                        "modcap": 2
+                    }
+                }
+            ]
         },
         "stashed": {
             "weapons": [],
@@ -160,7 +188,10 @@
         }
     },
     "backpack": {
-        "accessories": [],
+        "accessories": [
+            "Linen Backpack",
+            "Leather Sack & Belt"
+        ],
         "consumables": [],
         "kits & tools": [],
         "general": [

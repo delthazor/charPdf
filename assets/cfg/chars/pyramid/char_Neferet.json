@@ -158,7 +158,41 @@
     },
     "equipment": {
         "used": {
-            "weapons": [],
+            "weapons": [
+                {
+                    "name": "Dagger",
+                    "type": "Dagger",
+                    "extratext": "",
+                    "props": [
+                        "light",
+                        "thrown"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                },
+                {
+                    "name": "Sling",
+                    "type": "Sling",
+                    "extratext": "",
+                    "props": [],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "bludgeoning"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
             "armors": []
         },
         "stashed": {
@@ -167,7 +201,10 @@
         }
     },
     "backpack": {
-        "accessories": [],
+        "accessories": [
+            "Linen Backpack",
+            "Leather Sack & Belt"
+        ],
         "consumables": [],
         "kits & tools": [],
         "general": [

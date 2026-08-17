@@ -154,6 +154,24 @@
         "used": {
             "weapons": [
                 {
+                    "name": "Dagger",
+                    "type": "Dagger",
+                    "extratext": "",
+                    "props": [
+                        "light",
+                        "thrown"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d4",
+                            "bonus": 0,
+                            "type": "piercing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                },
+                {
                     "name": "Shortbow",
                     "type": "Shortbow",
                     "extratext": "",
@@ -184,7 +202,26 @@
             ]
         },
         "stashed": {
-            "weapons": [],
+            "weapons": [
+                {
+                    "name": "Scimitar",
+                    "type": "Scimitar",
+                    "extratext": "",
+                    "props": [
+                        "light",
+                        "finesse"
+                    ],
+                    "damage": {
+                        "base": {
+                            "dice": "1d6",
+                            "bonus": 0,
+                            "type": "slashing"
+                        },
+                        "alt": {},
+                        "extra": []
+                    }
+                }
+            ],
             "armors": []
         }
     },
