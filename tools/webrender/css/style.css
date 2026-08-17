@@ -84,6 +84,11 @@ a:hover {
     margin-top: 1rem;
 }
 
+.sheet-back-link {
+    margin-top: 0;
+    margin-bottom: 0.75rem;
+}
+
 .picker-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

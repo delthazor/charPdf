@@ -43,6 +43,14 @@ export function getSlugFromPage() {
     return null;
 }
 
+export function campaignIdFromSlug(slug) {
+    if (!slug) {
+        return null;
+    }
+    const slash = slug.indexOf('/');
+    return slash > 0 ? slug.slice(0, slash) : null;
+}
+
 async function fetchJson(relativePath) {
     const response = await fetch(relativePath);
     if (!response.ok) {

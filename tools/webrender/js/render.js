@@ -20,7 +20,7 @@ import {
     getSpellSaveDc,
     getStatMod,
 } from './dnd.js';
-import { lookupSpell, lookupTrait } from './data.js';
+import { campaignIdFromSlug, lookupSpell, lookupTrait } from './data.js';
 
 export function renderCampaignPicker(app, manifest, siteBase) {
     app.replaceChildren();
@@ -56,10 +56,7 @@ export function renderCharacterPicker(app, campaignId, characters, siteBase) {
     const wrap = el('div', 'landing');
     wrap.appendChild(el('h1', 'landing-title', 'Choose a character'));
 
-    const back = el('a', 'back-link');
-    back.href = siteBase + 'index.html';
-    back.textContent = 'Back to campaigns';
-    wrap.appendChild(back);
+    wrap.appendChild(buildBackLink(siteBase, null));
 
     if (!characters || characters.length === 0) {
         wrap.appendChild(el('p', 'muted', 'No characters in this campaign.'));
@@ -102,15 +99,7 @@ export function renderError(app, message, siteBase, campaignId) {
     app.replaceChildren();
     const wrap = el('div', 'state-message error-state');
     wrap.appendChild(el('h1', null, message));
-    const link = el('a', 'back-link');
-    if (campaignId) {
-        link.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
-        link.textContent = 'Back to character list';
-    } else {
-        link.href = siteBase + 'index.html';
-        link.textContent = 'Back to campaigns';
-    }
-    wrap.appendChild(link);
+    wrap.appendChild(buildBackLink(siteBase, campaignId));
     app.appendChild(wrap);
 }
 
@@ -122,8 +111,13 @@ export function renderLoading(app) {
     app.appendChild(wrap);
 }
 
-export function renderCharacterSheet(app, bundle) {
+export function renderCharacterSheet(app, bundle, siteBase) {
     app.replaceChildren();
+
+    const campaignId = campaignIdFromSlug(bundle.entry.slug);
+    const back = buildBackLink(siteBase, campaignId);
+    back.classList.add('sheet-back-link');
+    app.appendChild(back);
 
     const character = bundle.character;
     const header = buildHeader(character);
@@ -645,6 +639,18 @@ function keyValueList(rows) {
         list.appendChild(el('dd', null, value));
     }
     return list;
+}
+
+function buildBackLink(siteBase, campaignId) {
+    const link = el('a', 'back-link');
+    if (campaignId) {
+        link.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
+        link.textContent = 'Back to character list';
+    } else {
+        link.href = siteBase + 'index.html';
+        link.textContent = 'Back to campaigns';
+    }
+    return link;
 }
 
 function el(tag, className, text) {

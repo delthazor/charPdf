@@ -1,4 +1,5 @@
 import {
+    campaignIdFromSlug,
     getSlugFromPage,
     loadCharacterBundle,
     loadCharacterManifest,
@@ -26,7 +27,7 @@ async function bootstrap() {
 
     const siteBase = resolveSiteBase();
     const slug = getSlugFromPage();
-    const campaign = getCampaignFromQuery();
+    const campaign = getCampaignFromQuery() || campaignIdFromSlug(slug);
 
     if (!slug) {
         renderLoading(app);
@@ -44,7 +45,7 @@ async function bootstrap() {
     try {
         const bundle = await loadCharacterBundle(slug);
         updateDocumentTitle(bundle.character);
-        renderCharacterSheet(app, bundle);
+        renderCharacterSheet(app, bundle, siteBase);
     } catch (err) {
         const message = err.message && err.message.startsWith('Character not found')
             ? err.message
