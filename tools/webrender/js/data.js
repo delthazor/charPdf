@@ -88,10 +88,11 @@ export async function loadCharacterBundle(slug) {
         throw new Error('Character not found: ' + slug);
     }
 
-    const [character, traitsCatalog, spellsCatalog] = await Promise.all([
+    const [character, traitsCatalog, spellsCatalog, specialItemsCatalog] = await Promise.all([
         fetchJson(base + entry.file),
         fetchJson(base + 'config_traits.json'),
         fetchJson(base + 'config_spells.json'),
+        fetchJson(base + 'config_special_items.json'),
     ]);
 
     return {
@@ -100,6 +101,7 @@ export async function loadCharacterBundle(slug) {
         traitsByName: buildTraitsIndex(traitsCatalog),
         spellsByName: buildSpellsIndex(spellsCatalog),
         spellsByLowerName: buildSpellsLowerIndex(spellsCatalog),
+        specialItemsByLowerName: buildSpecialItemsIndex(specialItemsCatalog),
     };
 }
 
@@ -143,6 +145,49 @@ function buildSpellsLowerIndex(catalog) {
         }
     }
     return map;
+}
+
+const QUANTITY_SUFFIX = /\s+x\d+\s*$/i;
+const ATTUNED_SUFFIX = /\s*\(attuned\)\s*$/i;
+
+function stripTrailingQuantity(text) {
+    return text.replace(QUANTITY_SUFFIX, '');
+}
+
+function normalizeSpecialItemKey(text) {
+    let key = text.trim();
+    key = stripTrailingQuantity(key);
+    key = key.replace(ATTUNED_SUFFIX, '');
+    return key.trim().toLowerCase();
+}
+
+function buildSpecialItemsIndex(catalog) {
+    const map = new Map();
+    if (!Array.isArray(catalog)) {
+        return map;
+    }
+    for (const item of catalog) {
+        if (!item || !item.name) {
+            continue;
+        }
+        const key = normalizeSpecialItemKey(item.name);
+        if (!key || map.has(key)) {
+            continue;
+        }
+        map.set(key, item);
+    }
+    return map;
+}
+
+export function lookupSpecialItem(specialItemsByLowerName, displayName) {
+    if (!specialItemsByLowerName || displayName == null) {
+        return null;
+    }
+    const key = normalizeSpecialItemKey(String(displayName));
+    if (!key) {
+        return null;
+    }
+    return specialItemsByLowerName.get(key) || null;
 }
 
 export function lookupTrait(traitsByName, name) {

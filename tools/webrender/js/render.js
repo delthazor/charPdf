@@ -20,7 +20,12 @@ import {
     getSpellSaveDc,
     getStatMod,
 } from './dnd.js';
-import { campaignIdFromSlug, lookupSpell, lookupTrait } from './data.js';
+import { campaignIdFromSlug, lookupSpecialItem, lookupSpell, lookupTrait } from './data.js';
+
+const SPECIAL_ITEM_MODAL_ID = 'special-item-modal-root';
+const specialItemByButton = new WeakMap();
+let specialItemModalTrigger = null;
+let previousBodyOverflow = '';
 
 export function renderCampaignPicker(app, manifest, siteBase) {
     app.replaceChildren();
@@ -112,6 +117,7 @@ export function renderLoading(app) {
 }
 
 export function renderCharacterSheet(app, bundle, siteBase) {
+    removeSpecialItemModal();
     app.replaceChildren();
 
     const campaignId = campaignIdFromSlug(bundle.entry.slug);
@@ -126,18 +132,32 @@ export function renderCharacterSheet(app, bundle, siteBase) {
     const tabBar = el('div', 'tab-bar');
     const panels = el('div', 'tab-panels');
 
+    function renderOverviewPanel() {
+        return renderOverview(character);
+    }
+
+    function renderClassesPanel() {
+        return renderClasses(character);
+    }
+
+    function renderInventoryPanel() {
+        return renderInventory(character, bundle.specialItemsByLowerName);
+    }
+
+    function renderTraitsPanel() {
+        return renderTraits(character, bundle.traitsByName);
+    }
+
+    function renderSpellsPanel() {
+        return renderSpells(character, bundle.spellsByName, bundle.spellsByLowerName);
+    }
+
     const tabs = [
-        { id: 'overview', label: 'Overview', render: function () { return renderOverview(character); } },
-        { id: 'classes', label: 'Classes', render: function () { return renderClasses(character); } },
-        { id: 'inventory', label: 'Inventory', render: function () { return renderInventory(character); } },
-        { id: 'traits', label: 'Traits', render: function () { return renderTraits(character, bundle.traitsByName); } },
-        {
-            id: 'spells',
-            label: 'Spells',
-            render: function () {
-                return renderSpells(character, bundle.spellsByName, bundle.spellsByLowerName);
-            },
-        },
+        { id: 'overview', label: 'Overview', render: renderOverviewPanel },
+        { id: 'classes', label: 'Classes', render: renderClassesPanel },
+        { id: 'inventory', label: 'Inventory', render: renderInventoryPanel },
+        { id: 'traits', label: 'Traits', render: renderTraitsPanel },
+        { id: 'spells', label: 'Spells', render: renderSpellsPanel },
     ];
 
     const panelNodes = [];
@@ -411,29 +431,29 @@ function buildClassCard(character, classId, cls) {
     return card;
 }
 
-function renderInventory(character) {
+function renderInventory(character, specialItemsByLowerName) {
     const wrap = el('div', 'inventory-grid');
-    wrap.appendChild(buildEquipmentSection('Equipped', character.equipment?.used));
-    wrap.appendChild(buildEquipmentSection('Stashed', character.equipment?.stashed));
-    wrap.appendChild(buildBackpackSection(character.backpack));
+    wrap.appendChild(buildEquipmentSection('Equipped', character.equipment?.used, specialItemsByLowerName));
+    wrap.appendChild(buildEquipmentSection('Stashed', character.equipment?.stashed, specialItemsByLowerName));
+    wrap.appendChild(buildBackpackSection(character.backpack, specialItemsByLowerName));
     return wrap;
 }
 
-function buildEquipmentSection(title, bucket) {
+function buildEquipmentSection(title, bucket, specialItemsByLowerName) {
     const card = cardSection(title, 'accent-blue');
     if (!bucket) {
         card.appendChild(el('p', 'muted', 'None'));
         return card;
     }
-    appendWeaponList(card, bucket.weapons, 'Weapons');
-    appendArmorList(card, bucket.armors, 'Armor');
+    appendWeaponList(card, bucket.weapons, 'Weapons', specialItemsByLowerName);
+    appendArmorList(card, bucket.armors, 'Armor', specialItemsByLowerName);
     if (card.querySelector('.equip-list') === null) {
         card.appendChild(el('p', 'muted', 'None'));
     }
     return card;
 }
 
-function appendWeaponList(card, weapons, heading) {
+function appendWeaponList(card, weapons, heading, specialItemsByLowerName) {
     if (!Array.isArray(weapons) || weapons.length === 0) {
         return;
     }
@@ -441,7 +461,7 @@ function appendWeaponList(card, weapons, heading) {
     const list = el('div', 'equip-list');
     for (const weapon of weapons) {
         const item = el('div', 'equip-item');
-        item.appendChild(el('strong', null, weapon.name || 'Weapon'));
+        item.appendChild(createInventoryNameNode(weapon.name || 'Weapon', specialItemsByLowerName, 'strong'));
         const details = [];
         if (weapon.type) {
             details.push(weapon.type);
@@ -467,7 +487,7 @@ function appendWeaponList(card, weapons, heading) {
     card.appendChild(list);
 }
 
-function appendArmorList(card, armors, heading) {
+function appendArmorList(card, armors, heading, specialItemsByLowerName) {
     if (!Array.isArray(armors) || armors.length === 0) {
         return;
     }
@@ -475,7 +495,7 @@ function appendArmorList(card, armors, heading) {
     const list = el('div', 'equip-list');
     for (const armor of armors) {
         const item = el('div', 'equip-item');
-        item.appendChild(el('strong', null, armor.name || 'Armor'));
+        item.appendChild(createInventoryNameNode(armor.name || 'Armor', specialItemsByLowerName, 'strong'));
         const details = [];
         if (armor.type) {
             details.push(armor.type);
@@ -495,7 +515,7 @@ function appendArmorList(card, armors, heading) {
     card.appendChild(list);
 }
 
-function buildBackpackSection(backpack) {
+function buildBackpackSection(backpack, specialItemsByLowerName) {
     const card = cardSection('Backpack', 'accent-sage');
     card.classList.add('inventory-backpack');
     const columns = el('div', 'backpack-columns');
@@ -515,7 +535,9 @@ function buildBackpackSection(backpack) {
         } else {
             const ul = el('ul', 'backpack-list');
             for (const item of items) {
-                ul.appendChild(el('li', null, item));
+                const li = el('li');
+                li.appendChild(createInventoryNameNode(item, specialItemsByLowerName, null));
+                ul.appendChild(li);
             }
             block.appendChild(ul);
         }
@@ -651,6 +673,112 @@ function buildBackLink(siteBase, campaignId) {
         link.textContent = 'Back to campaigns';
     }
     return link;
+}
+
+function createInventoryNameNode(displayName, specialItemsByLowerName, missTag) {
+    const label = displayName;
+    const entry = lookupSpecialItem(specialItemsByLowerName, label);
+    if (!entry) {
+        if (missTag) {
+            return el(missTag, null, label);
+        }
+        return document.createTextNode(label);
+    }
+    const btn = el('button', 'special-item-link', label);
+    btn.type = 'button';
+    specialItemByButton.set(btn, entry);
+    btn.addEventListener('click', handleSpecialItemLinkClick);
+    return btn;
+}
+
+function handleSpecialItemLinkClick(event) {
+    const button = event.currentTarget;
+    const entry = specialItemByButton.get(button);
+    if (!entry) {
+        return;
+    }
+    openSpecialItemModal(entry, button);
+}
+
+function removeSpecialItemModal() {
+    const root = document.getElementById(SPECIAL_ITEM_MODAL_ID);
+    if (root) {
+        root.remove();
+    }
+    document.removeEventListener('keydown', handleSpecialItemModalKeydown);
+    document.body.style.overflow = previousBodyOverflow;
+    specialItemModalTrigger = null;
+}
+
+function closeSpecialItemModal() {
+    const trigger = specialItemModalTrigger;
+    removeSpecialItemModal();
+    if (trigger && document.contains(trigger) && typeof trigger.focus === 'function') {
+        trigger.focus();
+    }
+}
+
+function handleSpecialItemModalKeydown(event) {
+    if (event.key === 'Escape') {
+        closeSpecialItemModal();
+    }
+}
+
+function handleSpecialItemBackdropPointerDown(event) {
+    if (event.target === event.currentTarget) {
+        closeSpecialItemModal();
+    }
+}
+
+function handleSpecialItemDialogPointerDown(event) {
+    event.stopPropagation();
+}
+
+function handleSpecialItemCloseClick() {
+    closeSpecialItemModal();
+}
+
+function openSpecialItemModal(entry, triggerButton) {
+    removeSpecialItemModal();
+    specialItemModalTrigger = triggerButton;
+    previousBodyOverflow = document.body.style.overflow;
+
+    const overlay = el('div', 'special-item-overlay');
+    overlay.id = SPECIAL_ITEM_MODAL_ID;
+
+    const dialog = el('div', 'special-item-dialog');
+    dialog.setAttribute('role', 'dialog');
+    dialog.setAttribute('aria-modal', 'true');
+    dialog.setAttribute('aria-labelledby', 'special-item-modal-title');
+
+    const closeBtn = el('button', 'special-item-close', '×');
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.addEventListener('click', handleSpecialItemCloseClick);
+
+    const title = el('h2', 'special-item-title', entry.name || '');
+    title.id = 'special-item-modal-title';
+
+    dialog.appendChild(closeBtn);
+    dialog.appendChild(title);
+
+    if (entry.type) {
+        dialog.appendChild(el('p', 'special-item-type', entry.type));
+    }
+
+    if (entry.description) {
+        const body = el('div', 'special-item-description');
+        body.textContent = String(entry.description).trim();
+        dialog.appendChild(body);
+    }
+
+    overlay.appendChild(dialog);
+    overlay.addEventListener('pointerdown', handleSpecialItemBackdropPointerDown);
+    dialog.addEventListener('pointerdown', handleSpecialItemDialogPointerDown);
+    document.addEventListener('keydown', handleSpecialItemModalKeydown);
+    document.body.style.overflow = 'hidden';
+    document.body.appendChild(overlay);
+    closeBtn.focus();
 }
 
 function el(tag, className, text) {

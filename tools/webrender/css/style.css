@@ -569,7 +569,8 @@ a:hover {
     gap: 0.55rem;
 }
 
-.equip-item strong {
+.equip-item strong,
+.equip-item > .special-item-link {
     display: block;
     margin-bottom: 0.15rem;
 }
@@ -578,6 +579,90 @@ a:hover {
     margin: 0;
     font-size: 0.88rem;
     color: var(--muted);
+}
+
+/* Special items */
+
+.special-item-link {
+    appearance: none;
+    border: none;
+    background: transparent;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+    margin: 0;
+    color: var(--accent-teal);
+    text-decoration: underline;
+    cursor: pointer;
+    text-align: left;
+    display: inline;
+}
+
+.special-item-link:hover,
+.special-item-link:focus-visible {
+    text-decoration-thickness: 2px;
+}
+
+.special-item-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.special-item-dialog {
+    position: relative;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 80vh;
+    overflow: auto;
+    padding: 1.25rem 1.4rem 1.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    user-select: text;
+}
+
+.special-item-close {
+    appearance: none;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.2rem 0.45rem;
+}
+
+.special-item-close:hover,
+.special-item-close:focus-visible {
+    color: var(--text);
+}
+
+.special-item-title {
+    margin: 0 2rem 0.35rem 0;
+    font-size: 1.15rem;
+}
+
+.special-item-type {
+    margin: 0 0 0.75rem;
+    font-size: 0.88rem;
+    color: var(--accent-gold);
+}
+
+.special-item-description {
+    white-space: pre-wrap;
+    user-select: text;
+    font-size: 0.92rem;
+    line-height: 1.55;
 }
 
 /* Reference (traits / spells) */
