@@ -3,5 +3,35 @@
         "name": "Lightbringer",
         "type": "Magic Weapon",
         "description": "Requires Attunement.\n\nBefore attunement it looks like a Club: Melee(STR), light, 1d4 bludgeoning\nAfter attunement (while it lasts) this weapon can morhp into a:\n - Mace: Melee(STR), 1d6 bludgeoning\n - Morningstar: Melee(STR), 1d8 piercing\nor remain a club, based on in which weapon is the owner proficient (if more than one, it morhpes to the highest damage).\nAlso, while attuned, the wielder has a +1 bonus to both hit chance and damage rolls.\n\nWhile attuned, the wielder can command the weapon to glow, giving off faint light in a 20 ft. radius.\nWhile glowing, it has extra 1d6 damage against undead creatures.\n\nIn the hilt of the weapon the holy simbol of Lathander, the god of dawn, is implanted like a pommel. If the wielder is a follower of another god of the Light or Fire domain, the symbol will morph into that god's, while attuned."
+    },
+    {
+        "name": "Dragonguard Chestplate",
+        "type": "Magic Armor",
+        "description": "Medium Armor (breastplate, AC: 14 + dex mod, max 2)\n\nWhile wearing this armor you have +1 AC, and you have advantage on saving throws against any breath weapon attacks, and an additional +1 on saving throws against fire based attacks."
+    },
+    {
+        "name": "Gauntlets of Ogre Power",
+        "type": "Magic Armor",
+        "description": "Your Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is 19 or higher without them."
+    },
+    {
+        "name": "Staff of the Python",
+        "type": "Magic Weapon",
+        "description": "Quarterstaff: Melee(STR), versatile: 1d6/1d8 bludgeoning\n\nRequires attunement.\n\nYou can use an action to speak this staff's command word and throw the staff on the ground within 10 feet of you. The staff becomes a giant constrictor snake under your control and acts on its own initiative count. By using a bonus action to speak the command word again, you return the staff to its normal form in a space formerly occupied by the snake.\n\nOn your turn, you can mentally command the snake if it is within 60 feet of you and you aren't incapacitated. You decide what action the snake takes and where it moves during its next turn, or you can issue it a general command, such as to attack your enemies or guard a location. If the snake is reduced to 0 hit points, it dies and reverts to its staff form. The staff then shatters and is destroyed. If the snake reverts to staff form before losing all its hit points, it regains all of them."
+    },
+    {
+        "name": "Daggermaster's Ring",
+        "type": "Magic Item",
+        "description": "Requires Attunement\n\nAll attacks made with daggers have a +2 chance to hit, and you can decide wether the damage will be magical or not.\n\nNat19 also ensures a critical hit."
+    },
+    {
+        "name": "Decanter of Endless Water",
+        "type": "Magic Item",
+        "description": "You can use an action to remove the stopper and speak one of three command words, whereupon an amount of fresh water or salt water (your choice) pours out of the flask. The water stops pouring out at the start of your next turn. Choose from the following options:\n - \"Stream\" produces 1 gallon of water\n - \"Fountain\" produces 5 gallons of water.\n - \"Geyser\" produces 30 gallons of water that gushes forth in a geyser 30 feet long and 1 foot wide.\n\nAs a bonus action while holding the decanter, you can aim the geyser at a creature you can see within 30 feet of you. The target must succeed on a DC 13 Strength saving throw or take 1d4 bludgeoning damage and fall prone.\n\nInstead of a creature, you can target an object that isn't being worn or carried and that weighs no more than 200 pounds. The object is either knocked over or pushed up to 15 feet away from you."
+    },
+    {
+        "name": "Bag of Tricks",
+        "type": "Magic Item",
+        "description": "This ordinary bag appears empty. Reaching inside the bag, however, reveals the presence of a small, fuzzy object. You can use an action to pull the fuzzy object from the bag and throw it up to 20 feet. When the object lands, it transforms into a creature you determine by rolling a d8 and consulting the list below.\n\nThe creature is friendly to you and your companions, and it acts on your turn. You can use a bonus action to command how the creature moves and what action it takes on its next turn, or to give it general orders, such as to attack your enemies. In the absence of such orders, the creature acts in a fashion appropriate to its nature. Once three fuzzy objects have been pulled from the bag, the bag can't be used again until the next dawn.\n\n1 - Weasel,\n2 - Owl,\n3 - Badger,\n4 - Boar,\n5 - Panther,\n6 - Ape,\n7 - Dire Wolf,\n8-Black Bear"
     }
 ]
