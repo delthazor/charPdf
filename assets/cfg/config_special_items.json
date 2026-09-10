@@ -2,6 +2,6 @@
     {
         "name": "Lightbringer",
         "type": "Magic Weapon",
-        "description": "example description"
+        "description": "Requires Attunement.\n\nBefore attunement it looks like a Club: Melee(STR), light, 1d4 bludgeoning\nAfter attunement (while it lasts) this weapon can morhp into a:\n - Mace: Melee(STR), 1d6 bludgeoning\n - Morningstar: Melee(STR), 1d8 piercing\nor remain a club, based on in which weapon is the owner proficient (if more than one, it morhpes to the highest damage).\nAlso, while attuned, the wielder has a +1 bonus to both hit chance and damage rolls.\n\nWhile attuned, the wielder can command the weapon to glow, giving off faint light in a 20 ft. radius.\nWhile glowing, it has extra 1d6 damage against undead creatures.\n\nIn the hilt of the weapon the holy simbol of Lathander, the god of dawn, is implanted like a pommel. If the wielder is a follower of another god of the Light or Fire domain, the symbol will morph into that god's, while attuned."
     }
 ]
