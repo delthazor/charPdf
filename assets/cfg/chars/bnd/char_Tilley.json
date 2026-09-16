@@ -132,7 +132,9 @@
                     "Absorb Elements",
                     "Silvery Barbs"
                 ],
-                "2": ["Invisibility"],
+                "2": [
+                    "Invisibility"
+                ],
                 "3": [],
                 "4": [],
                 "5": [],
@@ -250,7 +252,7 @@
         "consumables": [
             "Rations (1 day) x5",
             "Arrows x20",
-            "Dried Leech (fine magic ammo)",
+            "Dried Leech",
             "Potion of Flying"
         ],
         "kits & tools": [
