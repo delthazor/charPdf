@@ -596,6 +596,8 @@ a:hover {
     cursor: pointer;
     text-align: left;
     display: inline;
+    /* Buttons stay inline-block: top-align so a wrapped name keeps the list bullet on its first line. */
+    vertical-align: top;
 }
 
 .special-item-link:hover,

@@ -149,15 +149,21 @@ function buildSpellsLowerIndex(catalog) {
 
 const QUANTITY_SUFFIX = /\s+x\d+\s*$/i;
 const ATTUNED_SUFFIX = /\s*\(attuned\)\s*$/i;
+const EQUIPPED_TAG_SUFFIX = /\s*\[(?:un)?equipped\]\s*$/i;
 
 function stripTrailingQuantity(text) {
     return text.replace(QUANTITY_SUFFIX, '');
+}
+
+function stripTrailingEquippedTag(text) {
+    return text.replace(EQUIPPED_TAG_SUFFIX, '');
 }
 
 function normalizeSpecialItemKey(text) {
     let key = text.trim();
     key = stripTrailingQuantity(key);
     key = key.replace(ATTUNED_SUFFIX, '');
+    key = stripTrailingEquippedTag(key);
     return key.trim().toLowerCase();
 }
 
