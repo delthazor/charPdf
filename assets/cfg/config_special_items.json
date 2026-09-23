@@ -21,7 +21,7 @@
     },
     {
         "name": "Daggermaster's Ring",
-        "type": "Magic Item",
+        "type": "Magic Accessory",
         "description": "Requires Attunement\n\nAll attacks made with daggers have a +2 chance to hit, and you can decide wether the damage will be magical or not.\n\nNat19 also ensures a critical hit."
     },
     {
@@ -36,12 +36,12 @@
     },
     {
         "name": "Robe of Useful Items",
-        "type": "Magic Item",
+        "type": "Magic Accessory",
         "description": "This robe has cloth patches of various shapes and colors covering it.\n\nWhile wearing the robe, you can use an action to detach one of the patches, causing it to become the object or creature it represents. Once the last patch is removed, the robe becomes an ordinary garment.\n\nThis robe contains the following patches:\n\n-Lantern (lit, filled)\n-Rowboat (4 person)\n-Hemphen rope (50 ft, coiled)\n-2 wooden ladders (25 ft)\n-Iron chest (3ft x 4ft, 2 ft deep, empty)"
     },
     {
         "name": "Googles of Night",
-        "type": "Magic Item",
+        "type": "Magic Accessory",
         "description": "While wearing these dark lenses, you have Darkvision out to 60 feet. If you already have Darkvision, wearing the goggles increases its range by 60 feet."
     },
     {
@@ -71,7 +71,7 @@
     },
     {
         "name": "Amulet of the Drunkard",
-        "type": "Magic Weapon",
+        "type": "Magic Accessory",
         "description": "This amulet smells of old, ale-stained wood.\n\nWhile wearing it, you can regain 4d4 + 4 hit points when you drink a pint (0.5 litre) of beer, ale, mead, or wine. Once the amulet has restored hit points, it can't do so again until the next dawn."
     },
     {
@@ -88,5 +88,90 @@
         "name": "Packets of Pixie Dust",
         "type": "Magic Item",
         "description": "3 small packets of pixie dust wrapped together.\n\nAs an action, you can sprinkle this dust on yourself or another creature you can see within 5 feet of you. The recipient gains a flying speed of 30 feet and the ability to hover for 1 minute.\n\nIf the creature is airborne when this effect ends, it falls safely to the ground, taking no damage and landing on its feet."
+    },
+    {
+        "name": "Sending Stone",
+        "type": "Magic Item",
+        "description": "Sending stones come in pairs, with each smooth stone carved to match the other so the pairing is easily recognized.\n\nWhile you touch one stone, you can use an action to cast the sending spell from it. The target is the bearer of the other stone. If no creature bears the other stone, you know that fact as soon as you use the stone and don't cast the spell. Once sending is cast through the stones, they can't be used again until the next dawn.\n\nIf one of the stones in a pair is destroyed, the other one becomes nonmagical."
+    },
+    {
+        "name": "Spider Staff",
+        "type": "Magic Weapon",
+        "description": "Quasrterstaff: Melee(STR), Versatile, 1d6 opne hand, 1d8 two hand, bludgeoning.\n\nRequires Attunement\n\nWhile attuned, it deals 1d6 extra poison damage as a melee weapon.\n\nThe staff has 10 charges, which are used to fuel the spells within it. With the staff in hand, you can use your action to cast one of the following spells from the staff:\n-spider climb (1 charge)\n-web (2 charges, spell save DC 15).\nNo components are required. The staff regains 1d6 + 4 expended charges each day at dusk.\n\nIf you expend the staff’s last charge, roll a d20. On a 1, the staff crumbles to dust and is destroyed."
+    },
+    {
+        "name": "Dragoncrest Medalion",
+        "type": "Magic Accessory",
+        "description": "A silvery-looking medallion etched with a dragon motif. Its surface becomes warm to the touch when divine magic is nearby.\n\nWhile wearing this medallion, you can see a small, spectral, salamander-like lizard resting on your shoulder. It seems friendly and playful, but only you can see or hear it, and it never leaves you. It appears clear and bright when the medalion is fully charged and becomes more and more dim, and hazy as the charges are used.\n\nThe medalion is linked to your divine energy, having a maximum charge capacity equal to half your level, rounded down. You can regain 1d4+1 charges after a long rest. You can use 1 charge per turn in combat as a bonus action or reaction:\n- If you miss with a spell attack, you may add +2 to the roll, potentially turning the miss into a hit.\n- When hit by an area attack, you gain advantage on the saving throw."
+    },
+    {
+        "name": "Boots of the Vigilant Wing",
+        "type": "Magic Accessory",
+        "description": "You gain a +1 bonus to AC while not wearing heavy or light armor.\n\nOnce per long rest, when you would be hit by an attack, you may use your reaction to move 10 feet without provoking opportunity attacks, potentially causing the attack to miss."
+    },
+    {
+        "name": "Bulwark of the Iron Will",
+        "type": "Magic Shield",
+        "description": "Shield (AC+2)\n\nA heavy steel shield etched with angular patterns resembling chains and fortress walls. It feels unnervingly solid.\n\nWhile wielding this shield, when you succeed on a saving throw against an attack, you may use your reaction to gain temporary hit points equal to your proficiency bonus.\n\nOnce per long rest, when you would be pushed, knocked prone, or moved against your will, you may ignore the effect."
+    },
+    {
+        "name": "Banner of the Iron Vanguard",
+        "type": "Magic Accessory",
+        "description": "A big red ribbon with golden lining that can be worn around heavy armor distinguishing the wearer.\n\nOnce per short rest, you can activate the magic of the fabric, granting one target ally (including yourself) to have +2 to any Charisma based ability checks in the next 10 minutes."
+    },
+    {
+        "name": "Silk Gloves of the Kindled Hand",
+        "type": "Magic Accessory",
+        "description": "Fine crimson silk gloves embroidered with golden flame motifs. They are warm, no matter the temperature outside.\n\nWhile wearing the gloves, when you restore hit points to a single creature using a spell of 1st level or higher, you may add +1d4 healing (once per turn).\n\nAlso once per long rest, when you cast a healing spell, you may also end one minor condition on the target (blinded, deafened, or poisoned, etc.)."
+    },
+    {
+        "name": "Censer of Sustained Flame",
+        "type": "Magic Item",
+        "description": "A small censer, with a little chain that can be attached to your belt, or to the grip of a weapon. When lit, it burns with a smokeless, golden fire, giving off scent of fresh campfire.\n\nAs an action or bonus action, once per short or long rest, you can light the censer for 10 minutes. While it is burning, allies within 15 feet of you, including you, get +1 for any ability check or saving throw. The effect diminishes during the heat of combat.\n\nThe censer sheds dim light in a 10-foot radius."
+    },
+    {
+        "name": "Golden Ring of the Apprentices",
+        "type": "Magic Accessory",
+        "description": "Requires attunement.\n\nA small golden ring that only fits your little finger. It is usually given to magic apprentices who can not managed their spells well.\n\nOnce during a short or long rest a spell caster can perform a quick ritual that stores a single spell they know into the ring. Only the attuned user can release the spell, unless the ring is destroyed, in which case the stored spell is released automatically.\n\nIf someone tries to store a spell while the ring already stores one, the spell acts like it was cast normally, but treating the ring as the target or center of effect.\n\nThe stored spell can be released as an action, regardless of the stored spell. It gain statistics (save DC, etc) based on the original caster, who stored the spell at the time of casting."
+    },
+    {
+        "name": "Lens of Revealing Threads",
+        "type": "Magic Accessory",
+        "description": "A monocle on a chain.\n\nWhile examining an area or object through the lens, you gain advantage on Investigation checks regarding that object.\n\nOnce per day, you may focus strongly on your surroundings to see if objects have faint magical auras on them or not (as a limited detect magic)."
+    },
+    {
+        "name": "Earrings of Misdirected Attention",
+        "type": "Magic Accessory",
+        "description": "A mismatched pair of small silver earrings that gently chime once in a while despite no apparent reason for them to make that sound. Also it seems only you can hear that chime, though it never happens when you are alone.\n\nOnce per short rest, when a creature you can see within 30 feet makes a Wisdom or Intelligence save, you may use your reaction to impose disadvantage on that save. If the save fails, you gain advantage on your next Stealth or Sleight of Hand check against that creature."
+    },
+    {
+        "name": "Fedora of the Quiet Step",
+        "type": "Magic Accessory",
+        "description": "A classic, detective-like hat from soft linen.\n\nYou gain advantage on Stealth checks made in dim light or darkness. Once you are in hiding, your own footsteps can never give you away.\n\nWhen you step one feet over a hole or chasm, or other fissure you would fall into, you do not fall yet. If your next step lands on solid ground, it would seem that you somehow jumped over. If this can not be done, you fall down, and everyone will see it like you jumped down on purpose."
+    },
+    {
+        "name": "Mantle of the Shared Decay",
+        "type": "Magic Accessory",
+        "description": "A cloak woven from fungus-thread and decorated with shed leaves.\n\nThe cloak helps you guide your Halo of Spores around, so the following rules apply to any creature in the halo:\n-When a creature fails a saving throw against one of your spells, you may choose one ally (including yourself) within 10 feet of it to gain advantage on their next attack or saving throw against that creature (once per turn).\n-Once per short or long rest, when a creature succeeds on a saving throw against one of your druid spells, you may impose a –2 penalty to that save (before the result is finalized)\n-Once per short or long rest, when you make a spell attack roll against any target that is or was in your halo since your last turn, and you miss, you may add +1d4 to the roll potentially changing the result."
+    },
+    {
+        "name": "Boots of the Rooted Step",
+        "type": "Magic Accessory",
+        "description": "These boots sprout thin rootlets when touching soil or stone.\n\nOnce per short or long rest, you can cast a root field as a bonus action. The center of the field must be within 20 feet of you, and it will have a diameter of 40 feet. The field counts as a difficult terrain for everyone except you, and hurts any creature who is not you by 1d4+1 if they start their turn in the field. The field disintegrates in 1 minute, but otherwise counts as a natural object unaffected by dispel magic.\n\nWhile standing in the field, you have the following benefits:\n-Advantage on saving throws against being knocked prone or moved\n-Ability to exclude any creature of your choice from the negative effects of the field\n-You can help any other creature fallen prone in the field to recover as a free action."
+    },
+    {
+        "name": "Boots of the Rooted Step",
+        "type": "Magic Accessory",
+        "description": "A leaf-patterned cloak that seems half a second out of sync with reality.\n\nOnce per round, when a creature misses you with a melee attack, you may move 5 feet without provoking opportunity attacks.\n\nOnce per short or long rest, when you take damage, you may teleport 10 feet to an unoccupied space you can see."
+    },
+    {
+        "name": "Bracers of Reactive Misdirection",
+        "type": "Magic Accessory",
+        "description": "Slender wooden bracers carved with spirals and thorn motifs.\n\nWhen a creature you can see targets you with an attack, you may use your reaction to impose disadvantage on that attack if you moved at least 10 feet on your last turn.\n\nWhen a creature moves at least 10 feet toward you, ending in melee range to you, you may use your reaction to gain 10 feet of movement on your next turn. This movement won't trigger an opportunity attack from that enemy."
+    },
+    {
+        "name": "Feymark Compass",
+        "type": "Magic Item",
+        "description": "A small crystal disk worn on a cord, but it does not seem to show North at all.\n\nOnce per long or short rest, at the start of a turn in combat (as highest initiative) you may swap initiative order with one willing ally you can see."
     }
 ]

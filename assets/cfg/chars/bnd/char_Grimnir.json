@@ -233,7 +233,7 @@
             "Amulet of the Drunkard",
             "Cloak of the Skipping Step",
             "Bracers of Reactive Misdirection",
-            "Robe of Useful Items",
+            "Robe of Useful Items [unequipped]",
             "Feymark Compass"
         ],
         "consumables": [
@@ -257,7 +257,7 @@
             "Pickaxe",
             "Pot (iron)",
             "Common clothes",
-            "Red Cloak",
+            "Red Cloak [unequipped]",
             "Platinum ring (7G)",
             "Diamod (4G) x3"
         ]

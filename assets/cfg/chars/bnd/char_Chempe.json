@@ -11,7 +11,7 @@
         "intelligence": 14,
         "wisdom": 16,
         "charisma": 12,
-        "speed": 35,
+        "speed": 30,
         "maxHp": 53,
         "acBonus": 1,
         "initiativeBonus": 1,
@@ -246,7 +246,9 @@
     },
     "backpack": {
         "accessories": [
-            "Boots of Movement",
+            "Boots of Movement (speed+5) [unequppied]",
+            "Boots of the Rooted Step",
+            "Mantle of the Shared Decay",
             "Bag of Tricks",
             "Alchemy jug"
         ],
