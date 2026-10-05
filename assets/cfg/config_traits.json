@@ -44,6 +44,10 @@
         "description": "You can use your action to magically assume the shape of a beast that you have seen before. You can use this feature twice. You regain expended uses when you finish a short or long rest. Your druid level determines the beasts you can transform into. You can stay in a beast shape for a number of hours equal to half your druid level (rounded down). You then revert to your normal form unless you expend another use of this feature. You can revert to your normal form earlier by using a bonus action on your turn. You automatically revert if you fall unconscious, drop to 0 hit points, or die."
     },
     {
+        "name": "Wildshape (2024)",
+        "description": "As a Bonus Action, you shape-shift into a Beast form that you have learned for this feature. You stay in that form for a number of hours equal to half your Druid level or until you use Wild Shape again, have the Incapacitated condition, or die. You can also leave the form early as a Bonus Action. You can use this feature twice. You regain one expended use when you finish a Short Rest, and you regain all expended uses when you finish a Long Rest. You get one additinal use at level 6, and another on level 17. While in a form, you retain your personality, memories, and ability to speak, and the following rules apply:\n-you gain a number of Temporary Hit Points equal to your Druid level\n Your game statistics are replaced by the Beast’s stat block, but you retain your creature type; Hit Points; Hit Point Dice; Intelligence, Wisdom, and Charisma scores; class features; languages; and feats. You also retain your skill and saving throw proficiencies and use your Proficiency Bonus for them, in addition to gaining the proficiencies of the creature. If a skill or saving throw modifier in the Beast’s stat block is higher than yours, use the one in the stat block.\n-ou can’t cast spells, but shape-shifting doesn’t break your Concentration or otherwise interfere with a spell you’ve already cast."
+    },
+    {
         "name": "Symbiotic Entity",
         "description": "As an action, you can expend a use of your Wild Shape feature to awaken those spores, rather than transforming into a beast form, and you gain 4 temporary hit points for each level you have in this class. While this feature is active, you gain the following benefits:\n-When you deal your Halo of Spores damage, roll the damage die a second time and add it to the total\n-Your melee weapon attacks deal an extra 1d6 necrotic damage to any target they hit\nThese benefits last for 10 minutes, until you lose all these temporary hit points, or until you use your Wild Shape again."
     },
@@ -346,5 +350,29 @@
     {
         "name": "Unarmored Defense",
         "description": "While you are not wearing any armor, your armor class equals 10 + your Dexterity modifier + your Constitution modifier. You can use a shield and still gain this benefit."
+    },
+    {
+        "name": "Second Wind",
+        "description": "On your turn, you can use a bonus action to regain hit points equal to 1d10 + your fighter level. Once you use this feature, you must finish a short or long rest before you can use it again."
+    },
+    {
+        "name": "Action Surge",
+        "description": "On your turn, you can take one additional Action. Once you use this feature, you must finish a short or long rest before you can use it again. Starting at 17th level, you can use it twice before a rest, but only once on the same turn."
+    },
+    {
+        "name": "Danger Sense",
+        "description": "You have advantage on Dexterity saving throws against effects that you can see, such as traps and spells. To gain this benefit, you can't be blinded, deafened, or incapacitated."
+    },
+    {
+        "name": "Reckless Attack",
+        "description": "When you make your first attack on your turn, you can decide to attack recklessly. Doing so gives you advantage on melee weapon attack rolls using Strength during this turn, but attack rolls against you have advantage until your next turn."
+    },
+    {
+        "name": "Known Wildshape Forms (Nephis)",
+        "description": "You can use the following beasts for your wildshape feature: Spider, Wolf, Snake, Panther"
+    },
+    {
+        "name": "Wild Companion",
+        "description": "As a Magic action, you can expend a spell slot or a use of Wild Shape to cast the Find Familiar spell without Material components. When you cast the spell in this way, the familiar is Fey and disappears when you finish a Long Rest."
     }
 ]

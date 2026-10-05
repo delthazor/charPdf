@@ -12,7 +12,7 @@
         "wisdom": 12,
         "charisma": 8,
         "speed": 30,
-        "maxHp": 14,
+        "maxHp": 19,
         "acBonus": 3,
         "initiativeBonus": 0,
         "pPercBonus": 0
@@ -112,6 +112,8 @@
         "Darkvision",
         "Rage",
         "Unarmored Defense",
+        "Danger Sense",
+        "Reckless Attack",
         "Military Rank (Officer)",
         "Healing Hands",
         "Celestial Resistance",

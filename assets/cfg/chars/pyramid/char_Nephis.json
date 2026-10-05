@@ -99,7 +99,10 @@
         "Tough (2024)",
         "Sacral Body",
         "Holy Experience",
-        "Vessel-bound Celestial"
+        "Vessel-bound Celestial",
+        "Wildshape (2024)",
+        "Known Wildshape Forms (Nephis)",
+        "Wild Companion"
     ],
     "classes": {
         "druid": {
@@ -109,7 +112,7 @@
             "castStat": "wisdom",
             "subclass": "",
             "spellslots": {
-                "1": 2,
+                "1": 3,
                 "2": 0,
                 "3": 0,
                 "4": 0,
@@ -135,7 +138,8 @@
                     "Thunderwave",
                     "Create or Destroy Water",
                     "Detect Poison and Disease",
-                    "Cure wounds"
+                    "Cure wounds",
+                    "Find Familiar"
                 ],
                 "2": [],
                 "3": [],
