@@ -12,7 +12,7 @@
         "wisdom": 11,
         "charisma": 15,
         "speed": 30,
-        "maxHp": 12,
+        "maxHp": 21,
         "acBonus": 0,
         "initiativeBonus": 0,
         "pPercBonus": 0
@@ -106,7 +106,7 @@
     ],
     "classes": {
         "druid": {
-            "level": 1,
+            "level": 2,
             "hitDice": "d8",
             "resourcePoints": 0,
             "castStat": "wisdom",

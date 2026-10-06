@@ -123,7 +123,7 @@
     ],
     "classes": {
         "barbarian": {
-            "level": 1,
+            "level": 2,
             "hitDice": "d12",
             "resourcePoints": 2,
             "castStat": "intelligence",
