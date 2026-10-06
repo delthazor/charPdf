@@ -39,23 +39,32 @@ struct RunMode
 
     Kind kind = Kind::All;
     std::string campaign;
+    bool archived = false;
 };
+
+constexpr const char* kUsage = "Usage: pdf_app [--archived] [all|<campaign>]";
 
 RunMode ParseRunMode(int argc, char* argv[])
 {
-    if (argc <= 1) { return {}; }
+    RunMode mode;
+    bool sawPositional = false;
 
-    if (argc > 2)
+    for (int i = 1; i < argc; ++i)
     {
-        throw std::runtime_error("Usage: pdf_app [all|<campaign>]");
+        const std::string arg = argv[i];
+        if (arg == "--archived")
+        {
+            if (mode.archived) { throw std::runtime_error(kUsage); }
+            mode.archived = true;
+            continue;
+        }
+        if (sawPositional) { throw std::runtime_error(kUsage); }
+        sawPositional = true;
+        if (arg == "all") { continue; }
+        mode.kind = RunMode::Kind::Single;
+        mode.campaign = arg;
     }
 
-    const std::string arg = argv[1];
-    if (arg == "all") { return {}; }
-
-    RunMode mode;
-    mode.kind = RunMode::Kind::Single;
-    mode.campaign = arg;
     return mode;
 }
 
@@ -103,13 +112,27 @@ void WarnLooseCharFilesInCharsRoot()
 }
 
 void ProcessCampaignDir(const fs::path& campaignDir,
+                        bool archived,
                         const UtilType::TraitsCatalog& traitsCatalog,
                         const UtilType::SpellsCatalog& spellsCatalog)
 {
     const std::string campaign = campaignDir.filename().string();
-    bool foundAny = false;
+    const fs::path sourceDir = archived ? campaignDir / "archived" : campaignDir;
+    const std::string emptyMessage =
+        archived ? std::string("No archived character files in campaign folder: ") + campaign
+                 : std::string("No character files in campaign folder: ") + campaign;
 
-    for (const auto& entry : fs::directory_iterator(campaignDir))
+    if (archived && (!fs::exists(sourceDir) || !fs::is_directory(sourceDir)))
+    {
+        Utilities::LogInfo(emptyMessage);
+        return;
+    }
+
+    bool foundAny = false;
+    std::string outputDir = std::string("chars/") + campaign + "/";
+    if (archived) { outputDir += "archived/"; }
+
+    for (const auto& entry : fs::directory_iterator(sourceDir))
     {
         if (!entry.is_regular_file()) { continue; }
 
@@ -123,8 +146,7 @@ void ProcessCampaignDir(const fs::path& campaignDir,
         Utilities::LogInfo(MakeProcessingBanner(name));
         Utilities::LogInfo(std::string("Processing: ") + name);
 
-        const std::string outputPath =
-            std::string("chars/") + campaign + "/" + Utilities::SanitizePdfStem(name) + ".pdf";
+        const std::string outputPath = outputDir + Utilities::SanitizePdfStem(name) + ".pdf";
         const fs::path outputFs(outputPath);
         fs::create_directories(outputFs.parent_path());
 
@@ -133,10 +155,7 @@ void ProcessCampaignDir(const fs::path& campaignDir,
         Utilities::LogInfo(std::string("PDF created: ") + outputPath);
     }
 
-    if (!foundAny)
-    {
-        Utilities::LogInfo(std::string("No character files in campaign folder: ") + campaign);
-    }
+    if (!foundAny) { Utilities::LogInfo(emptyMessage); }
 }
 
 void WarnLegacyRootCharFiles()
@@ -179,7 +198,7 @@ static int CreatePDFs(const RunMode& mode,
     const std::vector<fs::path> campaigns = CollectCampaignDirs(mode);
     for (const fs::path& campaignDir : campaigns)
     {
-        ProcessCampaignDir(campaignDir, traitsCatalog, spellsCatalog);
+        ProcessCampaignDir(campaignDir, mode.archived, traitsCatalog, spellsCatalog);
     }
 
     return 0;

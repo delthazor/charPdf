@@ -27,6 +27,7 @@ class CharacterRepository
 
     nlohmann::ordered_json Load(const std::string& fullPath) const;
     void SaveAtomic(const std::string& fullPath, const nlohmann::ordered_json& doc) const;
+    std::string MoveToCampaignArchive(const std::string& fullPath) const;
 
     const std::string& RootDir() const { return rootDir; }
     std::string CharsDir() const;

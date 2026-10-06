@@ -45,7 +45,7 @@ export function renderCampaignPicker(app, manifest, siteBase) {
         const card = el('a', 'picker-card');
         card.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaign.id);
         card.appendChild(el('span', 'picker-name', campaign.label || campaign.id));
-        const count = (campaign.characters || []).length;
+        const count = countActiveCharacters(campaign.characters);
         const meta = el('span', 'picker-meta');
         meta.textContent = count === 1 ? '1 character' : count + ' characters';
         card.appendChild(meta);
@@ -55,16 +55,25 @@ export function renderCampaignPicker(app, manifest, siteBase) {
     app.appendChild(wrap);
 }
 
-export function renderCharacterPicker(app, campaignId, characters, siteBase) {
+export function renderCharacterPicker(app, campaignId, characters, siteBase, showArchived) {
     app.replaceChildren();
 
     const wrap = el('div', 'landing');
     wrap.appendChild(el('h1', 'landing-title', 'Choose a character'));
 
-    wrap.appendChild(buildBackLink(siteBase, null));
+    const hasArchived = campaignHasArchived(characters);
+    if (hasArchived) {
+        wrap.appendChild(buildArchiveSwitch(siteBase, campaignId, showArchived));
+    }
 
-    if (!characters || characters.length === 0) {
-        wrap.appendChild(el('p', 'muted', 'No characters in this campaign.'));
+    wrap.appendChild(buildBackLink(siteBase, null, false));
+
+    const visible = filterCharacters(characters, showArchived);
+    if (visible.length === 0) {
+        const emptyText = showArchived
+            ? 'No archived characters in this campaign.'
+            : 'No characters in this campaign.';
+        wrap.appendChild(el('p', 'muted', emptyText));
         app.appendChild(wrap);
         return;
     }
@@ -73,7 +82,7 @@ export function renderCharacterPicker(app, campaignId, characters, siteBase) {
     wrap.appendChild(subtitle);
 
     const grid = el('div', 'picker-grid');
-    for (const entry of characters) {
+    for (const entry of visible) {
         const card = el('a', 'picker-card');
         card.href = siteBase + 'c/' + entry.slug + '.html';
         card.appendChild(el('span', 'picker-name', entry.name));
@@ -89,22 +98,20 @@ export function renderCharacterPicker(app, campaignId, characters, siteBase) {
     app.appendChild(wrap);
 }
 
-export function renderLanding(app, manifest, siteBase, campaignId) {
+export function renderLanding(app, manifest, siteBase, campaignId, showArchived) {
     if (campaignId) {
-        const group = (manifest.campaigns || []).find(function (item) {
-            return item.id === campaignId;
-        });
-        renderCharacterPicker(app, campaignId, group ? group.characters : [], siteBase);
+        const group = findCampaign(manifest, campaignId);
+        renderCharacterPicker(app, campaignId, group ? group.characters : [], siteBase, showArchived);
         return;
     }
     renderCampaignPicker(app, manifest, siteBase);
 }
 
-export function renderError(app, message, siteBase, campaignId) {
+export function renderError(app, message, siteBase, campaignId, showArchived) {
     app.replaceChildren();
     const wrap = el('div', 'state-message error-state');
     wrap.appendChild(el('h1', null, message));
-    wrap.appendChild(buildBackLink(siteBase, campaignId));
+    wrap.appendChild(buildBackLink(siteBase, campaignId, showArchived));
     app.appendChild(wrap);
 }
 
@@ -121,7 +128,7 @@ export function renderCharacterSheet(app, bundle, siteBase) {
     app.replaceChildren();
 
     const campaignId = campaignIdFromSlug(bundle.entry.slug);
-    const back = buildBackLink(siteBase, campaignId);
+    const back = buildBackLink(siteBase, campaignId, isArchivedEntry(bundle.entry));
     back.classList.add('sheet-back-link');
     app.appendChild(back);
 
@@ -663,16 +670,77 @@ function keyValueList(rows) {
     return list;
 }
 
-function buildBackLink(siteBase, campaignId) {
+function buildBackLink(siteBase, campaignId, showArchived) {
     const link = el('a', 'back-link');
     if (campaignId) {
-        link.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
+        let href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
+        if (showArchived) {
+            href += '&archived=1';
+        }
+        link.href = href;
         link.textContent = 'Back to character list';
     } else {
         link.href = siteBase + 'index.html';
         link.textContent = 'Back to campaigns';
     }
     return link;
+}
+
+function isArchivedEntry(entry) {
+    return !!(entry && entry.archived);
+}
+
+function countActiveCharacters(characters) {
+    let count = 0;
+    const list = characters || [];
+    for (const entry of list) {
+        if (!isArchivedEntry(entry)) {
+            count += 1;
+        }
+    }
+    return count;
+}
+
+function campaignHasArchived(characters) {
+    const list = characters || [];
+    for (const entry of list) {
+        if (isArchivedEntry(entry)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function filterCharacters(characters, showArchived) {
+    const visible = [];
+    const list = characters || [];
+    for (const entry of list) {
+        if (isArchivedEntry(entry) === !!showArchived) {
+            visible.push(entry);
+        }
+    }
+    return visible;
+}
+
+function findCampaign(manifest, campaignId) {
+    const campaigns = (manifest && manifest.campaigns) || [];
+    for (const item of campaigns) {
+        if (item.id === campaignId) {
+            return item;
+        }
+    }
+    return null;
+}
+
+function buildArchiveSwitch(siteBase, campaignId, showArchived) {
+    const bar = el('div', 'archive-switch');
+    const active = el('a', showArchived ? 'archive-switch-link' : 'archive-switch-link is-active', 'Active');
+    active.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId);
+    const archived = el('a', showArchived ? 'archive-switch-link is-active' : 'archive-switch-link', 'Archived');
+    archived.href = siteBase + 'index.html?campaign=' + encodeURIComponent(campaignId) + '&archived=1';
+    bar.appendChild(active);
+    bar.appendChild(archived);
+    return bar;
 }
 
 function createInventoryNameNode(displayName, specialItemsByLowerName, missTag) {

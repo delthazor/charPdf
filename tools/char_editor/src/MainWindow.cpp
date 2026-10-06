@@ -220,6 +220,8 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     QAction* actNew = toolbar->addAction("New");
     QAction* actSave = toolbar->addAction("Save");
     QAction* actSaveAs = toolbar->addAction("Save As");
+    archiveAction = toolbar->addAction("Archive");
+    archiveAction->setEnabled(false);
 
     auto* generateButton = new QToolButton();
     generateButton->setText(QStringLiteral("Generate"));
@@ -235,6 +237,7 @@ MainWindow::MainWindow(CharacterRepository repoParam) : repo(std::move(repoParam
     QObject::connect(actNew, &QAction::triggered, this, &MainWindow::OnToolbarNew);
     QObject::connect(actSave, &QAction::triggered, this, &MainWindow::OnToolbarSave);
     QObject::connect(actSaveAs, &QAction::triggered, this, &MainWindow::OnToolbarSaveAs);
+    QObject::connect(archiveAction, &QAction::triggered, this, &MainWindow::OnToolbarArchive);
     QObject::connect(actGenerateAll, &QAction::triggered, this, &MainWindow::OnToolbarGenerateAll);
     QObject::connect(actGenerateFolder, &QAction::triggered, this, &MainWindow::OnToolbarGenerateCurrentFolder);
     QObject::connect(actViewOnWeb, &QAction::triggered, this, &MainWindow::OnToolbarViewOnWeb);
@@ -377,6 +380,50 @@ void MainWindow::OnToolbarNew()
 }
 void MainWindow::OnToolbarSave() { Save(); }
 void MainWindow::OnToolbarSaveAs() { SaveAs(); }
+
+void MainWindow::OnToolbarArchive()
+{
+    if (!editorWorkspaceOpen_ || !doc.FilePath().has_value()) { return; }
+
+    QString message = QStringLiteral(
+        "This is final and will remove the file from the list of editable documents.");
+    if (doc.IsDirty())
+    {
+        message += QStringLiteral("\n\nUnsaved edits will be saved into the archived file first.");
+    }
+
+    QMessageBox box(this);
+    box.setIcon(QMessageBox::Warning);
+    box.setWindowTitle(QStringLiteral("Archive"));
+    box.setText(message);
+    QPushButton* proceedButton = box.addButton(QStringLiteral("Proceed"), QMessageBox::AcceptRole);
+    QPushButton* cancelButton = box.addButton(QMessageBox::Cancel);
+    box.setDefaultButton(cancelButton);
+    box.setEscapeButton(cancelButton);
+    box.exec();
+    if (box.clickedButton() != proceedButton) { return; }
+
+    if (doc.IsDirty())
+    {
+        Save();
+        if (doc.IsDirty() || !doc.FilePath().has_value()) { return; }
+    }
+
+    try
+    {
+        repo.MoveToCampaignArchive(doc.FilePath().value());
+    }
+    catch (const std::exception& e)
+    {
+        QMessageBox::critical(this, QStringLiteral("Archive"), QString::fromStdString(e.what()));
+        return;
+    }
+
+    SetEditorWorkspaceOpen(false);
+    doc = CharacterDocument();
+    UpdateArchiveActionEnabled();
+    RefreshFileList();
+}
 
 void MainWindow::OnToolbarGenerateAll()
 {
@@ -2732,6 +2779,7 @@ void MainWindow::SaveAs()
         RefreshFileList();
         SelectFileTreeItemByPath(QString::fromStdString(fullPath));
         UpdateValidationSummary();
+        UpdateArchiveActionEnabled();
     }
     catch (const std::exception& e)
     {
@@ -2748,6 +2796,7 @@ void MainWindow::SetDocument(CharacterDocument docParam, std::optional<std::stri
     UpdateRawJsonView();
     UpdateValidationSummary();
     doc.MarkClean();
+    UpdateArchiveActionEnabled();
 }
 
 void MainWindow::UpdateRawJsonView()
@@ -2756,12 +2805,19 @@ void MainWindow::UpdateRawJsonView()
     rawJson->setPlainText(QString::fromStdString(std::as_const(doc).Json().dump(4)));
 }
 
+void MainWindow::UpdateArchiveActionEnabled()
+{
+    if (archiveAction == nullptr) { return; }
+    archiveAction->setEnabled(editorWorkspaceOpen_ && doc.FilePath().has_value());
+}
+
 void MainWindow::SetEditorWorkspaceOpen(bool open)
 {
     editorWorkspaceOpen_ = open;
     if (editorStack) { editorStack->setCurrentIndex(open ? 1 : 0); }
     if (!open) { fileListLoadsNeedUserGesture_ = true; }
     UpdateValidationSummary();
+    UpdateArchiveActionEnabled();
 }
 
 void MainWindow::UpdateValidationSummary()

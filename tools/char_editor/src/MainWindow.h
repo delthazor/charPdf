@@ -30,6 +30,7 @@ class QStackedWidget;
 class QRadioButton;
 class QCheckBox;
 class QEvent;
+class QAction;
 
 namespace CharEditor
 {
@@ -53,6 +54,7 @@ class MainWindow : public QMainWindow
     void OnToolbarGenerateAll();
     void OnToolbarGenerateCurrentFolder();
     void OnToolbarViewOnWeb();
+    void OnToolbarArchive();
     void OnRefreshFileListButton();
 
     void OnRootStringChanged(const QString& value);
@@ -152,6 +154,7 @@ class MainWindow : public QMainWindow
     void RefreshProficienciesFromDocument();
     void UpdateRawJsonView();
     void UpdateValidationSummary();
+    void UpdateArchiveActionEnabled();
     void SetEditorWorkspaceOpen(bool open);
 
     QString ProjectRootAbsolute() const;
@@ -169,6 +172,7 @@ class MainWindow : public QMainWindow
     bool fileListLoadsNeedUserGesture_ = true;
     bool editorWorkspaceOpen_ = false;
 
+    QAction* archiveAction = nullptr;
     QTreeWidget* fileList = nullptr;
     QStackedWidget* editorStack = nullptr;
     QTabWidget* tabs = nullptr;

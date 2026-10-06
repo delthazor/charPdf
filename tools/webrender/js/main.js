@@ -19,6 +19,11 @@ function getCampaignFromQuery() {
     return campaign ? campaign.trim() : null;
 }
 
+function getArchivedFromQuery() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('archived') === '1';
+}
+
 async function bootstrap() {
     const app = document.getElementById('app');
     if (!app) {
@@ -28,14 +33,15 @@ async function bootstrap() {
     const siteBase = resolveSiteBase();
     const slug = getSlugFromPage();
     const campaign = getCampaignFromQuery() || campaignIdFromSlug(slug);
+    const showArchived = !slug && getArchivedFromQuery();
 
     if (!slug) {
         renderLoading(app);
         try {
             const manifest = await loadCharacterManifest();
-            renderLanding(app, manifest, siteBase, campaign);
+            renderLanding(app, manifest, siteBase, campaign, showArchived);
         } catch (err) {
-            renderError(app, 'Failed to load character list.', siteBase, campaign);
+            renderError(app, 'Failed to load character list.', siteBase, campaign, showArchived);
             console.error(err);
         }
         return;

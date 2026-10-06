@@ -50,65 +50,28 @@ chars_root = dest_cfg / "chars"
 if not chars_root.is_dir():
     raise SystemExit(f"error: synced chars directory missing at {chars_root}")
 
-campaigns = []
-slug_set = set()
-total_chars = 0
+def class_summary_for(data):
+    classes = data.get("classes") or {}
+    class_parts = []
+    total_level = 0
+    for class_id, cls in classes.items():
+        level = cls.get("level", 0) or 0
+        total_level += level
+        if level > 0:
+            label = class_id[:1].upper() + class_id[1:] if class_id else class_id
+            class_parts.append(f"{label} {level}")
+    return " / ".join(class_parts), total_level
 
-for campaign_dir in sorted(chars_root.iterdir()):
-    if not campaign_dir.is_dir():
-        continue
 
-    campaign_id = campaign_dir.name
-    characters = []
-
-    for path in sorted(campaign_dir.glob("char_*.json")):
-        with path.open(encoding="utf-8") as f:
-            data = json.load(f)
-
-        stem = path.stem
-        char_slug = stem[5:].lower() if stem.startswith("char_") else stem.lower()
-        slug = f"{campaign_id}/{char_slug}"
-
-        if slug in slug_set:
-            raise SystemExit(f"error: duplicate character slug: {slug}")
-        slug_set.add(slug)
-
-        name = data.get("name", char_slug)
-        race = data.get("race", "")
-        background = data.get("background", "")
-
-        classes = data.get("classes") or {}
-        class_parts = []
-        total_level = 0
-        for class_id, cls in classes.items():
-            level = cls.get("level", 0) or 0
-            total_level += level
-            if level > 0:
-                label = class_id[:1].upper() + class_id[1:] if class_id else class_id
-                class_parts.append(f"{label} {level}")
-        class_summary = " / ".join(class_parts)
-
-        rel_file = path.relative_to(dest_cfg).as_posix()
-        characters.append({
-            "slug": slug,
-            "file": rel_file,
-            "name": name,
-            "race": race,
-            "background": background,
-            "classSummary": class_summary,
-            "totalLevel": total_level,
-        })
-
-        depth = slug.count("/") + 1
-        asset_prefix = "../" * depth
-
-        og_title = f"{name} — Character Sheet"
-        og_desc_short = f"{race} {background} — D&D 5e character sheet".strip()
-        og_desc = f"{race} {background} — Level {total_level} {class_summary}".strip(" —")
-        og_image = f"{base_url}/img/og-default.png"
-        og_url = f"{base_url}/c/{slug}.html"
-
-        page = f"""<!DOCTYPE html>
+def share_page_html(slug, name, race, background, class_summary, total_level):
+    depth = slug.count("/") + 1
+    asset_prefix = "../" * depth
+    og_title = f"{name} — Character Sheet"
+    og_desc_short = f"{race} {background} — D&D 5e character sheet".strip()
+    og_desc = f"{race} {background} — Level {total_level} {class_summary}".strip(" —")
+    og_image = f"{base_url}/img/og-default.png"
+    og_url = f"{base_url}/c/{slug}.html"
+    return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -137,10 +100,64 @@ for campaign_dir in sorted(chars_root.iterdir()):
 </body>
 </html>
 """
+
+
+def collect_characters(campaign_dir, campaign_id, archived):
+    characters = []
+    if not campaign_dir.is_dir():
+        return characters
+
+    for path in sorted(campaign_dir.glob("char_*.json")):
+        with path.open(encoding="utf-8") as f:
+            data = json.load(f)
+
+        stem = path.stem
+        char_slug = stem[5:].lower() if stem.startswith("char_") else stem.lower()
+        slug = f"{campaign_id}/{char_slug}"
+
+        if slug in slug_set:
+            raise SystemExit(f"error: duplicate character slug: {slug}")
+        slug_set.add(slug)
+
+        name = data.get("name", char_slug)
+        race = data.get("race", "")
+        background = data.get("background", "")
+        class_summary, total_level = class_summary_for(data)
+
+        entry = {
+            "slug": slug,
+            "file": path.relative_to(dest_cfg).as_posix(),
+            "name": name,
+            "race": race,
+            "background": background,
+            "classSummary": class_summary,
+            "totalLevel": total_level,
+        }
+        if archived:
+            entry["archived"] = True
+        characters.append(entry)
+
         share_path = dest_c.joinpath(*slug.split("/")).with_suffix(".html")
         share_path.parent.mkdir(parents=True, exist_ok=True)
-        share_path.write_text(page, encoding="utf-8")
-        total_chars += 1
+        share_path.write_text(
+            share_page_html(slug, name, race, background, class_summary, total_level),
+            encoding="utf-8",
+        )
+    return characters
+
+
+campaigns = []
+slug_set = set()
+total_chars = 0
+
+for campaign_dir in sorted(chars_root.iterdir()):
+    if not campaign_dir.is_dir():
+        continue
+
+    campaign_id = campaign_dir.name
+    characters = collect_characters(campaign_dir, campaign_id, False)
+    characters.extend(collect_characters(campaign_dir / "archived", campaign_id, True))
+    total_chars += len(characters)
 
     campaigns.append({
         "id": campaign_id,

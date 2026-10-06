@@ -107,4 +107,43 @@ void CharacterRepository::SaveAtomic(const std::string& fullPath, const nlohmann
     }
 }
 
+std::string CharacterRepository::MoveToCampaignArchive(const std::string& fullPath) const
+{
+    const fs::path source(fullPath);
+    std::error_code ec;
+    if (!fs::is_regular_file(source, ec))
+    {
+        throw std::runtime_error("character file not found: " + fullPath);
+    }
+
+    const fs::path campaignDir = source.parent_path();
+    ec.clear();
+    const fs::path charsRoot = fs::weakly_canonical(fs::path(CharsDir()), ec);
+    if (ec) { throw std::runtime_error("character directory not found: " + CharsDir()); }
+
+    ec.clear();
+    const fs::path campaignCanon = fs::weakly_canonical(campaignDir, ec);
+    if (ec || campaignCanon.parent_path() != charsRoot)
+    {
+        throw std::runtime_error("character file is not directly in a campaign folder: " + fullPath);
+    }
+
+    const fs::path destDir = campaignDir / "archived";
+    const fs::path dest = destDir / source.filename();
+    if (fs::exists(dest))
+    {
+        throw std::runtime_error("archived character already exists: " + dest.string());
+    }
+
+    ec.clear();
+    fs::create_directories(destDir, ec);
+    if (ec) { throw std::runtime_error("cannot create directory: " + destDir.string()); }
+
+    ec.clear();
+    fs::rename(source, dest, ec);
+    if (ec) { throw std::runtime_error("cannot move character file: " + source.string()); }
+
+    return dest.string();
+}
+
 }
