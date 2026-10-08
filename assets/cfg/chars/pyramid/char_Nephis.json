@@ -139,6 +139,7 @@
                     "Create or Destroy Water",
                     "Detect Poison and Disease",
                     "Cure wounds",
+                    "Ice Knife",
                     "Find Familiar"
                 ],
                 "2": [],
@@ -193,7 +194,6 @@
                         "extra": []
                     }
                 }
-
             ],
             "armors": [
                 {
@@ -241,7 +241,9 @@
         ],
         "kits & tools": [],
         "general": [
-            "Ragged Leather Cloths"
+            "Ragged Leather Cloths",
+            "Candle x2",
+            "Piton x4"
         ]
     }
 }

@@ -124,16 +124,11 @@
                 "0": [
                     "Dancing Lights"
                 ],
-                "0_extra": [
-                ],
-                "1": [
-                ],
-                "2": [
-                ],
-                "3": [
-                ],
-                "4": [
-                ],
+                "0_extra": [],
+                "1": [],
+                "2": [],
+                "3": [],
+                "4": [],
                 "5": [],
                 "6": [],
                 "7": [],
@@ -227,10 +222,13 @@
             "Hand Crossbow Ammo x30",
             "Net (special thrown weapon)"
         ],
-        "kits & tools": [
-        ],
+        "kits & tools": [],
         "general": [
-            "Ragged Leather Cloths"
+            "Ragged Leather Cloths",
+            "Coil of Hemphen Rope (50 ft)",
+            "Torch",
+            "Crowbar",
+            "Set of Firestones"
         ]
     }
 }

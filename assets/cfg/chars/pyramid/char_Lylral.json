@@ -137,7 +137,8 @@
                     "Speak with Animals",
                     "Command",
                     "Healing Word",
-                    "Bane"
+                    "Bane",
+                    "Sleep"
                 ],
                 "2": [],
                 "3": [],
@@ -235,7 +236,11 @@
         ],
         "kits & tools": [],
         "general": [
-            "Ragged Leather Cloths"
+            "Ragged Leather Cloths",
+            "Flask of Lamp Oil",
+            "Coil of Hemphen Rope (50 ft)",
+            "Small Hammer",
+            "Set of Firestones"
         ]
     }
 }
